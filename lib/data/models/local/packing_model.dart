@@ -11,13 +11,13 @@ class Packing extends HiveObject {
   String name;
 
   @HiveField(2)
-  String category;
+  String group;
 
   @HiveField(3)
-  String packingPackage;
+  String groupIcon;
 
   @HiveField(4)
-  String confirm;
+  bool selected;
 
   @HiveField(5)
   DateTime createdAt;
@@ -25,9 +25,9 @@ class Packing extends HiveObject {
   Packing({
     required this.id,
     required this.name,
-    required this.category,
-    required this.packingPackage,
-    required this.confirm,
+    required this.group,
+    required this.groupIcon,
+    required this.selected,
     required this.createdAt,
   });
 }

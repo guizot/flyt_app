@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flyt_app/presentation/core/extension/number_extension.dart';
 import '../../../data/models/local/packing_model.dart';
 import '../../../injector.dart';
-import '../../core/constant/form_type.dart';
 import '../../core/handler/dialog_handler.dart';
+import '../../core/model/static/packing_category.dart';
+import '../../core/widget/drop_down_item.dart';
 import '../../core/widget/loading_state.dart';
 import '../../core/widget/text_field_item.dart';
 import 'cubit/packing_cubit.dart';
@@ -34,17 +34,14 @@ class PackingAdd extends StatefulWidget {
 class _PackingAddState extends State<PackingAdd> {
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
-  TextEditingController packageController = TextEditingController();
-  TextEditingController confirmController = TextEditingController();
+  TextEditingController groupController = TextEditingController();
   Packing? packing;
 
   Map<String, String> populateForm() {
     return {
       'name': nameController.text,
-      'category': categoryController.text,
-      'package': packageController.text.toIntFromFormatted().toString(),
-      'confirm': confirmController.text,
+      'group': groupController.text,
+      'groupIcon': groupController.text,
     };
   }
 
@@ -56,9 +53,7 @@ class _PackingAddState extends State<PackingAdd> {
       if(packing != null) {
         setState(() {
           nameController.text = packing!.name;
-          categoryController.text = packing!.category;
-          packageController.text = int.parse(packing!.packingPackage).toCurrencyFormat();
-          confirmController.text = packing!.confirm;
+          groupController.text = packing!.group;
         });
       }
     }
@@ -67,19 +62,11 @@ class _PackingAddState extends State<PackingAdd> {
   void validateForm() {
     final formData = populateForm();
     if (formData['name']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Name cannot be empty");
+      DialogHandler.showSnackBar(context: context, message: "Item Name cannot be empty");
       return;
     }
-    if (formData['category']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Category cannot be empty");
-      return;
-    }
-    if (formData['package']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Package cannot be empty");
-      return;
-    }
-    if (formData['confirm']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Confirmation cannot be empty");
+    if (formData['group']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Packing Group cannot be empty");
       return;
     }
     if(widget.id != null) {
@@ -95,9 +82,9 @@ class _PackingAddState extends State<PackingAdd> {
           Packing(
             id: widget.id != null ? widget.id! : const Uuid().v4(),
             name: data['name']!,
-            category: data['category']!,
-            packingPackage: data['package']!,
-            confirm: data['confirm']!,
+            group: data['group']!,
+            groupIcon: packingCategories.firstWhere((element) => element.name == data['group']!).icon,
+            selected: widget.id != null ? packing!.selected : false,
             createdAt: widget.id != null ? packing!.createdAt : DateTime.now(),
           )
       );
@@ -150,23 +137,15 @@ class _PackingAddState extends State<PackingAdd> {
               padding: const EdgeInsets.all(16.0),
               children: [
                 TextFieldItem(
-                  title: "Name",
+                  title: "Item Name",
                   controller: nameController,
                 ),
-                TextFieldItem(
-                  title: "Category",
-                  controller: categoryController,
-                ),
-                TextFieldItem(
-                  title: "Package",
-                  inputType: TextInputType.number,
-                  preText: "Pax",
-                  controller: packageController,
-                ),
-                TextFieldItem(
-                  title: "Confirmation",
-                  formType: FormType.switcher,
-                  controller: confirmController,
+                DropDownItem(
+                  title: "Packing Group",
+                  controller: groupController,
+                  items: packingCategories
+                      .map((c) => {'title': c.name, 'icon': c.icon})
+                      .toList(),
                 ),
               ],
             )

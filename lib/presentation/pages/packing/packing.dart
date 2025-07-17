@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/models/local/packing_model.dart';
+import 'package:flyt_app/presentation/core/model/common/packing_group.dart';
+import 'package:flyt_app/presentation/pages/packing/packing_group_item.dart';
 import '../../../injector.dart';
 import '../../core/constant/routes_values.dart';
 import '../../core/handler/dialog_handler.dart';
@@ -8,7 +9,6 @@ import '../../core/widget/empty_state.dart';
 import '../../core/widget/loading_state.dart';
 import 'cubit/packing_cubit.dart';
 import 'cubit/packing_state.dart';
-import 'packing_item.dart';
 
 class PackingPageProvider extends StatelessWidget {
   const PackingPageProvider({super.key, this.pageKey});
@@ -58,27 +58,39 @@ class PackingPageState extends State<PackingPage> {
   }
 
   void navigatePackingEdit(String id) {
-    Navigator.pushNamed(context, RoutesValues.packingAdd, arguments: id).then((value) => refreshData());
+    Navigator.pushNamed(context, RoutesValues.packingAdd, arguments: id).then((
+        value) => refreshData());
   }
 
-  Widget packingLoaded(List<Packing> packings) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: packings.length,
-      itemBuilder: (context, index) {
-        final item = packings[index];
-        return PackingItem(
-          item: item,
-          onTap: navigatePackingEdit,
-        );
-      },
+  void onDelete(String id, BuildContext context) async {
+    await BlocProvider.of<PackingCubit>(context).deletePacking(id);
+    if(context.mounted) {
+      DialogHandler.showSnackBar(
+        context: context,
+        message: "Item deleted",
+      );
+    }
+    refreshData();
+  }
+
+  void onSelect(String id) async {
+    await BlocProvider.of<PackingCubit>(context).selectPacking(id);
+    refreshData();
+  }
+
+  Widget packingLoaded(List<PackingGroup> packings, BuildContext context) {
+    return PackingGroupItem(
+      packings: packings,
+      onDelete: (id) => onDelete(id, context),
+      onClick: navigatePackingEdit,
+      onSelect: onSelect,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PackingCubit, PackingCubitState>(
-      builder: (context, state) {
+      builder: (contextBloc, state) {
         if (state is PackingInitial) {
           return const SizedBox.shrink();
         } else if (state is PackingLoading) {
@@ -91,8 +103,8 @@ class PackingPageState extends State<PackingPage> {
             onTap: navigatePackingAdd,
             onLearn: showDataWarning,
           );
-        } else if (state is PackingLoaded) {
-          return packingLoaded(state.packings);
+        } else if (state is PackingGroupLoaded) {
+          return packingLoaded(state.groupedPackings, context);
         }
         return const SizedBox.shrink();
       },

@@ -69,10 +69,13 @@ class _LanguageAddState extends State<LanguageAdd> {
 
   void onSubmit(BuildContext context, Map<String, String> data) async {
     try {
+      final item = languages.firstWhere((element) => element.name == data['language']!);
       await BlocProvider.of<PhrasesCubit>(context).saveLanguage(
         LanguageModel(
           id: widget.id != null ? widget.id! : const Uuid().v4(),
           language: data['language']!,
+          languageId: item.id,
+          languageIcon: item.icon,
           createdAt: widget.id != null ? phrases!.createdAt : DateTime.now(),
         ),
       );

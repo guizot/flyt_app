@@ -8,7 +8,9 @@ class PhrasesUseCases {
 
   List<LanguageModel> getAllLanguage() {
     try {
-      return hiveRepo.getAllLanguage();
+      final languages = hiveRepo.getAllLanguage();
+      languages.sort((a, b) => a.language.toLowerCase().compareTo(b.language.toLowerCase()));
+      return languages;
     } catch (e) {
       return [];
     }
@@ -35,11 +37,16 @@ class PhrasesUseCases {
   List<PhrasesModel> getAllPhrases(String languageId) {
     try {
       final allPhrases = hiveRepo.getAllPhrases();
-      return allPhrases.where((phrase) => phrase.languageId == languageId).toList();
+      final filtered = allPhrases
+          .where((phrase) => phrase.languageId == languageId)
+          .toList();
+      filtered.sort((a, b) => a.myLanguage.toLowerCase().compareTo(b.myLanguage.toLowerCase()));
+      return filtered;
     } catch (e) {
       return [];
     }
   }
+
 
   List<PhrasesModel> searchPhrases(String languageId, String query) {
     try {

@@ -12,7 +12,7 @@ class PackingCategory {
   });
 }
 
-const List<PackingCategory> categories = [
+const List<PackingCategory> packingCategories = [
   PackingCategory(id: "baby_kids", name: "Baby & Kids", icon: "🍼", description: "Ex: Diapers, Toys, Baby Wipes"),
   PackingCategory(id: "beach_gear", name: "Beach Gear", icon: "🏖️", description: "Ex: Towel, Sunscreen, Umbrella"),
   PackingCategory(id: "clothing", name: "Clothing", icon: "👕", description: "Ex: T-Shirts, Pants, Underwear"),

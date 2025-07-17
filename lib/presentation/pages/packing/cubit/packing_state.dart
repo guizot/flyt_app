@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../../data/models/local/packing_model.dart';
+import '../../../core/model/common/packing_group.dart';
 
 abstract class PackingCubitState extends Equatable {
   const PackingCubitState();
@@ -18,6 +19,14 @@ class PackingLoaded extends PackingCubitState {
 
   @override
   List<Object?> get props => [packings];
+}
+
+class PackingGroupLoaded extends PackingCubitState {
+  final List<PackingGroup> groupedPackings;
+  const PackingGroupLoaded({required this.groupedPackings});
+
+  @override
+  List<Object?> get props => [groupedPackings];
 }
 
 class PackingEmpty extends PackingCubitState {}

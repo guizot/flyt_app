@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flyt_app/data/models/local/language_model.dart';
 import 'package:flyt_app/data/models/local/phrases_model.dart';
 import 'package:flyt_app/presentation/core/model/arguments/phrases_add_args.dart';
@@ -10,12 +11,10 @@ import 'package:flyt_app/presentation/pages/phrases/phrases_item.dart';
 import '../../../injector.dart';
 import '../../core/constant/routes_values.dart';
 import '../../core/handler/dialog_handler.dart';
-import '../../core/model/static/language.dart';
 import '../../core/widget/empty_state.dart';
 import '../../core/widget/loading_state.dart';
 import 'cubit/phrases_cubit.dart';
 import 'cubit/phrases_state.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
 class PhrasesDetailPageProvider extends StatelessWidget {
   const PhrasesDetailPageProvider({super.key, required this.id});
@@ -37,129 +36,20 @@ class PhrasesDetailPage extends StatefulWidget {
   State<PhrasesDetailPage> createState() => PhrasesDetailPageState();
 }
 
-enum TtsState { playing, stopped, paused, continued }
-
 class PhrasesDetailPageState extends State<PhrasesDetailPage> {
+
   LanguageModel? language;
   String? searchQuery;
   late FocusNode searchFocusNode;
 
   late FlutterTts flutterTts;
-  TtsState ttsState = TtsState.stopped;
-  double volume = 0.5;
-  double pitch = 1.0;
-  double rate = 0.5;
-  bool get isAndroid => !kIsWeb && Platform.isAndroid;
+  bool _isTtsInitialized = false;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-    refreshData();
     searchFocusNode = FocusNode();
-    initTts();
-  }
-
-  dynamic initTts() {
-    flutterTts = FlutterTts();
-
-    _setAwaitOptions();
-
-    if (isAndroid) {
-      _getDefaultEngine();
-      _getDefaultVoice();
-    }
-
-    flutterTts.setStartHandler(() {
-      setState(() {
-        print("Playing");
-        ttsState = TtsState.playing;
-      });
-    });
-
-    flutterTts.setCompletionHandler(() {
-      setState(() {
-        print("Complete");
-        ttsState = TtsState.stopped;
-      });
-    });
-
-    flutterTts.setCancelHandler(() {
-      setState(() {
-        print("Cancel");
-        ttsState = TtsState.stopped;
-      });
-    });
-
-    flutterTts.setPauseHandler(() {
-      setState(() {
-        print("Paused");
-        ttsState = TtsState.paused;
-      });
-    });
-
-    flutterTts.setContinueHandler(() {
-      setState(() {
-        print("Continued");
-        ttsState = TtsState.continued;
-      });
-    });
-
-    flutterTts.setErrorHandler((msg) {
-      setState(() {
-        print("error: $msg");
-        ttsState = TtsState.stopped;
-      });
-    });
-  }
-
-  Future<void> _getDefaultEngine() async {
-    var engine = await flutterTts.getDefaultEngine;
-    if (engine != null) {
-      print(engine);
-    }
-  }
-
-  Future<void> _getDefaultVoice() async {
-    var voice = await flutterTts.getDefaultVoice;
-    if (voice != null) {
-      print(voice);
-    }
-  }
-
-  Future<void> speak(String? message) async {
-    await flutterTts.setVolume(volume);
-    await flutterTts.setSpeechRate(rate);
-    await flutterTts.setPitch(pitch);
-
-    if (message != null) {
-      if (message.isNotEmpty) {
-        await flutterTts.speak(message);
-        await _stop();
-      }
-    }
-  }
-
-  Future<void> _setAwaitOptions() async {
-    await flutterTts.awaitSpeakCompletion(true);
-    String? languageId = languages.firstWhere((lang) => lang.name.toLowerCase() == language!.language.toLowerCase()).id;
-    await flutterTts.setLanguage(languageId);
-  }
-
-  Future<void> _stop() async {
-    var result = await flutterTts.stop();
-    if (result == 1) setState(() => ttsState = TtsState.stopped);
-  }
-
-  // Future<void> _pause() async {
-  //   var result = await flutterTts.pause();
-  //   if (result == 1) setState(() => ttsState = TtsState.paused);
-  // }
-
-  @override
-  void dispose() {
-    super.dispose();
-    searchFocusNode.dispose();
-    flutterTts.stop();
+    refreshData();
   }
 
   void refreshData() {
@@ -169,7 +59,86 @@ class PhrasesDetailPageState extends State<PhrasesDetailPage> {
     } else {
       context.read<PhrasesCubit>().getAllPhrases(widget.id);
     }
-    setState(() {});
+  }
+
+  Future<void> initTextToSpeech(String languageId) async {
+    flutterTts = FlutterTts();
+
+    await flutterTts.awaitSpeakCompletion(true);
+    await flutterTts.setLanguage(languageId);
+
+    if (!kIsWeb && Platform.isAndroid) {
+      _getDefaultEngine();
+      _getDefaultVoice();
+    }
+
+    flutterTts.setStartHandler(() {
+      debugPrint("Playing");
+    });
+
+    flutterTts.setCompletionHandler(() {
+      debugPrint("Complete");
+    });
+
+    flutterTts.setCancelHandler(() {
+      debugPrint("Cancel");
+    });
+
+    flutterTts.setPauseHandler(() {
+      debugPrint("Paused");
+    });
+
+    flutterTts.setContinueHandler(() {
+      debugPrint("Continued");
+    });
+
+    flutterTts.setErrorHandler((msg) {
+      debugPrint("error: $msg");
+    });
+  }
+
+  Future<void> _getDefaultEngine() async {
+    final engine = await flutterTts.getDefaultEngine;
+    if (engine != null) {
+      debugPrint(engine);
+    }
+  }
+
+  Future<void> _getDefaultVoice() async {
+    final voice = await flutterTts.getDefaultVoice;
+    if (voice != null) {
+      debugPrint(voice.toString());
+    }
+  }
+
+  Future<void> speak(String? message) async {
+    if (!_isTtsInitialized) {
+      await initTextToSpeech(language!.languageId);
+      _isTtsInitialized = true;
+    }
+
+    await flutterTts.setVolume(0.5);
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setPitch(1.0);
+
+    if (message?.isNotEmpty == true) {
+      await flutterTts.speak(message!);
+    }
+  }
+
+  Future<void> stopTextToSpeech() async {
+    try {
+      await flutterTts.stop();
+    } catch(e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    stopTextToSpeech();
+    searchFocusNode.dispose();
   }
 
   void showDataWarning() {
@@ -209,7 +178,7 @@ class PhrasesDetailPageState extends State<PhrasesDetailPage> {
         return PhrasesItem(
             item: item,
             onTap: navigatePhrasesEdit,
-            onSpeak: speak
+            onSpeak: (message) => speak(message)
         );
       },
     );

@@ -21,9 +21,9 @@ class PhrasesCubit extends Cubit<PhrasesCubitState> {
 
   LanguageModel? getLanguage(String id) {
     emit(PhrasesLoading());
-    LanguageModel? event = phrasesUseCases.getLanguage(id);
+    LanguageModel? language = phrasesUseCases.getLanguage(id);
     emit(PhrasesInitial());
-    return event;
+    return language;
   }
 
   Future<void> saveLanguage(LanguageModel item) async {

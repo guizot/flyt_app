@@ -19,19 +19,25 @@ class LanguageModelAdapter extends TypeAdapter<LanguageModel> {
     return LanguageModel(
       id: fields[0] as String,
       language: fields[1] as String,
-      createdAt: fields[2] as DateTime,
+      languageId: fields[2] as String,
+      languageIcon: fields[3] as String,
+      createdAt: fields[4] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, LanguageModel obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.language)
       ..writeByte(2)
+      ..write(obj.languageId)
+      ..writeByte(3)
+      ..write(obj.languageIcon)
+      ..writeByte(4)
       ..write(obj.createdAt);
   }
 

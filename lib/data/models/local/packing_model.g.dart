@@ -19,9 +19,9 @@ class PackingAdapter extends TypeAdapter<Packing> {
     return Packing(
       id: fields[0] as String,
       name: fields[1] as String,
-      category: fields[2] as String,
-      packingPackage: fields[3] as String,
-      confirm: fields[4] as String,
+      group: fields[2] as String,
+      groupIcon: fields[3] as String,
+      selected: fields[4] as bool,
       createdAt: fields[5] as DateTime,
     );
   }
@@ -35,11 +35,11 @@ class PackingAdapter extends TypeAdapter<Packing> {
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.category)
+      ..write(obj.group)
       ..writeByte(3)
-      ..write(obj.packingPackage)
+      ..write(obj.groupIcon)
       ..writeByte(4)
-      ..write(obj.confirm)
+      ..write(obj.selected)
       ..writeByte(5)
       ..write(obj.createdAt);
   }

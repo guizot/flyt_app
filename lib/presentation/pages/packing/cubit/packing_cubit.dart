@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../data/models/local/packing_model.dart';
 import '../../../../domain/usecases/packing_usecases.dart';
+import '../../../core/model/common/packing_group.dart';
 import 'packing_state.dart';
 
 class PackingCubit extends Cubit<PackingCubitState> {
@@ -10,12 +11,16 @@ class PackingCubit extends Cubit<PackingCubitState> {
 
   Future<void> getAllPacking() async {
     emit(PackingLoading());
-    List<Packing> packings = packingUseCases.getAllPacking();
-    if(packings.isEmpty) {
+    List<PackingGroup> grouped = packingUseCases.getGroupedPacking();
+    if (grouped.isEmpty) {
       emit(PackingEmpty());
-    } else if(packings.isNotEmpty) {
-      emit(PackingLoaded(packings: packings));
+    } else {
+      emit(PackingGroupLoaded(groupedPackings: grouped));
     }
+  }
+
+  Future<void> selectPacking(String id) async {
+    await packingUseCases.toggleSelectedPacking(id);
   }
 
   Packing? getPacking(String id) {
@@ -31,14 +36,6 @@ class PackingCubit extends Cubit<PackingCubitState> {
 
   Future<void> deletePacking(String id) async {
     await packingUseCases.deletePacking(id);
-  }
-
-  String? getSelectedEventId() {
-    try {
-      return packingUseCases.getSelectedEvent()['id'];
-    } catch(e) {
-      return null;
-    }
   }
 
 }

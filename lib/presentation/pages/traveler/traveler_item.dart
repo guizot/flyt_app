@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flyt_app/presentation/core/extension/number_extension.dart';
 import '../../../data/models/local/traveler_model.dart';
-import '../../core/widget/common_separator.dart';
 
 class TravelerItem extends StatefulWidget {
   const TravelerItem({super.key, required this.item, required this.onTap });
@@ -54,23 +52,6 @@ class _TravelerItemState extends State<TravelerItem> {
                         Icons.arrow_forward_ios_rounded,
                         size: 15,
                       ),
-                    ],
-                  ),
-                  const CommonSeparator(
-                    color: Colors.grey,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          widget.item.category,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ),
-                      const SizedBox(width: 8.0),
-                      Text("Rp ${int.parse(widget.item.budget).toCurrencyFormat()}")
                     ],
                   ),
                 ],

@@ -1,7 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyt_app/presentation/core/widget/add_image_item.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flyt_app/presentation/core/extension/number_extension.dart';
 import '../../../data/models/local/traveler_model.dart';
 import '../../../injector.dart';
 import '../../core/handler/dialog_handler.dart';
@@ -32,17 +33,12 @@ class TravelerAdd extends StatefulWidget {
 
 class _TravelerAddState extends State<TravelerAdd> {
   TextEditingController nameController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
-  TextEditingController budgetController = TextEditingController();
-  TextEditingController descController = TextEditingController();
   Traveler? traveler;
+  Uint8List? imagePhoto;
 
   Map<String, String> populateForm() {
     return {
       'name': nameController.text,
-      'category': categoryController.text,
-      'budget': budgetController.text.toIntFromFormatted().toString(),
-      'description': descController.text,
     };
   }
 
@@ -53,10 +49,8 @@ class _TravelerAddState extends State<TravelerAdd> {
       traveler = BlocProvider.of<TravelerCubit>(context).getTraveler(widget.id!);
       if(traveler != null) {
         setState(() {
+          imagePhoto = traveler!.imageBytes;
           nameController.text = traveler!.name;
-          categoryController.text = traveler!.category;
-          budgetController.text = int.parse(traveler!.budget).toCurrencyFormat();
-          descController.text = traveler!.description;
         });
       }
     }
@@ -64,20 +58,12 @@ class _TravelerAddState extends State<TravelerAdd> {
 
   void validateForm() {
     final formData = populateForm();
+    if (imagePhoto == null) {
+      DialogHandler.showSnackBar(context: context, message: "Photo cannot be empty");
+      return;
+    }
     if (formData['name']!.trim().isEmpty) {
       DialogHandler.showSnackBar(context: context, message: "Name cannot be empty");
-      return;
-    }
-    if (formData['category']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Category cannot be empty");
-      return;
-    }
-    if (formData['budget']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Budget cannot be empty");
-      return;
-    }
-    if (formData['description']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Description cannot be empty");
       return;
     }
     if(widget.id != null) {
@@ -90,14 +76,19 @@ class _TravelerAddState extends State<TravelerAdd> {
   void onSubmit(BuildContext context, Map<String, String> data) async {
     try {
       await BlocProvider.of<TravelerCubit>(context).saveTraveler(
-          Traveler(
-            id: widget.id != null ? widget.id! : const Uuid().v4(),
-            name: data['name']!,
-            category: data['category']!,
-            budget: data['budget']!,
-            description: data['description']!,
-            createdAt: widget.id != null ? traveler!.createdAt : DateTime.now(),
-          )
+        Traveler(
+          id: widget.id != null ? widget.id! : const Uuid().v4(),
+          name: data['name']!,
+          birthdate: DateTime.now(),
+          gender: '',
+          bloodType: '',
+          maritalStatus: '',
+          nationality: '',
+          phone: '',
+          email: '',
+          imageBytes: imagePhoto,
+          createdAt: widget.id != null ? traveler!.createdAt : DateTime.now(),
+        )
       );
       if(context.mounted) {
         Navigator.pop(context);
@@ -147,24 +138,16 @@ class _TravelerAddState extends State<TravelerAdd> {
             child: ListView(
               padding: const EdgeInsets.all(16.0),
               children: [
+                AddImageItem(
+                  title: "Photo",
+                  onImagePicked: (bytes) {
+                    imagePhoto = bytes;
+                  },
+                  initialImageBytes: imagePhoto,
+                ),
                 TextFieldItem(
                   title: "Name",
                   controller: nameController,
-                ),
-                TextFieldItem(
-                  title: "Category",
-                  controller: categoryController,
-                ),
-                TextFieldItem(
-                  title: "Budget",
-                  inputType: TextInputType.number,
-                  preText: "Rp",
-                  controller: budgetController,
-                ),
-                TextFieldItem(
-                  title: "Description",
-                  inputType: TextInputType.multiline,
-                  controller: descController
                 ),
               ],
             )

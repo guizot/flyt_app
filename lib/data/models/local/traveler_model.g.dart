@@ -19,28 +19,43 @@ class TravelerAdapter extends TypeAdapter<Traveler> {
     return Traveler(
       id: fields[0] as String,
       name: fields[1] as String,
-      category: fields[2] as String,
-      budget: fields[3] as String,
-      description: fields[4] as String,
-      createdAt: fields[5] as DateTime,
+      birthdate: fields[2] as DateTime,
+      gender: fields[3] as String,
+      bloodType: fields[4] as String,
+      maritalStatus: fields[5] as String,
+      nationality: fields[6] as String,
+      phone: fields[7] as String,
+      email: fields[8] as String,
+      imageBytes: fields[9] as Uint8List?,
+      createdAt: fields[10] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, Traveler obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.category)
+      ..write(obj.birthdate)
       ..writeByte(3)
-      ..write(obj.budget)
+      ..write(obj.gender)
       ..writeByte(4)
-      ..write(obj.description)
+      ..write(obj.bloodType)
       ..writeByte(5)
+      ..write(obj.maritalStatus)
+      ..writeByte(6)
+      ..write(obj.nationality)
+      ..writeByte(7)
+      ..write(obj.phone)
+      ..writeByte(8)
+      ..write(obj.email)
+      ..writeByte(9)
+      ..write(obj.imageBytes)
+      ..writeByte(10)
       ..write(obj.createdAt);
   }
 

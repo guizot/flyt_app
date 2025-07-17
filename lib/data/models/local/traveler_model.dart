@@ -1,5 +1,5 @@
+import 'dart:typed_data';
 import 'package:hive/hive.dart';
-
 part 'traveler_model.g.dart';
 
 @HiveType(typeId: 1)
@@ -11,23 +11,43 @@ class Traveler extends HiveObject {
   String name;
 
   @HiveField(2)
-  String category;
+  DateTime birthdate;
 
   @HiveField(3)
-  String budget;
+  String gender;
 
   @HiveField(4)
-  String description;
+  String bloodType;
 
   @HiveField(5)
+  String maritalStatus;
+
+  @HiveField(6)
+  String nationality;
+
+  @HiveField(7)
+  String phone;
+
+  @HiveField(8)
+  String email;
+
+  @HiveField(9)
+  Uint8List? imageBytes;
+
+  @HiveField(10)
   DateTime createdAt;
 
   Traveler({
     required this.id,
     required this.name,
-    required this.category,
-    required this.budget,
-    required this.description,
+    required this.birthdate,
+    required this.gender,
+    required this.bloodType,
+    required this.maritalStatus,
+    required this.nationality,
+    required this.phone,
+    required this.email,
+    this.imageBytes,
     required this.createdAt,
   });
 } 

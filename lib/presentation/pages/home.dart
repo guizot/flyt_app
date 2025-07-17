@@ -1,0 +1,189 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import '../core/constant/routes_values.dart';
+import 'traveler/traveler.dart';
+import 'phrases/phrases.dart';
+import 'event/event.dart';
+import 'packing/packing.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final GlobalKey<EventPageState> eventPageKey = GlobalKey<EventPageState>();
+  final GlobalKey<TravelerPageState> travelerPageKey = GlobalKey<TravelerPageState>();
+  final GlobalKey<PackingPageState> packingPageKey = GlobalKey<PackingPageState>();
+  final GlobalKey<PhrasesPageState> phrasesPageKey = GlobalKey<PhrasesPageState>();
+
+  int currentPageIndex = 0;
+  String titlePage = "Event";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(titlePage),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          surfaceTintColor: Colors.transparent,
+          centerTitle: true,
+          actions: [
+            Container(
+              margin: const EdgeInsets.only(right: 8.0),
+              child: IconButton(
+                icon: const Icon(Icons.add_circle_outline_sharp),
+                tooltip: 'Add',
+                onPressed: () {
+                  if(currentPageIndex == 0) {
+                    Navigator.pushNamed(context, RoutesValues.eventAdd).then((_) {
+                      eventPageKey.currentState?.refreshData();
+                    });
+                  }
+                  else if(currentPageIndex == 1) {
+                    Navigator.pushNamed(context, RoutesValues.travelerAdd).then((_) {
+                      travelerPageKey.currentState?.refreshData();
+                    });
+                  }
+                  else if(currentPageIndex == 2) {
+                    Navigator.pushNamed(context, RoutesValues.packingAdd).then((_) {
+                      packingPageKey.currentState?.refreshData();
+                    });
+                  }
+                  else if(currentPageIndex == 3) {
+                    Navigator.pushNamed(context, RoutesValues.languageAdd).then((_) {
+                      phrasesPageKey.currentState?.refreshData();
+                    });
+                  }
+                },
+              ),
+            )
+          ],
+        ),
+        bottomNavigationBar: Stack(
+          children: [
+            NavigationBar(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              indicatorColor: Theme.of(context).colorScheme.inversePrimary,
+              onDestinationSelected: (int index) {
+                setState(() {
+                  currentPageIndex = index;
+                  if(index == 0) {
+                    titlePage = "Event";
+                  }
+                  else if(index == 1) {
+                    titlePage = "Traveler";
+                  }
+                  else if(index == 2) {
+                    titlePage = "Packing";
+                  }
+                  else if(index == 3) {
+                    titlePage = "Phrases";
+                  }
+                });
+              },
+              elevation: 8.0,
+              selectedIndex: currentPageIndex,
+              destinations: <Widget>[
+                NavigationDestination(
+                  selectedIcon: SvgPicture.asset(
+                  'assets/svg/trip.svg',
+                    width: 20,
+                    height: 20,
+                    colorFilter: ColorFilter.mode(
+                        Theme.of(context).iconTheme.color ?? Colors.grey,
+                        BlendMode.srcIn
+                    ),
+                  ),
+                  icon: SvgPicture.asset(
+                  'assets/svg/trip.svg',
+                    width: 20,
+                    height: 20,
+                    colorFilter: ColorFilter.mode(
+                        Theme.of(context).iconTheme.color ?? Colors.grey,
+                        BlendMode.srcIn
+                    ),
+                  ),
+                  label: 'Event',
+                ),
+                NavigationDestination(
+                  selectedIcon: SvgPicture.asset(
+                      'assets/svg/traveler.svg',
+                      width: 20,
+                      height: 20,
+                    colorFilter: ColorFilter.mode(
+                        Theme.of(context).iconTheme.color ?? Colors.grey,
+                        BlendMode.srcIn
+                    ),
+                  ),
+                  icon: SvgPicture.asset(
+                      'assets/svg/traveler.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(
+                          Theme.of(context).iconTheme.color ?? Colors.grey,
+                          BlendMode.srcIn
+                      ),
+                  ),
+                  label: 'Traveler',
+                ),
+                NavigationDestination(
+                  selectedIcon: SvgPicture.asset(
+                      'assets/svg/packing.svg',
+                      width: 20,
+                      height: 20,
+                    colorFilter: ColorFilter.mode(
+                        Theme.of(context).iconTheme.color ?? Colors.grey,
+                        BlendMode.srcIn
+                    ),
+                  ),
+                  icon: SvgPicture.asset(
+                      'assets/svg/packing.svg',
+                      width: 20,
+                      height: 20,
+                    colorFilter: ColorFilter.mode(
+                        Theme.of(context).iconTheme.color ?? Colors.grey,
+                        BlendMode.srcIn
+                    ),
+                  ),
+                  label: 'Packing',
+                ),
+                NavigationDestination(
+                  selectedIcon: SvgPicture.asset(
+                      'assets/svg/phrases.svg',
+                      width: 20,
+                      height: 20,
+                    colorFilter: ColorFilter.mode(
+                        Theme.of(context).iconTheme.color ?? Colors.grey,
+                        BlendMode.srcIn
+                    ),
+                  ),
+                  icon: SvgPicture.asset(
+                      'assets/svg/phrases.svg',
+                      width: 20,
+                      height: 20,
+                    colorFilter: ColorFilter.mode(
+                        Theme.of(context).iconTheme.color ?? Colors.grey,
+                        BlendMode.srcIn
+                    ),
+                  ),
+                  label: 'Phrases',
+                ),
+              ],
+            )
+          ],
+        ),
+        body: Builder(
+          builder: (_) {
+            if (currentPageIndex == 0) return EventPageProvider(pageKey: eventPageKey);
+            if (currentPageIndex == 1) return TravelerPageProvider(pageKey: travelerPageKey);
+            if (currentPageIndex == 2) return PackingPageProvider(pageKey: packingPageKey);
+            if (currentPageIndex == 3) return PhrasesPageProvider(pageKey: phrasesPageKey);
+            return const SizedBox.shrink();
+          },
+        ),
+    );
+  }
+
+}

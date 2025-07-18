@@ -7,6 +7,7 @@ import '../../core/handler/dialog_handler.dart';
 import '../../core/widget/loading_state.dart';
 import 'cubit/traveler_cubit.dart';
 import 'cubit/traveler_state.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class TravelerDetailPageProvider extends StatelessWidget {
   const TravelerDetailPageProvider({super.key, this.id});
@@ -28,8 +29,8 @@ class TravelerDetailPage extends StatefulWidget {
   State<TravelerDetailPage> createState() => _TravelerDetailPageState();
 }
 
-class _TravelerDetailPageState extends State<TravelerDetailPage>
-    with SingleTickerProviderStateMixin {
+class _TravelerDetailPageState extends State<TravelerDetailPage> with SingleTickerProviderStateMixin {
+
   int selectedTabIndex = 0;
   late PageController _pageController;
 
@@ -45,6 +46,7 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
     _pageController.dispose();
     super.dispose();
   }
+
 
   void refreshData() {
     context.read<TravelerCubit>().getAllDetail(widget.id!);
@@ -108,13 +110,17 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
     );
   }
 
-  Widget _buildTab(String label, int index) {
+
+  Widget buildTab(String label, int index) {
     final isSelected = selectedTabIndex == index;
     return Expanded(
       child: GestureDetector(
         onTap: () => changeTab(index),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12), // dynamic width
+          padding: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 16,
+          ), // dynamic width
           decoration: BoxDecoration(
             color: isSelected
                 ? Theme.of(context).iconTheme.color
@@ -124,7 +130,7 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
           child: Text(
             label,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w500,
               color: isSelected
                   ? Theme.of(context).colorScheme.surface
@@ -137,16 +143,95 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
     );
   }
 
-  Widget _buildTabContent(int index, Traveler? traveler) {
+  Widget buildTabContent(int index, Traveler? traveler) {
     switch (index) {
       case 0:
         return traveler != null
-            ? ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8,
+            ? MasonryGridView.count(
+                padding: const EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 16.0,
+                  right: 16,
+                  left: 16,
                 ),
-                children: [],
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                shrinkWrap: false,
+                itemCount: travelerItems(traveler).length,
+                itemBuilder: (context, index) {
+                  final item = travelerItems(traveler)[index];
+                  if (item['type'] == 'image') {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).hoverColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              image: DecorationImage(
+                                image: MemoryImage(item['imageBytes']),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            item['title'] as String,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  else {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).hoverColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            item['icon'] as IconData,
+                            size: 32,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            item['title'] as String,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            item['description'] as String,
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodySmall?.color,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
               )
             : Container();
       // case 1:
@@ -173,6 +258,88 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
       default:
         return const SizedBox.shrink();
     }
+  }
+
+  int? calculateAge(String birthdate) {
+    try {
+      final parts = birthdate.split(' ');
+      if (parts.length == 3) {
+        final day = int.parse(parts[0]);
+        final monthMap = {
+          'jan': 1,
+          'feb': 2,
+          'mar': 3,
+          'apr': 4,
+          'may': 5,
+          'jun': 6,
+          'jul': 7,
+          'aug': 8,
+          'sep': 9,
+          'oct': 10,
+          'nov': 11,
+          'dec': 12,
+        };
+        final month = monthMap[parts[1].toLowerCase()] ?? 1;
+        final year = int.parse(parts[2]);
+        final birth = DateTime(year, month, day);
+        final now = DateTime.now();
+        int age = now.year - birth.year;
+        if (now.month < birth.month ||
+            (now.month == birth.month && now.day < birth.day)) {
+          age--;
+        }
+        return age;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  List<Map<String, dynamic>> travelerItems(Traveler traveler) {
+    final items = <Map<String, dynamic>>[];
+
+    items.add({'icon': Icons.person, 'title': 'Name', 'description': traveler.name});
+
+    if (traveler.imageBytes != null) {
+      items.add({
+        'type': 'image',
+        'imageBytes': traveler.imageBytes,
+        'title': 'Photo',
+        'icon': Icons.image,
+      });
+    }
+
+    items.add({
+      'icon': Icons.calendar_today,
+      'title': 'Age',
+      'description': '${calculateAge(traveler.birthdate)} years',
+    });
+
+    items.addAll([
+      {
+        'icon': Icons.cake,
+        'title': 'Birthdate',
+        'description': traveler.birthdate,
+      },
+      {'icon': Icons.wc, 'title': 'Gender', 'description': traveler.gender},
+      {
+        'icon': Icons.bloodtype,
+        'title': 'Blood Type',
+        'description': 'Type ${traveler.bloodType}',
+      },
+      {
+        'icon': Icons.favorite,
+        'title': 'Marital Status',
+        'description': traveler.maritalStatus,
+      },
+      {
+        'icon': Icons.flag,
+        'title': 'Nationality',
+        'description': traveler.nationality,
+      },
+      {'icon': Icons.phone, 'title': 'Phone', 'description': traveler.phone},
+      {'icon': Icons.email, 'title': 'Email', 'description': traveler.email},
+    ]);
+    return items;
   }
 
   Widget travelerDetailLoaded(
@@ -209,9 +376,9 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildTab("Detail", 0),
+                buildTab("Detail", 0),
                 const SizedBox(width: 12.0),
-                _buildTab("Documents", 1),
+                buildTab("Documents", 1),
               ],
             ),
           ),
@@ -223,9 +390,9 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
                 setState(() => selectedTabIndex = index);
               },
               children: [
-                _buildTabContent(0, traveler),
-                _buildTabContent(1, traveler),
-                _buildTabContent(2, traveler),
+                buildTabContent(0, traveler),
+                buildTabContent(1, traveler),
+                buildTabContent(2, traveler),
               ],
             ),
           ),
@@ -233,6 +400,7 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -249,4 +417,5 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
       },
     );
   }
+
 }

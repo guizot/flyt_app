@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../data/models/local/trip_model.dart';
 import '../../../../domain/usecases/trip_usecases.dart';
@@ -55,6 +54,17 @@ class TripCubit extends Cubit<TripCubitState> {
     } else {
       emit(TripGroupedLoaded(items: items));
     }
+  }
+
+  Future<void> getAllDetail(String id) async {
+    // emit(TripLoading());
+    // List<TripModel> trips = tripUseCases.getAllTrip();
+    // if(trips.isEmpty) {
+    //   emit(TripEmpty());
+    // } else if(trips.isNotEmpty) {
+    //   emit(TripLoaded(trips: trips));
+    // }
+    emit(const TripDetailLoaded(trips: []));
   }
 
 }

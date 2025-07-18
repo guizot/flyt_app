@@ -8,6 +8,7 @@ class RoutesValues {
   static const String phrasesDetail = '/phrases-detail';
   static const String languageAdd = '/language-add';
   static const String tripAdd = '/trip-add';
+  static const String tripDetail = '/trip-detail';
   static const String setting = '/setting';
   static const String viewImage = '/view-image';
 }

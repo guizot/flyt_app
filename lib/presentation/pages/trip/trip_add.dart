@@ -162,6 +162,7 @@ class _TripAddState extends State<TripAdd> {
     await BlocProvider.of<TripCubit>(context).deleteTrip(widget.id!);
     if(context.mounted) {
       Navigator.pop(context);
+      Navigator.pop(context);
     }
   }
 

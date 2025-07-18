@@ -12,6 +12,7 @@ import '../../pages/phrases/phrases_add.dart';
 import '../../pages/setting/setting.dart';
 import '../../pages/traveler/document_add.dart';
 import '../../pages/traveler/traveler_detail.dart';
+import '../../pages/trip/trip_detail.dart';
 import '../constant/routes_values.dart';
 import '../widget/image_view.dart';
 
@@ -45,6 +46,9 @@ class RouteService {
       case RoutesValues.tripAdd:
         var id = settings.arguments as String?;
         return MaterialPageRoute(builder: (_) => TripAddProvider(id: id));
+      case RoutesValues.tripDetail:
+        var id = settings.arguments as String?;
+        return MaterialPageRoute(builder: (_) => TripDetailPageProvider(id: id));
       case RoutesValues.viewImage:
         var imageBytes = settings.arguments as Uint8List?;
         return MaterialPageRoute(builder: (_) => ImageView(imageBytes: imageBytes));

@@ -72,11 +72,11 @@ class TripPageState extends State<TripPage> {
   }
 
   void navigateTripEdit(String id) {
-    Navigator.pushNamed(context, RoutesValues.tripAdd, arguments: id).then((value) => refreshData());
+    // Navigator.pushNamed(context, RoutesValues.tripAdd, arguments: id).then((value) => refreshData());
   }
 
   void navigateTripDetail(String id) {
-    // Navigator.pushNamed(context, RoutesValues.tripDetail, arguments: id).then((value) => refreshData());
+    Navigator.pushNamed(context, RoutesValues.tripDetail, arguments: id).then((value) => refreshData());
   }
 
   Widget tripGroupedLoaded(List<TripDisplayItem> items) {
@@ -107,7 +107,7 @@ class TripPageState extends State<TripPage> {
         } else if (item is TripContentItem) {
           return TripItem(
             item: item.trip,
-            onTap: navigateTripEdit,
+            onTap: navigateTripDetail,
           );
         }
 
@@ -124,7 +124,7 @@ class TripPageState extends State<TripPage> {
         final item = travelers[index];
         return TripItem(
           item: item,
-          onTap: navigateTripEdit,
+          onTap: navigateTripDetail,
         );
       },
     );

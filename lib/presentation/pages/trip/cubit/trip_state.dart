@@ -21,6 +21,14 @@ class TripLoaded extends TripCubitState {
   List<Object?> get props => [trips];
 }
 
+class TripDetailLoaded extends TripCubitState {
+  final List<TripModel> trips;
+  const TripDetailLoaded({required this.trips});
+
+  @override
+  List<Object?> get props => [trips];
+}
+
 class TripGroupedLoaded extends TripCubitState {
   final List<TripDisplayItem> items;
   const TripGroupedLoaded({required this.items});

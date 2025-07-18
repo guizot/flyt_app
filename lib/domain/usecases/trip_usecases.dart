@@ -42,21 +42,22 @@ class TripUseCases {
 
       final formatter = DateFormat('dd MMM yyyy');
 
-      final ongoing = allTrips.where((trip) {
+      List<TripModel> ongoing = [];
+      List<TripModel> upcoming = [];
+      List<TripModel> past = [];
+
+      for (final trip in allTrips) {
         final start = formatter.parse(trip.startDate);
         final end = formatter.parse(trip.endDate);
-        return now.isAfter(start) && now.isBefore(end.add(const Duration(days: 1)));
-      }).toList();
 
-      final upcoming = allTrips.where((trip) {
-        final start = formatter.parse(trip.startDate);
-        return now.isBefore(start);
-      }).toList();
-
-      final past = allTrips.where((trip) {
-        final end = formatter.parse(trip.endDate);
-        return now.isAfter(end);
-      }).toList();
+        if (now.isAfter(start.subtract(const Duration(days: 1))) && now.isBefore(end.add(const Duration(days: 1)))) {
+          ongoing.add(trip);
+        } else if (now.isBefore(start)) {
+          upcoming.add(trip);
+        } else {
+          past.add(trip);
+        }
+      }
 
       // Sort if needed
       ongoing.sort((a, b) => a.startDate.compareTo(b.startDate));

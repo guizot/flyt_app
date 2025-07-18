@@ -8,7 +8,7 @@ class DocumentModel extends HiveObject {
   String id;
 
   @HiveField(1)
-  String name;
+  String title;
 
   @HiveField(2)
   String description;
@@ -24,7 +24,7 @@ class DocumentModel extends HiveObject {
 
   DocumentModel({
     required this.id,
-    required this.name,
+    required this.title,
     required this.description,
     this.imageBytes,
     required this.travelerId,

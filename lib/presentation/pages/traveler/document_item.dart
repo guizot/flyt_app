@@ -44,7 +44,7 @@ class _DocumentItemState extends State<DocumentItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.item.name,
+                            widget.item.title,
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 18,

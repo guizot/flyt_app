@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyt_app/presentation/pages/trip/trip_display_item.dart';
 import 'package:flyt_app/presentation/pages/trip/trip_item.dart';
 import '../../../data/models/local/trip_model.dart';
 import '../../../injector.dart';
@@ -51,7 +52,7 @@ class TripPageState extends State<TripPage> {
     if (searchQuery?.isNotEmpty == true) {
       context.read<TripCubit>().searchTrip(searchQuery!);
     } else {
-      context.read<TripCubit>().getAllTrip();
+      context.read<TripCubit>().getGroupedTrip();
     }
   }
 
@@ -78,16 +79,39 @@ class TripPageState extends State<TripPage> {
     // Navigator.pushNamed(context, RoutesValues.tripDetail, arguments: id).then((value) => refreshData());
   }
 
-  Widget tripLoaded(List<TripModel> travelers) {
+  Widget tripGroupedLoaded(List<TripDisplayItem> items) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      itemCount: travelers.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        final item = travelers[index];
-        return TripItem(
-          item: item,
-          onTap: navigateTripEdit,
-        );
+        final item = items[index];
+
+        if (item is TripHeaderItem) {
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+            child: Row(
+              children: [
+                Text(item.icon, style: const TextStyle(fontSize: 20)),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    item.title,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else if (item is TripContentItem) {
+          return TripItem(
+            item: item.trip,
+            onTap: navigateTripEdit,
+          );
+        }
+
+        return const SizedBox.shrink();
       },
     );
   }
@@ -145,7 +169,7 @@ class TripPageState extends State<TripPage> {
                   onChanged: (query) {
                     searchQuery = query;
                     if (query.isEmpty) {
-                      context.read<TripCubit>().getAllTrip();
+                      context.read<TripCubit>().getGroupedTrip();
                     } else {
                       context.read<TripCubit>().searchTrip(query);
                     }
@@ -174,8 +198,8 @@ class TripPageState extends State<TripPage> {
                   onLearn: showDataWarning,
                 );
               }
-              else if (state is TripLoaded) {
-                return tripLoaded(state.trips);
+              else if (state is TripGroupedLoaded) {
+                return tripGroupedLoaded(state.items);
               }
               else if (state is TripSearchLoaded) {
                 return tripSearchLoaded(state.trips);

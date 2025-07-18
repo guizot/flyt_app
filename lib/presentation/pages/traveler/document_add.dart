@@ -33,14 +33,14 @@ class DocumentAdd extends StatefulWidget {
 }
 
 class _DocumentAddState extends State<DocumentAdd> {
-  TextEditingController nameController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
   TextEditingController descController = TextEditingController();
   DocumentModel? document;
   Uint8List? imagePhoto;
 
   Map<String, String> populateForm() {
     return {
-      'name': nameController.text,
+      'title': titleController.text,
       'description': descController.text,
     };
   }
@@ -55,7 +55,7 @@ class _DocumentAddState extends State<DocumentAdd> {
       if (document != null) {
         setState(() {
           imagePhoto = document!.imageBytes;
-          nameController.text = document!.name;
+          titleController.text = document!.title;
           descController.text = document!.description;
         });
       }
@@ -64,10 +64,10 @@ class _DocumentAddState extends State<DocumentAdd> {
 
   void validateForm() {
     final formData = populateForm();
-    if (formData['name']!.trim().isEmpty) {
+    if (formData['title']!.trim().isEmpty) {
       DialogHandler.showSnackBar(
         context: context,
-        message: "Name cannot be empty",
+        message: "Title cannot be empty",
       );
       return;
     }
@@ -90,7 +90,7 @@ class _DocumentAddState extends State<DocumentAdd> {
       await BlocProvider.of<TravelerCubit>(context).saveDocument(
         DocumentModel(
           id: widget.item.id != null ? widget.item.id! : const Uuid().v4(),
-          name: data['name']!,
+          title: data['title']!,
           description: data['description']!,
           travelerId: widget.item.travelerId,
           imageBytes: imagePhoto,
@@ -147,10 +147,10 @@ class _DocumentAddState extends State<DocumentAdd> {
           child: ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              TextFieldItem(title: "Name", controller: nameController),
+              TextFieldItem(title: "Title", controller: titleController),
               TextFieldItem(title: "Description", controller: descController),
               AddImageItem(
-                title: "Photo",
+                title: "Image Document",
                 onImagePicked: (bytes) {
                   setState(() {
                     imagePhoto = bytes;
@@ -181,7 +181,7 @@ class _DocumentAddState extends State<DocumentAdd> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.item.id == null ? "Add" : "Edit"} Traveler"),
+        title: Text("${widget.item.id == null ? "Add" : "Edit"} Document"),
         backgroundColor: Theme.of(context).colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         centerTitle: true,

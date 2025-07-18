@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../data/models/local/trip_model.dart';
 import '../../../../domain/usecases/trip_usecases.dart';
+import '../trip_display_item.dart';
 import 'trip_state.dart';
 
 class TripCubit extends Cubit<TripCubitState> {
@@ -8,7 +10,7 @@ class TripCubit extends Cubit<TripCubitState> {
   final TripUseCases tripUseCases;
   TripCubit({required this.tripUseCases}) : super(TripInitial());
 
-  Future<List<TripModel>> getAllTrip() async {
+  Future<void> getAllTrip() async {
     emit(TripLoading());
     List<TripModel> trips = tripUseCases.getAllTrip();
     if(trips.isEmpty) {
@@ -16,7 +18,6 @@ class TripCubit extends Cubit<TripCubitState> {
     } else if(trips.isNotEmpty) {
       emit(TripLoaded(trips: trips));
     }
-    return trips;
   }
 
   TripModel? getTrip(String id) {
@@ -43,6 +44,16 @@ class TripCubit extends Cubit<TripCubitState> {
       emit(TripEmpty());
     } else {
       emit(TripSearchLoaded(trips: trips));
+    }
+  }
+
+  Future<void> getGroupedTrip() async {
+    emit(TripLoading());
+    List<TripDisplayItem> items = tripUseCases.getGroupedTrip();
+    if (items.isEmpty) {
+      emit(TripEmpty());
+    } else {
+      emit(TripGroupedLoaded(items: items));
     }
   }
 

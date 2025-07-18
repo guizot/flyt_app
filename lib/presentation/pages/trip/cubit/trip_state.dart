@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../../data/models/local/trip_model.dart';
+import '../trip_display_item.dart';
 
 abstract class TripCubitState extends Equatable {
   const TripCubitState();
@@ -18,6 +19,14 @@ class TripLoaded extends TripCubitState {
 
   @override
   List<Object?> get props => [trips];
+}
+
+class TripGroupedLoaded extends TripCubitState {
+  final List<TripDisplayItem> items;
+  const TripGroupedLoaded({required this.items});
+
+  @override
+  List<Object?> get props => [items];
 }
 
 class TripSearchLoaded extends TripCubitState {

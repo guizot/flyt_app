@@ -18,7 +18,7 @@ class DocumentModelAdapter extends TypeAdapter<DocumentModel> {
     };
     return DocumentModel(
       id: fields[0] as String,
-      name: fields[1] as String,
+      title: fields[1] as String,
       description: fields[2] as String,
       imageBytes: fields[3] as Uint8List?,
       travelerId: fields[4] as String,
@@ -33,7 +33,7 @@ class DocumentModelAdapter extends TypeAdapter<DocumentModel> {
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.name)
+      ..write(obj.title)
       ..writeByte(2)
       ..write(obj.description)
       ..writeByte(3)

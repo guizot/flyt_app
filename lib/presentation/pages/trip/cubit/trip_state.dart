@@ -20,6 +20,14 @@ class TripLoaded extends TripCubitState {
   List<Object?> get props => [trips];
 }
 
+class TripSearchLoaded extends TripCubitState {
+  final List<TripModel> trips;
+  const TripSearchLoaded({required this.trips});
+
+  @override
+  List<Object?> get props => [trips];
+}
+
 class TripEmpty extends TripCubitState {}
 
 class TripError extends TripCubitState {

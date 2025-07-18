@@ -30,15 +30,29 @@ class TripPage extends StatefulWidget {
 }
 
 class TripPageState extends State<TripPage> {
+
+  String? searchQuery;
+  late FocusNode searchFocusNode;
+
   @override
   void initState() {
     super.initState();
-    context.read<TripCubit>().getAllTrip();
+    searchFocusNode = FocusNode();
+    refreshData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchFocusNode.dispose();
   }
 
   void refreshData() {
-    context.read<TripCubit>().getAllTrip();
-    setState(() {});
+    if (searchQuery?.isNotEmpty == true) {
+      context.read<TripCubit>().searchTrip(searchQuery!);
+    } else {
+      context.read<TripCubit>().getAllTrip();
+    }
   }
 
   void showDataWarning() {
@@ -66,7 +80,21 @@ class TripPageState extends State<TripPage> {
 
   Widget tripLoaded(List<TripModel> travelers) {
     return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      itemCount: travelers.length,
+      itemBuilder: (context, index) {
+        final item = travelers[index];
+        return TripItem(
+          item: item,
+          onTap: navigateTripEdit,
+        );
+      },
+    );
+  }
+
+  Widget tripSearchLoaded(List<TripModel> travelers) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       itemCount: travelers.length,
       itemBuilder: (context, index) {
         final item = travelers[index];
@@ -80,25 +108,83 @@ class TripPageState extends State<TripPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TripCubit, TripCubitState>(
-      builder: (context, state) {
-        if (state is TripInitial) {
-          return const SizedBox.shrink();
-        } else if (state is TripLoading) {
-          return const LoadingState();
-        } else if (state is TripEmpty) {
-          return EmptyState(
-            title: "No Records",
-            subtitle: "You haven’t added any trip. Once you do, they’ll appear here.",
-            tapText: "Add Trip +",
-            onTap: navigateTripAdd,
-            onLearn: showDataWarning,
-          );
-        } else if (state is TripLoaded) {
-          return tripLoaded(state.trips);
-        }
-        return const SizedBox.shrink();
-      },
+    return Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: 16,
+          ),
+          padding: const EdgeInsets.only(left: 8, right: 20),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+            color: Theme.of(context).hoverColor,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  focusNode: searchFocusNode,
+                  style: const TextStyle(fontSize: 16),
+                  decoration: InputDecoration(
+                    hintText: 'Search trips..',
+                    hintStyle: TextStyle(
+                      color: Theme.of(context).iconTheme.color?.withAlpha(70),
+                      fontWeight: FontWeight.normal,
+                    ),
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  keyboardType: TextInputType.text,
+                  maxLines: 1,
+                  onChanged: (query) {
+                    searchQuery = query;
+                    if (query.isEmpty) {
+                      context.read<TripCubit>().getAllTrip();
+                    } else {
+                      context.read<TripCubit>().searchTrip(query);
+                    }
+                  },
+                ),
+              ),
+              const Icon(Icons.search_rounded, size: 26, weight: 10),
+            ],
+          ),
+        ),
+        Expanded(
+          child: BlocBuilder<TripCubit, TripCubitState>(
+            builder: (context, state) {
+              if (state is TripInitial) {
+                return const SizedBox.shrink();
+              }
+              else if (state is TripLoading) {
+                return const LoadingState();
+              }
+              else if (state is TripEmpty) {
+                return EmptyState(
+                  title: "No Records",
+                  subtitle: "You haven’t added any trip. Once you do, they’ll appear here.",
+                  tapText: "Add Trip +",
+                  onTap: navigateTripAdd,
+                  onLearn: showDataWarning,
+                );
+              }
+              else if (state is TripLoaded) {
+                return tripLoaded(state.trips);
+              }
+              else if (state is TripSearchLoaded) {
+                return tripSearchLoaded(state.trips);
+              }
+              return const SizedBox.shrink();
+            },
+          )
+        ),
+      ],
     );
   }
 }

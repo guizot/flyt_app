@@ -36,4 +36,14 @@ class TripCubit extends Cubit<TripCubitState> {
     emit(TripInitial());
   }
 
+  Future<void> searchTrip(String query) async {
+    emit(TripLoading());
+    List<TripModel> trips = tripUseCases.searchTrip(query);
+    if (trips.isEmpty) {
+      emit(TripEmpty());
+    } else {
+      emit(TripSearchLoaded(trips: trips));
+    }
+  }
+
 }

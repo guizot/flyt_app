@@ -22,5 +22,16 @@ class TripUseCases {
     await hiveRepo.deleteTrip(id);
   }
 
+  List<TripModel> searchTrip(String query) {
+    try {
+      final allItems = hiveRepo.getAllTrip();
+      return allItems.where((phrase) =>
+        phrase.title.toLowerCase().contains(query.toLowerCase())
+      ).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
 
 }

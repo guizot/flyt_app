@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/local/traveler_model.dart';
+import '../../core/helper/age_helper.dart';
 
 class TravelerItem extends StatefulWidget {
   const TravelerItem({super.key, required this.item, required this.onTap});
@@ -102,38 +103,7 @@ class _TravelerItemState extends State<TravelerItem> {
   }
 
   String buildGenderAgeText(String gender, String birthdate) {
-    int? age;
-    final parts = birthdate.split(' ');
-    if (parts.length == 3) {
-      final monthMap = {
-        'jan': 1,
-        'feb': 2,
-        'mar': 3,
-        'apr': 4,
-        'may': 5,
-        'jun': 6,
-        'jul': 7,
-        'aug': 8,
-        'sep': 9,
-        'oct': 10,
-        'nov': 11,
-        'dec': 12,
-      };
-      try {
-        final day = int.parse(parts[0]);
-        final month = monthMap[parts[1].toLowerCase()] ?? 1;
-        final year = int.parse(parts[2]);
-        final birth = DateTime(year, month, day);
-        final now = DateTime.now();
-        age =
-            now.year -
-            birth.year -
-            ((now.month < birth.month ||
-                    (now.month == birth.month && now.day < birth.day))
-                ? 1
-                : 0);
-      } catch (_) {}
-    }
+    final age = AgeHelper().calculateAge(birthdate);
     final genderStr = gender.isNotEmpty ? gender : '';
     final ageStr = age != null ? '$age Years' : '';
     if (genderStr.isNotEmpty && ageStr.isNotEmpty) {

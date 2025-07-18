@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flyt_app/presentation/core/model/arguments/phrases_add_args.dart';
 import 'package:flyt_app/presentation/pages/event/event_add.dart';
@@ -10,6 +11,7 @@ import '../../pages/phrases/phrases_add.dart';
 import '../../pages/setting/setting.dart';
 import '../../pages/traveler/traveler_detail.dart';
 import '../constant/routes_values.dart';
+import '../widget/image_view.dart';
 
 class RouteService {
 
@@ -38,6 +40,9 @@ class RouteService {
       case RoutesValues.eventAdd:
         var id = settings.arguments as String?;
         return MaterialPageRoute(builder: (_) => EventAddProvider(id: id));
+      case RoutesValues.viewImage:
+        var imageBytes = settings.arguments as Uint8List?;
+        return MaterialPageRoute(builder: (_) => ImageView(imageBytes: imageBytes));
       case RoutesValues.setting:
         return MaterialPageRoute(builder: (_) => const SettingPage());
       default:

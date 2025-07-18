@@ -8,4 +8,5 @@ class RoutesValues {
   static const String languageAdd = '/language-add';
   static const String eventAdd = '/event-add';
   static const String setting = '/setting';
+  static const String viewImage = '/view-image';
 }

@@ -4,10 +4,12 @@ import '../../../data/models/local/traveler_model.dart';
 import '../../../injector.dart';
 import '../../core/constant/routes_values.dart';
 import '../../core/handler/dialog_handler.dart';
+import '../../core/helper/age_helper.dart';
 import '../../core/widget/loading_state.dart';
 import 'cubit/traveler_cubit.dart';
 import 'cubit/traveler_state.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter/services.dart';
 
 class TravelerDetailPageProvider extends StatelessWidget {
   const TravelerDetailPageProvider({super.key, this.id});
@@ -29,8 +31,8 @@ class TravelerDetailPage extends StatefulWidget {
   State<TravelerDetailPage> createState() => _TravelerDetailPageState();
 }
 
-class _TravelerDetailPageState extends State<TravelerDetailPage> with SingleTickerProviderStateMixin {
-
+class _TravelerDetailPageState extends State<TravelerDetailPage>
+    with SingleTickerProviderStateMixin {
   int selectedTabIndex = 0;
   late PageController _pageController;
 
@@ -46,7 +48,6 @@ class _TravelerDetailPageState extends State<TravelerDetailPage> with SingleTick
     _pageController.dispose();
     super.dispose();
   }
-
 
   void refreshData() {
     context.read<TravelerCubit>().getAllDetail(widget.id!);
@@ -110,6 +111,20 @@ class _TravelerDetailPageState extends State<TravelerDetailPage> with SingleTick
     );
   }
 
+  void onItemTap(Map<String, dynamic> item) async {
+    if (item['type'] == 'image') {
+      Navigator.pushNamed(
+        context,
+        RoutesValues.viewImage,
+        arguments: item['imageBytes'] as Uint8List,
+      );
+      return;
+    }
+    final value = item['description'] as String?;
+    if (value != null && value.isNotEmpty) {
+      await Clipboard.setData(ClipboardData(text: value));
+    }
+  }
 
   Widget buildTab(String label, int index) {
     final isSelected = selectedTabIndex == index;
@@ -161,76 +176,76 @@ class _TravelerDetailPageState extends State<TravelerDetailPage> with SingleTick
                 itemCount: travelerItems(traveler).length,
                 itemBuilder: (context, index) {
                   final item = travelerItems(traveler)[index];
-                  if (item['type'] == 'image') {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).hoverColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            height: 120,
+                  return GestureDetector(
+                    onTap: () => onItemTap(item),
+                    child: item['type'] == 'image'
+                        ? Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              image: DecorationImage(
-                                image: MemoryImage(item['imageBytes']),
-                                fit: BoxFit.cover,
-                              ),
+                              color: Theme.of(context).hoverColor,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    image: DecorationImage(
+                                      image: MemoryImage(item['imageBytes']),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  item['title'] as String,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).hoverColor,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  item['icon'] as IconData,
+                                  size: 32,
+                                  color: Theme.of(context).iconTheme.color,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  item['title'] as String,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  item['description'] as String,
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall?.color,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          Text(
-                            item['title'] as String,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  else {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).hoverColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            item['icon'] as IconData,
-                            size: 32,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            item['title'] as String,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            item['description'] as String,
-                            style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodySmall?.color,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+                  );
                 },
               )
             : Container();
@@ -260,44 +275,14 @@ class _TravelerDetailPageState extends State<TravelerDetailPage> with SingleTick
     }
   }
 
-  int? calculateAge(String birthdate) {
-    try {
-      final parts = birthdate.split(' ');
-      if (parts.length == 3) {
-        final day = int.parse(parts[0]);
-        final monthMap = {
-          'jan': 1,
-          'feb': 2,
-          'mar': 3,
-          'apr': 4,
-          'may': 5,
-          'jun': 6,
-          'jul': 7,
-          'aug': 8,
-          'sep': 9,
-          'oct': 10,
-          'nov': 11,
-          'dec': 12,
-        };
-        final month = monthMap[parts[1].toLowerCase()] ?? 1;
-        final year = int.parse(parts[2]);
-        final birth = DateTime(year, month, day);
-        final now = DateTime.now();
-        int age = now.year - birth.year;
-        if (now.month < birth.month ||
-            (now.month == birth.month && now.day < birth.day)) {
-          age--;
-        }
-        return age;
-      }
-    } catch (_) {}
-    return null;
-  }
-
   List<Map<String, dynamic>> travelerItems(Traveler traveler) {
     final items = <Map<String, dynamic>>[];
 
-    items.add({'icon': Icons.person, 'title': 'Name', 'description': traveler.name});
+    items.add({
+      'icon': Icons.person,
+      'title': 'Name',
+      'description': traveler.name,
+    });
 
     if (traveler.imageBytes != null) {
       items.add({
@@ -311,7 +296,7 @@ class _TravelerDetailPageState extends State<TravelerDetailPage> with SingleTick
     items.add({
       'icon': Icons.calendar_today,
       'title': 'Age',
-      'description': '${calculateAge(traveler.birthdate)} years',
+      'description': '${AgeHelper().calculateAge(traveler.birthdate)} years',
     });
 
     items.addAll([
@@ -401,7 +386,6 @@ class _TravelerDetailPageState extends State<TravelerDetailPage> with SingleTick
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TravelerCubit, TravelerCubitState>(
@@ -417,5 +401,4 @@ class _TravelerDetailPageState extends State<TravelerDetailPage> with SingleTick
       },
     );
   }
-
 }

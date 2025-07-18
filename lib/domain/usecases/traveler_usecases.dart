@@ -1,5 +1,4 @@
 import 'package:flyt_app/domain/repositories/hive_repo.dart';
-import '../../data/core/const/hive_values.dart';
 import '../../data/models/local/traveler_model.dart';
 
 class TravelerUseCases {

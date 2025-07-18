@@ -7,12 +7,8 @@ class BloodType {
 }
 
 const List<BloodType> bloodTypes = [
-  BloodType(id: "A+", name: "A+", icon: "🅰️➕"),
-  BloodType(id: "A-", name: "A-", icon: "🅰️➖"),
-  BloodType(id: "B+", name: "B+", icon: "🅱️➕"),
-  BloodType(id: "B-", name: "B-", icon: "🅱️➖"),
-  BloodType(id: "AB+", name: "AB+", icon: "🆎➕"),
-  BloodType(id: "AB-", name: "AB-", icon: "🆎➖"),
-  BloodType(id: "O+", name: "O+", icon: "🅾️➕"),
-  BloodType(id: "O-", name: "O-", icon: "🅾️➖"),
+  BloodType(id: "A", name: "A", icon: "🅰️"),
+  BloodType(id: "B", name: "B", icon: "🅱️"),
+  BloodType(id: "AB", name: "AB", icon: "🆎"),
+  BloodType(id: "O", name: "O", icon: "🅾️"),
 ];

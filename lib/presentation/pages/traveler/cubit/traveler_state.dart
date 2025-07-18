@@ -20,6 +20,14 @@ class TravelerLoaded extends TravelerCubitState {
   List<Object?> get props => [travelers];
 }
 
+class TravelerDetailLoaded extends TravelerCubitState {
+  final Traveler? traveler;
+  const TravelerDetailLoaded({required this.traveler});
+
+  @override
+  List<Object?> get props => [traveler];
+}
+
 class TravelerEmpty extends TravelerCubitState {}
 
 class TravelerError extends TravelerCubitState {

@@ -27,7 +27,7 @@ class _PackingItemState extends State<PackingItem> {
               ),
               color: Theme.of(context).hoverColor,
             ),
-            padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 24.0),
+            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
             child: Column(
               children: [
                 Row(
@@ -37,7 +37,7 @@ class _PackingItemState extends State<PackingItem> {
                       child: Text(
                         widget.item.name,
                         style: const TextStyle(
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
                           fontSize: 16,
                         ),
                         overflow: TextOverflow.ellipsis,

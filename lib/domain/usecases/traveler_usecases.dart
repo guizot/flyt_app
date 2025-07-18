@@ -32,8 +32,4 @@ class TravelerUseCases {
     await hiveRepo.deleteTraveler(id);
   }
 
-
-  dynamic getSelectedEvent() {
-    return hiveRepo.getSetting(HiveValues.eventSelected);
-  }
 } 

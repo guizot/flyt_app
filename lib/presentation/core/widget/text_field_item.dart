@@ -40,13 +40,13 @@ class _TextFieldItemState extends State<TextFieldItem> {
           widget.controller.text = switchValue.toString();
         case FormType.date:
           try {
-            DateFormat format = DateFormat('dd MMM yyyy - HH:mm');
+            DateFormat format = DateFormat('dd MMM yyyy');
             DateTime dateTime = format.parse(widget.controller.text);
             dateTempValue = dateTime;
           } catch(e) {
             dateTempValue = DateTime.now();
           }
-          String formattedDate = DateFormat('dd MMM yyyy - HH:mm').format(dateTempValue!);
+          String formattedDate = DateFormat('dd MMM yyyy').format(dateTempValue!);
           widget.controller.text = formattedDate;
       }
     });
@@ -225,7 +225,7 @@ class _TextFieldItemState extends State<TextFieldItem> {
                           color: Theme.of(context).colorScheme.surface,
                           child: CupertinoDatePicker(
                             initialDateTime: dateTempValue,
-                            mode: CupertinoDatePickerMode.dateAndTime,
+                            mode: CupertinoDatePickerMode.date,
                             onDateTimeChanged: (DateTime newDate) {
                               dateTempValue = newDate;
                             },
@@ -239,7 +239,7 @@ class _TextFieldItemState extends State<TextFieldItem> {
                     child: FilledButton(
                       onPressed: () {
                         setState(() {
-                          String formattedDate = DateFormat('dd MMM yyyy - HH:mm').format(dateTempValue ?? DateTime.now());
+                          String formattedDate = DateFormat('dd MMM yyyy').format(dateTempValue ?? DateTime.now());
                           widget.controller.text = formattedDate;
                         });
                         Navigator.pop(context);

@@ -8,6 +8,7 @@ import 'package:flyt_app/presentation/pages/traveler/traveler_add.dart';
 import '../../pages/home.dart';
 import '../../pages/phrases/phrases_add.dart';
 import '../../pages/setting/setting.dart';
+import '../../pages/traveler/traveler_detail.dart';
 import '../constant/routes_values.dart';
 
 class RouteService {
@@ -19,6 +20,9 @@ class RouteService {
       case RoutesValues.travelerAdd:
         var id = settings.arguments as String?;
         return MaterialPageRoute(builder: (_) => TravelerAddProvider(id: id));
+      case RoutesValues.travelerDetail:
+        var id = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => TravelerDetailPageProvider(id: id));
       case RoutesValues.packingAdd:
         var id = settings.arguments as String?;
         return MaterialPageRoute(builder: (_) => PackingAddProvider(id: id));

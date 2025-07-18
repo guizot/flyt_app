@@ -11,7 +11,7 @@ class Traveler extends HiveObject {
   String name;
 
   @HiveField(2)
-  DateTime birthdate;
+  String birthdate;
 
   @HiveField(3)
   String gender;

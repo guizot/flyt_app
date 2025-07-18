@@ -19,7 +19,7 @@ class TravelerAdapter extends TypeAdapter<Traveler> {
     return Traveler(
       id: fields[0] as String,
       name: fields[1] as String,
-      birthdate: fields[2] as DateTime,
+      birthdate: fields[2] as String,
       gender: fields[3] as String,
       bloodType: fields[4] as String,
       maritalStatus: fields[5] as String,

@@ -34,11 +34,16 @@ class TravelerCubit extends Cubit<TravelerCubitState> {
     emit(TravelerInitial());
   }
 
-  String? getSelectedEventId() {
-    try {
-      return travelerUseCases.getSelectedEvent()['id'];
-    } catch(e) {
-      return null;
-    }
+  Future<void> getAllDetail(String id) async {
+    emit(TravelerLoading());
+    Traveler? traveler = travelerUseCases.getTraveler(id);
+    //List<DocumentModel> documents = travelerUseCases.getAllDocument(id);
+    emit(
+        TravelerDetailLoaded(
+          traveler: traveler,
+          //documents: documents,
+        )
+    );
   }
+
 } 

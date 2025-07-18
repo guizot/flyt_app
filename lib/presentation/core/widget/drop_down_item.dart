@@ -78,6 +78,8 @@ class _DropDownItemState extends State<DropDownItem> {
                     return DropdownMenuItem<String>(
                       value: title,
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           if (icon != null)
                             Text(icon, style: const TextStyle(fontSize: 18)),

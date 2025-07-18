@@ -24,8 +24,8 @@ class _LanguageItemState extends State<LanguageItem> {
               color: Theme.of(context).hoverColor,
             ),
             padding: const EdgeInsets.symmetric(
-              vertical: 24.0,
-              horizontal: 24.0,
+              vertical: 20.0,
+              horizontal: 20.0,
             ),
             child: Column(
               children: [
@@ -33,7 +33,7 @@ class _LanguageItemState extends State<LanguageItem> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(widget.item.languageIcon, style: const TextStyle(fontSize: 28)),
+                    Text(widget.item.languageIcon, style: const TextStyle(fontSize: 24)),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
@@ -47,7 +47,7 @@ class _LanguageItemState extends State<LanguageItem> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    const Icon(Icons.keyboard_arrow_right_outlined, size: 28),
+                    const Icon(Icons.arrow_forward_ios_rounded, size: 20),
                   ],
                 ),
               ],

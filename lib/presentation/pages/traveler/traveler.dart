@@ -56,8 +56,8 @@ class TravelerPageState extends State<TravelerPage> {
     Navigator.pushNamed(context, RoutesValues.travelerAdd).then((value) => refreshData());
   }
 
-  void navigateTravelerEdit(String id) {
-    Navigator.pushNamed(context, RoutesValues.travelerAdd, arguments: id).then((value) => refreshData());
+  void navigateTravelerDetail(String id) {
+    Navigator.pushNamed(context, RoutesValues.travelerDetail, arguments: id).then((value) => refreshData());
   }
 
   Widget travelerLoaded(List<Traveler> travelers) {
@@ -68,7 +68,7 @@ class TravelerPageState extends State<TravelerPage> {
         final item = travelers[index];
         return TravelerItem(
           item: item,
-          onTap: navigateTravelerEdit,
+          onTap: navigateTravelerDetail,
         );
       },
     );

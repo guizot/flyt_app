@@ -1,46 +1,52 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flyt_app/presentation/core/extension/number_extension.dart';
-import '../../../data/models/local/event_model.dart';
+import '../../../data/models/local/trip_model.dart';
 import '../../../injector.dart';
+import '../../core/constant/form_type.dart';
 import '../../core/handler/dialog_handler.dart';
+import '../../core/widget/add_image_item.dart';
 import '../../core/widget/loading_state.dart';
 import '../../core/widget/text_field_item.dart';
-import 'cubit/event_cubit.dart';
-import 'cubit/event_state.dart';
+import 'cubit/trip_cubit.dart';
+import 'cubit/trip_state.dart';
 
-class EventAddProvider extends StatelessWidget {
-  const EventAddProvider({super.key, this.id });
+class TripAddProvider extends StatelessWidget {
+  const TripAddProvider({super.key, this.id });
   final String? id;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<EventCubit>(),
-      child: EventAdd(id: id),
+      create: (context) => sl<TripCubit>(),
+      child: TripAdd(id: id),
     );
   }
 }
 
-class EventAdd extends StatefulWidget {
-  const EventAdd({super.key, this.id});
+class TripAdd extends StatefulWidget {
+  const TripAdd({super.key, this.id});
   final String? id;
   @override
-  State<EventAdd> createState() => _EventAddState();
+  State<TripAdd> createState() => _TripAddState();
 }
 
-class _EventAddState extends State<EventAdd> {
+class _TripAddState extends State<TripAdd> {
 
   TextEditingController titleController = TextEditingController();
-  TextEditingController budgetController = TextEditingController();
+  TextEditingController startDateController = TextEditingController();
+  TextEditingController endDateController = TextEditingController();
   TextEditingController descController = TextEditingController();
-  Event? event;
+  TripModel? trip;
+  Uint8List? imagePhoto;
 
   Map<String, String> populateForm() {
     return {
       'title': titleController.text,
-      'budget': budgetController.text.toIntFromFormatted().toString(),
+      'startDate': startDateController.text,
+      'endDate': endDateController.text,
       'description': descController.text,
     };
   }
@@ -49,12 +55,14 @@ class _EventAddState extends State<EventAdd> {
   void initState() {
     super.initState();
     if (widget.id != null) {
-      event = BlocProvider.of<EventCubit>(context).getEvent(widget.id!);
-      if(event != null) {
+      trip = BlocProvider.of<TripCubit>(context).getTrip(widget.id!);
+      if(trip != null) {
         setState(() {
-          titleController.text = event!.title;
-          budgetController.text = int.parse(event!.budget).toCurrencyFormat();
-          descController.text = event!.description;
+          imagePhoto = trip!.photoBytes;
+          titleController.text = trip!.title;
+          startDateController.text = trip!.startDate;
+          endDateController.text = trip!.endDate;
+          descController.text = trip!.description;
         });
       }
     }
@@ -62,16 +70,48 @@ class _EventAddState extends State<EventAdd> {
 
   void validateForm(BuildContext context) async {
     final formData = populateForm();
+    if (imagePhoto == null) {
+      DialogHandler.showSnackBar(
+        context: context,
+        message: "Photo cannot be empty",
+      );
+      return;
+    }
     if (formData['title']!.trim().isEmpty) {
       DialogHandler.showSnackBar(context: context, message: "Title cannot be empty");
       return;
     }
-    if (formData['budget']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Budget cannot be empty");
+    if (formData['startDate']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(
+        context: context,
+        message: "Start Date Date cannot be empty",
+      );
+      return;
+    }
+    if (formData['endDate']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(
+        context: context,
+        message: "End Date Date cannot be empty",
+      );
       return;
     }
     if (formData['description']!.trim().isEmpty) {
       DialogHandler.showSnackBar(context: context, message: "Description cannot be empty");
+      return;
+    }
+    try {
+      final dateFormat = DateFormat('dd MMM yyyy');
+      final startDate = dateFormat.parse(formData['startDate']!);
+      final endDate = dateFormat.parse(formData['endDate']!);
+
+      if (endDate.isBefore(startDate)) {
+        DialogHandler.showSnackBar(
+            context: context,
+            message: "End Time cannot be earlier than Start Time");
+        return;
+      }
+    } catch (e) {
+      DialogHandler.showSnackBar(context: context, message: "Invalid date format");
       return;
     }
     if(widget.id != null) {
@@ -83,13 +123,15 @@ class _EventAddState extends State<EventAdd> {
 
   void onSubmit(BuildContext context, Map<String, String> data) async {
     try {
-      await BlocProvider.of<EventCubit>(context).saveEvent(
-        Event(
+      await BlocProvider.of<TripCubit>(context).saveTrip(
+        TripModel(
           id: widget.id != null ? widget.id! : const Uuid().v4(),
           title: data['title']!,
-          budget: data['budget']!,
           description: data['description']!,
-          createdAt: widget.id != null ? event!.createdAt : DateTime.now(),
+          startDate: data['startDate']!,
+          endDate: data['endDate']!,
+          photoBytes: imagePhoto,
+          createdAt: widget.id != null ? trip!.createdAt : DateTime.now(),
         )
       );
       if(context.mounted) {
@@ -117,7 +159,7 @@ class _EventAddState extends State<EventAdd> {
 
   void onDelete(BuildContext context) async {
     Navigator.pop(context);
-    await BlocProvider.of<EventCubit>(context).deleteEvent(widget.id!);
+    await BlocProvider.of<TripCubit>(context).deleteTrip(widget.id!);
     if(context.mounted) {
       Navigator.pop(context);
     }
@@ -140,15 +182,28 @@ class _EventAddState extends State<EventAdd> {
             child: ListView(
               padding: const EdgeInsets.all(16.0),
               children: [
+                AddImageItem(
+                  title: "Image",
+                  onImagePicked: (bytes) {
+                    setState(() {
+                      imagePhoto = bytes;
+                    });
+                  },
+                  initialImageBytes: imagePhoto,
+                ),
                 TextFieldItem(
                     title: "Title",
                     controller: titleController
                 ),
                 TextFieldItem(
-                    title: "Budget",
-                    inputType: TextInputType.number,
-                    preText: "Rp",
-                    controller: budgetController
+                  title: "Start Date",
+                  formType: FormType.date,
+                  controller: startDateController,
+                ),
+                TextFieldItem(
+                  title: "End Date",
+                  formType: FormType.date,
+                  controller: endDateController,
                 ),
                 TextFieldItem(
                     title: "Description",
@@ -178,7 +233,7 @@ class _EventAddState extends State<EventAdd> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text("${widget.id == null ? "Add" : "Edit"} Event"),
+            title: Text("${widget.id == null ? "Add" : "Edit"} Trip"),
             backgroundColor: Theme.of(context).colorScheme.surface,
             surfaceTintColor: Colors.transparent,
             centerTitle: true,
@@ -193,12 +248,12 @@ class _EventAddState extends State<EventAdd> {
               )
             ],
           ),
-        body: BlocBuilder<EventCubit, EventCubitState>(
+        body: BlocBuilder<TripCubit, TripCubitState>(
           builder: (blocContext, state) {
-            if(state is EventInitial) {
+            if(state is TripInitial) {
               return eventInitial(context);
             }
-            else if(state is EventLoading) {
+            else if(state is TripLoading) {
               return const LoadingState();
             }
             return Container();

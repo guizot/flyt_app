@@ -2,13 +2,13 @@ import 'package:get_it/get_it.dart';
 import 'package:flyt_app/data/repositories/hive_repo_impl.dart';
 import 'package:flyt_app/domain/repositories/hive_repo.dart';
 import 'package:flyt_app/presentation/core/service/theme_service.dart';
-import 'package:flyt_app/presentation/pages/event/cubit/event_cubit.dart';
+import 'package:flyt_app/presentation/pages/trip/cubit/trip_cubit.dart';
 import 'package:flyt_app/presentation/pages/packing/cubit/packing_cubit.dart';
 import 'package:flyt_app/presentation/pages/phrases/cubit/phrases_cubit.dart';
 import 'package:flyt_app/presentation/pages/traveler/cubit/traveler_cubit.dart';
 import 'data/datasource/local/hive_data_source.dart';
 import 'data/datasource/shared/shared_preferences_data_source.dart';
-import 'domain/usecases/event_usecases.dart';
+import 'domain/usecases/trip_usecases.dart';
 import 'domain/usecases/packing_usecases.dart';
 import 'domain/usecases/phrases_usecases.dart';
 import 'domain/usecases/traveler_usecases.dart';
@@ -26,8 +26,8 @@ Future<void> init() async {
 
   /// PRESENTATION LAYER
   sl.registerFactory(
-    () => EventCubit(
-      eventUseCases: sl(),
+    () => TripCubit(
+      tripUseCases: sl(),
     ),
   );
   sl.registerFactory(
@@ -48,7 +48,7 @@ Future<void> init() async {
 
   /// DOMAIN LAYER
   sl.registerLazySingleton(
-    () => EventUseCases(
+    () => TripUseCases(
       hiveRepo: sl(),
     ),
   );

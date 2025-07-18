@@ -11,7 +11,7 @@ class ActivityType {
 }
 
 const List<ActivityType> activityTypes = [
-  ActivityType(id: "event", name: "Event", icon: "🎫"),
+  ActivityType(id: "trip", name: "Event", icon: "🎫"),
   ActivityType(id: "attraction", name: "Attraction", icon: "🏰"),
   ActivityType(id: "tour", name: "Tour", icon: "🗺️"),
   ActivityType(id: "playground", name: "Playground", icon: "🛝"),

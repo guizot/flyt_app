@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../models/local/document_model.dart';
-import '../../models/local/event_model.dart';
+import '../../models/local/trip_model.dart';
 import '../../models/local/packing_model.dart';
 import '../../models/local/language_model.dart';
 import '../../models/local/phrases_model.dart';
@@ -13,7 +13,7 @@ class HiveDataSource {
     await Hive.initFlutter();
 
     /// Define the adapters
-    Hive.registerAdapter(EventAdapter());
+    Hive.registerAdapter(TripModelAdapter());
     Hive.registerAdapter(TravelerAdapter());
     Hive.registerAdapter(PackingAdapter());
     Hive.registerAdapter(LanguageModelAdapter());
@@ -21,7 +21,7 @@ class HiveDataSource {
     Hive.registerAdapter(DocumentModelAdapter());
 
     /// Open the boxes
-    await Hive.openBox<Event>('eventBox');
+    await Hive.openBox<TripModel>('tripBox');
     await Hive.openBox<Traveler>('travelerBox');
     await Hive.openBox<Packing>('packingBox');
     await Hive.openBox<LanguageModel>('languageBox');
@@ -31,7 +31,7 @@ class HiveDataSource {
   }
 
   /// Get the boxes
-  Box<Event> get eventBox => Hive.box<Event>('eventBox');
+  Box<TripModel> get tripBox => Hive.box<TripModel>('tripBox');
   Box<Traveler> get travelerBox => Hive.box<Traveler>('travelerBox');
   Box<Packing> get packingBox => Hive.box<Packing>('packingBox');
   Box<LanguageModel> get languageBox => Hive.box<LanguageModel>('languageBox');

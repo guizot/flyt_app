@@ -1,19 +1,19 @@
-import 'package:flyt_app/data/models/local/event_model.dart';
 import '../../data/models/local/document_model.dart';
 import '../../data/models/local/packing_model.dart';
 import '../../data/models/local/language_model.dart';
 import '../../data/models/local/phrases_model.dart';
 import '../../data/models/local/traveler_model.dart';
+import '../../data/models/local/trip_model.dart';
 
 abstract class HiveRepo {
 
-  // region EVENT
+  // region TRIP
 
-  List<Event> getAllEvent();
-  Event? getEvent(String id);
-  Future<void> saveEvent(String id, Event item);
-  Future<void> deleteEvent(String id);
-  Future<void> deleteAllEvent(Iterable<dynamic> keys);
+  List<TripModel> getAllTrip();
+  TripModel? getTrip(String id);
+  Future<void> saveTrip(String id, TripModel item);
+  Future<void> deleteTrip(String id);
+  Future<void> deleteAllTrip(Iterable<dynamic> keys);
 
   // endregion
 

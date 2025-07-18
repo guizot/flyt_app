@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flyt_app/presentation/core/model/arguments/document_add_args.dart';
 import 'package:flyt_app/presentation/core/model/arguments/phrases_add_args.dart';
-import 'package:flyt_app/presentation/pages/event/event_add.dart';
+import 'package:flyt_app/presentation/pages/trip/trip_add.dart';
 import 'package:flyt_app/presentation/pages/packing/packing_add.dart';
 import 'package:flyt_app/presentation/pages/phrases/language_add.dart';
 import 'package:flyt_app/presentation/pages/phrases/phrases_detail.dart';
@@ -42,9 +42,9 @@ class RouteService {
       case RoutesValues.phrasesAdd:
         var args = settings.arguments as PhrasesAddArgs;
         return MaterialPageRoute(builder: (_) => PhrasesAddProvider(item: args));
-      case RoutesValues.eventAdd:
+      case RoutesValues.tripAdd:
         var id = settings.arguments as String?;
-        return MaterialPageRoute(builder: (_) => EventAddProvider(id: id));
+        return MaterialPageRoute(builder: (_) => TripAddProvider(id: id));
       case RoutesValues.viewImage:
         var imageBytes = settings.arguments as Uint8List?;
         return MaterialPageRoute(builder: (_) => ImageView(imageBytes: imageBytes));

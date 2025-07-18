@@ -1,4 +1,3 @@
-import 'package:flyt_app/data/models/local/event_model.dart';
 import '../../domain/repositories/hive_repo.dart';
 import '../datasource/local/hive_data_source.dart';
 import '../models/local/document_model.dart';
@@ -6,6 +5,7 @@ import '../models/local/packing_model.dart';
 import '../models/local/language_model.dart';
 import '../models/local/phrases_model.dart';
 import '../models/local/traveler_model.dart';
+import '../models/local/trip_model.dart';
 
 class HiveRepoImpl implements HiveRepo {
 
@@ -15,31 +15,31 @@ class HiveRepoImpl implements HiveRepo {
     required this.hiveDataSource,
   });
 
-  // region EVENT
+  // region TRIP
 
   @override
-  List<Event> getAllEvent() {
-    return hiveDataSource.eventBox.values.toList();
+  List<TripModel> getAllTrip() {
+    return hiveDataSource.tripBox.values.toList();
   }
 
   @override
-  Event? getEvent(String id) {
-    return hiveDataSource.eventBox.get(id);
+  TripModel? getTrip(String id) {
+    return hiveDataSource.tripBox.get(id);
   }
 
   @override
-  Future<void> saveEvent(String id, Event item) async {
-    await hiveDataSource.eventBox.put(id, item);
+  Future<void> saveTrip(String id, TripModel item) async {
+    await hiveDataSource.tripBox.put(id, item);
   }
 
   @override
-  Future<void> deleteEvent(String id) async {
-    await hiveDataSource.eventBox.delete(id);
+  Future<void> deleteTrip(String id) async {
+    await hiveDataSource.tripBox.delete(id);
   }
 
   @override
-  Future<void> deleteAllEvent(Iterable<dynamic> keys) async {
-    await hiveDataSource.eventBox.deleteAll(keys);
+  Future<void> deleteAllTrip(Iterable<dynamic> keys) async {
+    await hiveDataSource.tripBox.deleteAll(keys);
   }
 
   // endregion

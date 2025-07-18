@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import '../core/constant/routes_values.dart';
 import 'traveler/traveler.dart';
 import 'phrases/phrases.dart';
-import 'event/event.dart';
+import 'trip/trip.dart';
 import 'packing/packing.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,13 +13,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final GlobalKey<EventPageState> eventPageKey = GlobalKey<EventPageState>();
+  final GlobalKey<TripPageState> tripPageKey = GlobalKey<TripPageState>();
   final GlobalKey<TravelerPageState> travelerPageKey = GlobalKey<TravelerPageState>();
   final GlobalKey<PackingPageState> packingPageKey = GlobalKey<PackingPageState>();
   final GlobalKey<PhrasesPageState> phrasesPageKey = GlobalKey<PhrasesPageState>();
 
   int currentPageIndex = 0;
-  String titlePage = "Event";
+  String titlePage = "Trip";
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +37,8 @@ class _HomePageState extends State<HomePage> {
                 tooltip: 'Add',
                 onPressed: () {
                   if(currentPageIndex == 0) {
-                    Navigator.pushNamed(context, RoutesValues.eventAdd).then((_) {
-                      eventPageKey.currentState?.refreshData();
+                    Navigator.pushNamed(context, RoutesValues.tripAdd).then((_) {
+                      tripPageKey.currentState?.refreshData();
                     });
                   }
                   else if(currentPageIndex == 1) {
@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                 setState(() {
                   currentPageIndex = index;
                   if(index == 0) {
-                    titlePage = "Event";
+                    titlePage = "Trip";
                   }
                   else if(index == 1) {
                     titlePage = "Traveler";
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                         BlendMode.srcIn
                     ),
                   ),
-                  label: 'Event',
+                  label: 'Trip',
                 ),
                 NavigationDestination(
                   selectedIcon: SvgPicture.asset(
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Builder(
           builder: (_) {
-            if (currentPageIndex == 0) return EventPageProvider(pageKey: eventPageKey);
+            if (currentPageIndex == 0) return TripPageProvider(pageKey: tripPageKey);
             if (currentPageIndex == 1) return TravelerPageProvider(pageKey: travelerPageKey);
             if (currentPageIndex == 2) return PackingPageProvider(pageKey: packingPageKey);
             if (currentPageIndex == 3) return PhrasesPageProvider(pageKey: phrasesPageKey);

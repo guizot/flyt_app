@@ -41,13 +41,12 @@ class TravelerUseCases {
   List<DocumentModel> getAllDocument(String travelerId) {
     try {
       final allDocuments = hiveRepo.getAllDocument();
-      allDocuments.where((doc) => doc.travelerId == travelerId).toList();
       allDocuments.sort((a, b) {
         final aTime = a.createdAt;
         final bTime = b.createdAt;
         return aTime.compareTo(bTime);
       });
-      return allDocuments;
+      return allDocuments.where((doc) => doc.travelerId == travelerId).toList();
     } catch (e) {
       return [];
     }

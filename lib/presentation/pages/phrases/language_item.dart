@@ -24,7 +24,7 @@ class _LanguageItemState extends State<LanguageItem> {
               color: Theme.of(context).hoverColor,
             ),
             padding: const EdgeInsets.symmetric(
-              vertical: 20.0,
+              vertical: 24.0,
               horizontal: 20.0,
             ),
             child: Column(

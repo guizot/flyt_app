@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../../data/models/local/document_model.dart';
 import '../../../../data/models/local/traveler_model.dart';
 
 abstract class TravelerCubitState extends Equatable {
@@ -22,10 +23,11 @@ class TravelerLoaded extends TravelerCubitState {
 
 class TravelerDetailLoaded extends TravelerCubitState {
   final Traveler? traveler;
-  const TravelerDetailLoaded({required this.traveler});
+  final List<DocumentModel> documents;
+  const TravelerDetailLoaded({required this.traveler, required this.documents});
 
   @override
-  List<Object?> get props => [traveler];
+  List<Object?> get props => [traveler, documents];
 }
 
 class TravelerEmpty extends TravelerCubitState {}

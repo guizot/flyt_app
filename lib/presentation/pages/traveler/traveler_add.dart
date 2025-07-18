@@ -202,6 +202,7 @@ class _TravelerAddState extends State<TravelerAdd> {
     await BlocProvider.of<TravelerCubit>(context).deleteTraveler(widget.id!);
     if (context.mounted) {
       Navigator.pop(context);
+      Navigator.pop(context);
     }
   }
 

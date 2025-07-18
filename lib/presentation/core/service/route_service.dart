@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flyt_app/presentation/core/model/arguments/document_add_args.dart';
 import 'package:flyt_app/presentation/core/model/arguments/phrases_add_args.dart';
 import 'package:flyt_app/presentation/pages/event/event_add.dart';
 import 'package:flyt_app/presentation/pages/packing/packing_add.dart';
@@ -9,6 +10,7 @@ import 'package:flyt_app/presentation/pages/traveler/traveler_add.dart';
 import '../../pages/home.dart';
 import '../../pages/phrases/phrases_add.dart';
 import '../../pages/setting/setting.dart';
+import '../../pages/traveler/document_add.dart';
 import '../../pages/traveler/traveler_detail.dart';
 import '../constant/routes_values.dart';
 import '../widget/image_view.dart';
@@ -25,6 +27,9 @@ class RouteService {
       case RoutesValues.travelerDetail:
         var id = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => TravelerDetailPageProvider(id: id));
+      case RoutesValues.documentAdd:
+        var args = settings.arguments as DocumentAddArgs;
+        return MaterialPageRoute(builder: (_) => DocumentAddProvider(item: args));
       case RoutesValues.packingAdd:
         var id = settings.arguments as String?;
         return MaterialPageRoute(builder: (_) => PackingAddProvider(id: id));

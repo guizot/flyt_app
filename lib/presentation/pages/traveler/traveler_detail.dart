@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/models/local/document_model.dart';
 import '../../../data/models/local/traveler_model.dart';
 import '../../../injector.dart';
 import '../../core/constant/routes_values.dart';
 import '../../core/handler/dialog_handler.dart';
 import '../../core/helper/age_helper.dart';
+import '../../core/model/arguments/document_add_args.dart';
+import '../../core/widget/empty_state.dart';
 import '../../core/widget/loading_state.dart';
 import 'cubit/traveler_cubit.dart';
 import 'cubit/traveler_state.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/services.dart';
+
+import 'document_item.dart';
 
 class TravelerDetailPageProvider extends StatelessWidget {
   const TravelerDetailPageProvider({super.key, this.id});
@@ -72,23 +77,23 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
   }
 
   void navigateDocumentAdd() {
-    // Navigator.pushNamed(
-    //   context,
-    //   RoutesValues.documentAdd,
-    //   arguments: DocumentAddArgs(travelerId: widget.id!),
-    // ).then((value) {
-    //   refreshData();
-    // });
+    Navigator.pushNamed(
+      context,
+      RoutesValues.documentAdd,
+      arguments: DocumentAddArgs(travelerId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
   }
 
   void navigateDocumentEdit(String id) {
-    // Navigator.pushNamed(
-    //   context,
-    //   RoutesValues.documentAdd,
-    //   arguments: DocumentAddArgs(id: id, travelerId: widget.id!),
-    // ).then((value) {
-    //   refreshData();
-    // });
+    Navigator.pushNamed(
+      context,
+      RoutesValues.documentAdd,
+      arguments: DocumentAddArgs(id: id, travelerId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
   }
 
   void navigateAction(BuildContext context) {
@@ -158,7 +163,7 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
     );
   }
 
-  Widget buildTabContent(int index, Traveler? traveler) {
+  Widget buildTabContent(int index, Traveler? traveler, List<DocumentModel> documents) {
     switch (index) {
       case 0:
         return traveler != null
@@ -203,8 +208,8 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
                                 Text(
                                   item['title'] as String,
                                   style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
                                   ),
                                 ),
                               ],
@@ -228,18 +233,18 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
                                 Text(
                                   item['title'] as String,
                                   style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 6),
                                 Text(
                                   item['description'] as String,
                                   style: TextStyle(
                                     color: Theme.of(
                                       context,
                                     ).textTheme.bodySmall?.color,
-                                    fontSize: 14,
+                                    fontSize: 15,
                                   ),
                                 ),
                               ],
@@ -249,27 +254,34 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
                 },
               )
             : Container();
-      // case 1:
-      //   return documents.isNotEmpty ? ListView.builder(
-      //     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-      //     itemCount: documents.length,
-      //     itemBuilder: (context, index) {
-      //       return DocumentItem(
-      //         item: documents[index],
-      //         onTap: navigateDocumentEdit,
-      //       );
-      //     },
-      //   )
-      //       : Padding(
-      //       padding: const EdgeInsets.only(bottom: 60),
-      //       child: EmptyState(
-      //           title: "No Records",
-      //           subtitle: "You haven’t added any Document. Once you do, they’ll appear here.",
-      //           tapText: "Add Document +",
-      //           onTap: navigateDocumentAdd,
-      //           onLearn: showDataWarning
-      //       )
-      //   );
+      case 1:
+        return documents.isNotEmpty ? ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+          itemCount: documents.length,
+          itemBuilder: (context, index) {
+            return DocumentItem(
+              item: documents[index],
+              onTap: navigateDocumentEdit,
+              onViewImage: (bytes) {
+                Navigator.pushNamed(
+                  context,
+                  RoutesValues.viewImage,
+                  arguments: bytes,
+                );
+              },
+            );
+          },
+        )
+            : Padding(
+            padding: const EdgeInsets.only(bottom: 60),
+            child: EmptyState(
+                title: "No Records",
+                subtitle: "You haven’t added any Document. Once you do, they’ll appear here.",
+                tapText: "Add Document +",
+                onTap: navigateDocumentAdd,
+                onLearn: showDataWarning
+            )
+        );
       default:
         return const SizedBox.shrink();
     }
@@ -332,7 +344,7 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
     TravelerDetailLoaded state,
   ) {
     Traveler? traveler = state.traveler;
-    // List<DocumentModel> documents = state.documents;
+    List<DocumentModel> documents = state.documents;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -375,9 +387,8 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
                 setState(() => selectedTabIndex = index);
               },
               children: [
-                buildTabContent(0, traveler),
-                buildTabContent(1, traveler),
-                buildTabContent(2, traveler),
+                buildTabContent(0, traveler, documents),
+                buildTabContent(1, traveler, documents),
               ],
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flyt_app/data/models/local/event_model.dart';
+import '../../data/models/local/document_model.dart';
 import '../../data/models/local/packing_model.dart';
 import '../../data/models/local/language_model.dart';
 import '../../data/models/local/phrases_model.dart';
@@ -23,6 +24,16 @@ abstract class HiveRepo {
     Future<void> saveTraveler(String id, Traveler item);
     Future<void> deleteTraveler(String id);
     Future<void> deleteAllTraveler(Iterable<dynamic> keys);
+
+  // endregion
+
+  // region DOCUMENT
+
+  List<DocumentModel> getAllDocument();
+  DocumentModel? getDocument(String id);
+  Future<void> saveDocument(String id, DocumentModel item);
+  Future<void> deleteDocument(String id);
+  Future<void> deleteAllDocument(Iterable<dynamic> keys);
 
   // endregion
 

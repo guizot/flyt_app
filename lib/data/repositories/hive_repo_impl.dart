@@ -1,6 +1,7 @@
 import 'package:flyt_app/data/models/local/event_model.dart';
 import '../../domain/repositories/hive_repo.dart';
 import '../datasource/local/hive_data_source.dart';
+import '../models/local/document_model.dart';
 import '../models/local/packing_model.dart';
 import '../models/local/language_model.dart';
 import '../models/local/phrases_model.dart';
@@ -68,6 +69,35 @@ class HiveRepoImpl implements HiveRepo {
   @override
   Future<void> deleteAllTraveler(Iterable<dynamic> keys) async {
     await hiveDataSource.travelerBox.deleteAll(keys);
+  }
+
+  // endregion
+
+  // region DOCUMENT
+
+  @override
+  List<DocumentModel> getAllDocument() {
+    return hiveDataSource.documentBox.values.toList();
+  }
+
+  @override
+  DocumentModel? getDocument(String id) {
+    return hiveDataSource.documentBox.get(id);
+  }
+
+  @override
+  Future<void> saveDocument(String id, DocumentModel item) async {
+    await hiveDataSource.documentBox.put(id, item);
+  }
+
+  @override
+  Future<void> deleteDocument(String id) async {
+    await hiveDataSource.documentBox.delete(id);
+  }
+
+  @override
+  Future<void> deleteAllDocument(Iterable<dynamic> keys) async {
+    await hiveDataSource.documentBox.deleteAll(keys);
   }
 
   // endregion

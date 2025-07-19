@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flyt_app/data/models/local/trip_model.dart';
+import 'package:intl/intl.dart';
 
 class TripItem extends StatefulWidget {
   const TripItem({super.key, required this.item, required this.onTap });
@@ -11,6 +12,24 @@ class TripItem extends StatefulWidget {
 }
 
 class _TripItemState extends State<TripItem> {
+
+  String formatTripDate(String start, String end) {
+    final inputFormat = DateFormat('dd MMM yyyy');
+    final startDate = inputFormat.parse(start);
+    final endDate = inputFormat.parse(end);
+
+    if (startDate == endDate) {
+      return DateFormat('dd MMM yyyy').format(startDate);
+    } else if (startDate.year == endDate.year) {
+      if (startDate.month == endDate.month) {
+        return "${DateFormat('dd').format(startDate)} - ${DateFormat('dd MMM yyyy').format(endDate)}";
+      } else {
+        return "${DateFormat('dd MMM').format(startDate)} - ${DateFormat('dd MMM yyyy').format(endDate)}";
+      }
+    } else {
+      return "${DateFormat('dd MMM yyyy').format(startDate)} - ${DateFormat('dd MMM yyyy').format(endDate)}";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +57,8 @@ class _TripItemState extends State<TripItem> {
                 // Left: Image
                 widget.item.photoBytes != null
                     ? Container(
-                  width: 100,
-                  height: 100,
+                  width: 80,
+                  height: 80,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     image: DecorationImage(
@@ -49,8 +68,8 @@ class _TripItemState extends State<TripItem> {
                   ),
                 )
                     : Container(
-                  width: 100,
-                  height: 100,
+                  width: 80,
+                  height: 80,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     color: Theme.of(context).colorScheme.surface,
@@ -69,14 +88,14 @@ class _TripItemState extends State<TripItem> {
                         widget.item.title,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 18,
+                          fontSize: 16,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
                       ),
                       const SizedBox(height: 4.0),
                       Text(
-                        "${widget.item.startDate} - ${widget.item.endDate}",
+                        formatTripDate(widget.item.startDate, widget.item.endDate),
                         style: TextStyle(
                           color: Theme.of(context).textTheme.bodySmall?.color,
                           fontWeight: FontWeight.w400,

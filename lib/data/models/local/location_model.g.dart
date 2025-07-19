@@ -26,15 +26,16 @@ class LocationModelAdapter extends TypeAdapter<LocationModel> {
       email: fields[6] as String,
       website: fields[7] as String,
       mapUrl: fields[8] as String,
-      note: fields[9] as String,
-      createdAt: fields[10] as DateTime,
+      note: fields[9] as String?,
+      tripId: fields[10] as String,
+      createdAt: fields[11] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, LocationModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,6 +57,8 @@ class LocationModelAdapter extends TypeAdapter<LocationModel> {
       ..writeByte(9)
       ..write(obj.note)
       ..writeByte(10)
+      ..write(obj.tripId)
+      ..writeByte(11)
       ..write(obj.createdAt);
   }
 

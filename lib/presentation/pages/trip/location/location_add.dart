@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:flyt_app/presentation/core/model/static/location_types.dart';
 import 'package:uuid/uuid.dart';
-import '../../../../data/models/local/trip_model.dart';
+import '../../../../data/models/local/location_model.dart';
 import '../../../../injector.dart';
-import '../../../core/constant/form_type.dart';
 import '../../../core/handler/dialog_handler.dart';
 import '../../../core/model/arguments/common_add_args.dart';
 import '../../../core/widget/add_image_item.dart';
+import '../../../core/widget/drop_down_item.dart';
 import '../../../core/widget/loading_state.dart';
 import '../../../core/widget/text_field_item.dart';
 import '../cubit/trip_cubit.dart';
@@ -36,19 +36,27 @@ class LocationAdd extends StatefulWidget {
 
 class _LocationAddState extends State<LocationAdd> {
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController startDateController = TextEditingController();
-  TextEditingController endDateController = TextEditingController();
-  TextEditingController descController = TextEditingController();
-  TripModel? trip;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController typeController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController websiteController = TextEditingController();
+  TextEditingController urlController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
+  LocationModel? location;
   Uint8List? imagePhoto;
 
   Map<String, String> populateForm() {
     return {
-      'title': titleController.text,
-      'startDate': startDateController.text,
-      'endDate': endDateController.text,
-      'description': descController.text,
+      'name': nameController.text,
+      'type': typeController.text,
+      'address': addressController.text,
+      'phone': phoneController.text,
+      'email': emailController.text,
+      'website': websiteController.text,
+      'url': urlController.text,
+      'note': noteController.text,
     };
   }
 
@@ -56,14 +64,18 @@ class _LocationAddState extends State<LocationAdd> {
   void initState() {
     super.initState();
     if (widget.item.id != null) {
-      trip = BlocProvider.of<TripCubit>(context).getTrip(widget.item.id!);
-      if(trip != null) {
+      location = BlocProvider.of<TripCubit>(context).getLocation(widget.item.id!);
+      if(location != null) {
         setState(() {
-          imagePhoto = trip!.photoBytes;
-          titleController.text = trip!.title;
-          startDateController.text = trip!.startDate;
-          endDateController.text = trip!.endDate;
-          descController.text = trip!.description;
+          imagePhoto = location!.photoBytes;
+          nameController.text = location!.name;
+          typeController.text = location!.type;
+          addressController.text = location!.address;
+          phoneController.text = location!.phone;
+          emailController.text = location!.email;
+          websiteController.text = location!.website;
+          urlController.text = location!.mapUrl;
+          noteController.text = location!.note ?? '';
         });
       }
     }
@@ -78,41 +90,32 @@ class _LocationAddState extends State<LocationAdd> {
       );
       return;
     }
-    if (formData['title']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Title cannot be empty");
+    if (formData['name']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Location Name cannot be empty");
       return;
     }
-    if (formData['startDate']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "Start Date Date cannot be empty",
-      );
+    if (formData['type']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Location Type cannot be empty");
       return;
     }
-    if (formData['endDate']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "End Date Date cannot be empty",
-      );
+    if (formData['address']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Address cannot be empty");
       return;
     }
-    if (formData['description']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Description cannot be empty");
+    if (formData['phone']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Phone cannot be empty");
       return;
     }
-    try {
-      final dateFormat = DateFormat('dd MMM yyyy');
-      final startDate = dateFormat.parse(formData['startDate']!);
-      final endDate = dateFormat.parse(formData['endDate']!);
-
-      if (endDate.isBefore(startDate)) {
-        DialogHandler.showSnackBar(
-            context: context,
-            message: "End Time cannot be earlier than Start Time");
-        return;
-      }
-    } catch (e) {
-      DialogHandler.showSnackBar(context: context, message: "Invalid date format");
+    if (formData['email']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Email cannot be empty");
+      return;
+    }
+    if (formData['website']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Eebsite cannot be empty");
+      return;
+    }
+    if (formData['url']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Google Maps URL cannot be empty");
       return;
     }
     if(widget.item.id != null) {
@@ -124,16 +127,21 @@ class _LocationAddState extends State<LocationAdd> {
 
   void onSubmit(BuildContext context, Map<String, String> data) async {
     try {
-      await BlocProvider.of<TripCubit>(context).saveTrip(
-          TripModel(
-            id: widget.item.id != null ? widget.item.id! : const Uuid().v4(),
-            title: data['title']!,
-            description: data['description']!,
-            startDate: data['startDate']!,
-            endDate: data['endDate']!,
-            photoBytes: imagePhoto,
-            createdAt: widget.item.id != null ? trip!.createdAt : DateTime.now(),
-          )
+      await BlocProvider.of<TripCubit>(context).saveLocation(
+        LocationModel(
+          id: widget.item.id != null ? widget.item.id! : const Uuid().v4(),
+          name: data['name']!,
+          type: data['type']!,
+          address: data['address']!,
+          phone: data['phone']!,
+          email: data['email']!,
+          website: data['website']!,
+          mapUrl: data['url']!,
+          note: data['note']!,
+          tripId: widget.item.tripId,
+          photoBytes: imagePhoto,
+          createdAt: widget.item.id != null ? location!.createdAt : DateTime.now(),
+        )
       );
       if(context.mounted) {
         Navigator.pop(context);
@@ -194,23 +202,40 @@ class _LocationAddState extends State<LocationAdd> {
                   initialImageBytes: imagePhoto,
                 ),
                 TextFieldItem(
-                    title: "Title",
-                    controller: titleController
+                    title: "Location Name",
+                    controller: nameController
+                ),
+                DropDownItem(
+                  title: "Location Type",
+                  controller: typeController,
+                  items: locationTypes
+                      .map((c) => {'title': c.name, 'icon': c.icon})
+                      .toList(),
                 ),
                 TextFieldItem(
-                  title: "Start Date",
-                  formType: FormType.date,
-                  controller: startDateController,
-                ),
-                TextFieldItem(
-                  title: "End Date",
-                  formType: FormType.date,
-                  controller: endDateController,
-                ),
-                TextFieldItem(
-                    title: "Description",
+                    title: "Address",
                     inputType: TextInputType.multiline,
-                    controller: descController
+                    controller: addressController
+                ),
+                TextFieldItem(
+                    title: "Phone",
+                    controller: phoneController
+                ),
+                TextFieldItem(
+                    title: "Email",
+                    controller: emailController
+                ),
+                TextFieldItem(
+                    title: "Website",
+                    controller: websiteController
+                ),
+                TextFieldItem(
+                    title: "Google Maps URL",
+                    controller: urlController
+                ),
+                TextFieldItem(
+                    title: "Notes",
+                    controller: noteController
                 ),
               ],
             )

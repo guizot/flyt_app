@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flyt_app/data/models/local/note_model.dart';
 import 'package:flyt_app/presentation/core/model/arguments/common_add_args.dart';
+import '../../../data/models/local/location_model.dart';
 import '../../../data/models/local/trip_model.dart';
 import '../../../injector.dart';
 import '../../core/constant/routes_values.dart';
@@ -11,6 +12,7 @@ import '../../core/widget/loading_state.dart';
 import 'cubit/trip_cubit.dart';
 import 'cubit/trip_state.dart';
 import 'description/description_item.dart';
+import 'location/location_item.dart';
 import 'note/note_item.dart';
 
 class TripDetailPageProvider extends StatelessWidget {
@@ -82,6 +84,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     if (selectedTabIndex == 0) {
     } else if (selectedTabIndex == 1) {
     } else if (selectedTabIndex == 2) {
+      navigateLocationAdd(context);
     } else if (selectedTabIndex == 3) {
     } else if (selectedTabIndex == 4) {
       navigateTripEdit(context);
@@ -118,6 +121,26 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
       context,
       RoutesValues.noteAdd,
       arguments: CommonAddArgs(id: id, tripId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
+  }
+
+  void navigateLocationAdd(BuildContext context) {
+    Navigator.pushNamed(
+      context,
+      RoutesValues.locationAdd,
+      arguments: CommonAddArgs(tripId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
+  }
+
+  void navigateLocationDetail(String id) {
+    Navigator.pushNamed(
+      context,
+      RoutesValues.locationDetail,
+      arguments: id
     ).then((value) {
       refreshData();
     });
@@ -221,7 +244,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
               children: [
                 itineraryPage(),
                 bookingPage(),
-                locationPage(),
+                locationPage(state.locations),
                 pathPage(),
                 descriptionPage(state.trip),
                 notesPage(state.notes),
@@ -242,8 +265,27 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     return const Center(child: Text("Booking"));
   }
 
-  Widget locationPage() {
-    return const Center(child: Text("Location"));
+  Widget locationPage(List<LocationModel> locations) {
+    if (locations.isEmpty) {
+      return EmptyState(
+        title: "No Records",
+        subtitle: "You haven’t added any location. Once you do, they’ll appear here.",
+        tapText: "Add Location +",
+        onTap: () => navigateLocationAdd(context),
+        onLearn: showDataWarning,
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: locations.length,
+      itemBuilder: (context, index) {
+        final location = locations[index];
+        return LocationItem(
+          item: location,
+          onTap: (id) => navigateLocationDetail(id),
+        );
+      },
+    );
   }
 
   Widget pathPage() {

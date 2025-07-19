@@ -1,6 +1,7 @@
 import 'package:flyt_app/data/models/local/note_model.dart';
 import 'package:flyt_app/domain/repositories/hive_repo.dart';
 import 'package:intl/intl.dart';
+import '../../data/models/local/location_model.dart';
 import '../../data/models/local/trip_model.dart';
 import '../../presentation/pages/trip/trip_display_item.dart';
 
@@ -88,8 +89,14 @@ class TripUseCases {
     }
   }
 
+
   List<NoteModel> getAllNote(String tripId) {
-    return hiveRepo.getAllNote().where((note) => note.tripId == tripId).toList();
+    final notes = hiveRepo
+        .getAllNote()
+        .where((note) => note.tripId == tripId)
+        .toList();
+    notes.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    return notes;
   }
 
   NoteModel? getNote(String id) {
@@ -102,6 +109,28 @@ class TripUseCases {
 
   Future<void> deleteNote(String id) async {
     await hiveRepo.deleteNote(id);
+  }
+
+
+  List<LocationModel> getAllLocation(String tripId) {
+    final locations = hiveRepo
+        .getAllLocation()
+        .where((location) => location.tripId == tripId)
+        .toList();
+    locations.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return locations;
+  }
+
+  LocationModel? getLocation(String id) {
+    return hiveRepo.getLocation(id);
+  }
+
+  Future<void> saveLocation(LocationModel item) async {
+    await hiveRepo.saveLocation(item.id, item);
+  }
+
+  Future<void> deleteLocation(String id) async {
+    await hiveRepo.deleteLocation(id);
   }
 
 }

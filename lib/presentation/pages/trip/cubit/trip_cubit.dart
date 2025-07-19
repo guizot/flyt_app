@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../data/models/local/location_model.dart';
 import '../../../../data/models/local/note_model.dart';
 import '../../../../data/models/local/trip_model.dart';
 import '../../../../domain/usecases/trip_usecases.dart';
@@ -62,11 +63,14 @@ class TripCubit extends Cubit<TripCubitState> {
     emit(TripLoading());
     TripModel? trip = tripUseCases.getTrip(id);
     List<NoteModel> notes = tripUseCases.getAllNote(id);
+    List<LocationModel> locations = tripUseCases.getAllLocation(id);
     emit(TripDetailLoaded(
       trip: trip,
-      notes: notes
+      notes: notes,
+      locations: locations
     ));
   }
+
 
   NoteModel? getNote(String id) {
     emit(TripLoading());
@@ -82,6 +86,24 @@ class TripCubit extends Cubit<TripCubitState> {
   Future<void> deleteNote(String id) async {
     emit(TripLoading());
     await tripUseCases.deleteNote(id);
+    emit(TripInitial());
+  }
+
+
+  LocationModel? getLocation(String id) {
+    emit(TripLoading());
+    LocationModel? location = tripUseCases.getLocation(id);
+    emit(TripInitial());
+    return location;
+  }
+
+  Future<void> saveLocation(LocationModel item) async {
+    await tripUseCases.saveLocation(item);
+  }
+
+  Future<void> deleteLocation(String id) async {
+    emit(TripLoading());
+    await tripUseCases.deleteLocation(id);
     emit(TripInitial());
   }
 

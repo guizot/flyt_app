@@ -33,9 +33,12 @@ class LocationModel extends HiveObject {
   String mapUrl;
 
   @HiveField(9)
-  String note;
+  String? note;
 
   @HiveField(10)
+  String tripId;
+
+  @HiveField(11)
   DateTime createdAt;
 
   LocationModel({
@@ -48,7 +51,8 @@ class LocationModel extends HiveObject {
     required this.email,
     required this.website,
     required this.mapUrl,
-    required this.note,
+    this.note,
+    required this.tripId,
     required this.createdAt,
   });
 }

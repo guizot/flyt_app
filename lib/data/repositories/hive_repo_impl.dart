@@ -1,8 +1,13 @@
 import '../../domain/repositories/hive_repo.dart';
 import '../datasource/local/hive_data_source.dart';
+import '../models/local/booking_model.dart';
 import '../models/local/document_model.dart';
+import '../models/local/itinerary_model.dart';
+import '../models/local/location_model.dart';
+import '../models/local/note_model.dart';
 import '../models/local/packing_model.dart';
 import '../models/local/language_model.dart';
+import '../models/local/path_model.dart';
 import '../models/local/phrases_model.dart';
 import '../models/local/traveler_model.dart';
 import '../models/local/trip_model.dart';
@@ -185,6 +190,151 @@ class HiveRepoImpl implements HiveRepo {
   @override
   Future<void> deleteAllPhrases(Iterable<dynamic> keys) async {
     await hiveDataSource.phrasesBox.deleteAll(keys);
+  }
+
+  // endregion
+
+  // region BOOKING
+
+  @override
+  List<BookingModel> getAllBooking() {
+    return hiveDataSource.bookingBox.values.toList();
+  }
+
+  @override
+  BookingModel? getBooking(String id) {
+    return hiveDataSource.bookingBox.get(id);
+  }
+
+  @override
+  Future<void> saveBooking(String id, BookingModel item) async {
+    await hiveDataSource.bookingBox.put(id, item);
+  }
+
+  @override
+  Future<void> deleteBooking(String id) async {
+    await hiveDataSource.bookingBox.delete(id);
+  }
+
+  @override
+  Future<void> deleteAllBooking(Iterable<dynamic> keys) async {
+    await hiveDataSource.bookingBox.deleteAll(keys);
+  }
+
+  // endregion
+
+  // region ITINERARY
+
+  @override
+  List<ItineraryModel> getAllItinerary() {
+    return hiveDataSource.itineraryBox.values.toList();
+  }
+
+  @override
+  ItineraryModel? getItinerary(String id) {
+    return hiveDataSource.itineraryBox.get(id);
+  }
+
+  @override
+  Future<void> saveItinerary(String id, ItineraryModel item) async {
+    await hiveDataSource.itineraryBox.put(id, item);
+  }
+
+  @override
+  Future<void> deleteItinerary(String id) async {
+    await hiveDataSource.itineraryBox.delete(id);
+  }
+
+  @override
+  Future<void> deleteAllItinerary(Iterable<dynamic> keys) async {
+    await hiveDataSource.itineraryBox.deleteAll(keys);
+  }
+
+  // endregion
+
+  // region LOCATION
+
+  @override
+  List<LocationModel> getAllLocation() {
+    return hiveDataSource.locationBox.values.toList();
+  }
+
+  @override
+  LocationModel? getLocation(String id) {
+    return hiveDataSource.locationBox.get(id);
+  }
+
+  @override
+  Future<void> saveLocation(String id, LocationModel item) async {
+    await hiveDataSource.locationBox.put(id, item);
+  }
+
+  @override
+  Future<void> deleteLocation(String id) async {
+    await hiveDataSource.locationBox.delete(id);
+  }
+
+  @override
+  Future<void> deleteAllLocation(Iterable<dynamic> keys) async {
+    await hiveDataSource.locationBox.deleteAll(keys);
+  }
+
+  // endregion
+
+  // region PATH
+
+  @override
+  List<PathModel> getAllPath() {
+    return hiveDataSource.pathBox.values.toList();
+  }
+
+  @override
+  PathModel? getPath(String id) {
+    return hiveDataSource.pathBox.get(id);
+  }
+
+  @override
+  Future<void> savePath(String id, PathModel item) async {
+    await hiveDataSource.pathBox.put(id, item);
+  }
+
+  @override
+  Future<void> deletePath(String id) async {
+    await hiveDataSource.pathBox.delete(id);
+  }
+
+  @override
+  Future<void> deleteAllPath(Iterable<dynamic> keys) async {
+    await hiveDataSource.pathBox.deleteAll(keys);
+  }
+
+  // endregion
+
+  // region NOTE
+
+  @override
+  List<NoteModel> getAllNote() {
+    return hiveDataSource.noteBox.values.toList();
+  }
+
+  @override
+  NoteModel? getNote(String id) {
+    return hiveDataSource.noteBox.get(id);
+  }
+
+  @override
+  Future<void> saveNote(String id, NoteModel item) async {
+    await hiveDataSource.noteBox.put(id, item);
+  }
+
+  @override
+  Future<void> deleteNote(String id) async {
+    await hiveDataSource.noteBox.delete(id);
+  }
+
+  @override
+  Future<void> deleteAllNote(Iterable<dynamic> keys) async {
+    await hiveDataSource.noteBox.deleteAll(keys);
   }
 
   // endregion

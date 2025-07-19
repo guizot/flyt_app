@@ -2,6 +2,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flyt_app/presentation/core/model/arguments/document_add_args.dart';
 import 'package:flyt_app/presentation/core/model/arguments/phrases_add_args.dart';
+import 'package:flyt_app/presentation/pages/trip/location/location_add.dart';
+import 'package:flyt_app/presentation/pages/trip/notes/note_add.dart';
+import 'package:flyt_app/presentation/pages/trip/path/path_add.dart';
 import 'package:flyt_app/presentation/pages/trip/trip_add.dart';
 import 'package:flyt_app/presentation/pages/packing/packing_add.dart';
 import 'package:flyt_app/presentation/pages/phrases/language_add.dart';
@@ -12,8 +15,13 @@ import '../../pages/phrases/phrases_add.dart';
 import '../../pages/setting/setting.dart';
 import '../../pages/traveler/document_add.dart';
 import '../../pages/traveler/traveler_detail.dart';
+import '../../pages/trip/booking/booking_add.dart';
+import '../../pages/trip/booking/booking_detail.dart';
+import '../../pages/trip/itinerary/itinerary_add.dart';
+import '../../pages/trip/location/location_detail.dart';
 import '../../pages/trip/trip_detail.dart';
 import '../constant/routes_values.dart';
+import '../model/arguments/common_add_args.dart';
 import '../widget/image_view.dart';
 
 class RouteService {
@@ -54,6 +62,27 @@ class RouteService {
         return MaterialPageRoute(builder: (_) => ImageView(imageBytes: imageBytes));
       case RoutesValues.setting:
         return MaterialPageRoute(builder: (_) => const SettingPage());
+      case RoutesValues.bookingAdd:
+        var args = settings.arguments as CommonAddArgs;
+        return MaterialPageRoute(builder: (_) => BookingAddProvider(item: args));
+      case RoutesValues.itineraryAdd:
+        var args = settings.arguments as CommonAddArgs;
+        return MaterialPageRoute(builder: (_) => ItineraryAddProvider(item: args));
+      case RoutesValues.locationAdd:
+        var args = settings.arguments as CommonAddArgs;
+        return MaterialPageRoute(builder: (_) => LocationAddProvider(item: args));
+      case RoutesValues.noteAdd:
+        var args = settings.arguments as CommonAddArgs;
+        return MaterialPageRoute(builder: (_) => NoteAddProvider(item: args));
+      case RoutesValues.pathAdd:
+        var args = settings.arguments as CommonAddArgs;
+        return MaterialPageRoute(builder: (_) => PathAddProvider(item: args));
+      case RoutesValues.bookingDetail:
+        var id = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => BookingDetailPageProvider(id: id));
+      case RoutesValues.locationDetail:
+        var id = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => LocationDetailPageProvider(id: id));
       default:
         return MaterialPageRoute(builder: (_) {
           return Scaffold(

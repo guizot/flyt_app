@@ -11,4 +11,11 @@ class RoutesValues {
   static const String tripDetail = '/trip-detail';
   static const String setting = '/setting';
   static const String viewImage = '/view-image';
+  static const String bookingAdd = '/booking-add';
+  static const String bookingDetail = '/booking-detail';
+  static const String locationAdd = '/location-add';
+  static const String locationDetail = '/location-detail';
+  static const String itineraryAdd = '/itinerary-add';
+  static const String noteAdd = '/note-add';
+  static const String pathAdd = '/path-add';
 }

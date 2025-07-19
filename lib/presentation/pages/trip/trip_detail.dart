@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyt_app/data/models/local/note_model.dart';
+import 'package:flyt_app/presentation/core/model/arguments/common_add_args.dart';
+import '../../../data/models/local/trip_model.dart';
 import '../../../injector.dart';
 import '../../core/constant/routes_values.dart';
 import '../../core/handler/dialog_handler.dart';
-import '../../core/model/arguments/document_add_args.dart';
+import '../../core/widget/empty_state.dart';
 import '../../core/widget/loading_state.dart';
 import 'cubit/trip_cubit.dart';
 import 'cubit/trip_state.dart';
+import 'description/description_item.dart';
+import 'note/note_item.dart';
 
 class TripDetailPageProvider extends StatelessWidget {
   const TripDetailPageProvider({super.key, this.id});
@@ -53,6 +58,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     context.read<TripCubit>().getAllDetail(widget.id!);
   }
 
+
   void scrollToSelectedTab() {
     final keyContext = _tabKeys[selectedTabIndex].currentContext;
     if (keyContext != null) {
@@ -71,6 +77,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     scrollToSelectedTab();
   }
 
+
   void navigateAction(BuildContext context) {
     if (selectedTabIndex == 0) {
     } else if (selectedTabIndex == 1) {
@@ -78,7 +85,9 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     } else if (selectedTabIndex == 3) {
     } else if (selectedTabIndex == 4) {
       navigateTripEdit(context);
-    } else if (selectedTabIndex == 5) {}
+    } else if (selectedTabIndex == 5) {
+      navigateNoteAdd(context);
+    }
   }
 
   void navigateTripEdit(BuildContext context) {
@@ -94,11 +103,11 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     });
   }
 
-  void navigateNoteAdd() {
+  void navigateNoteAdd(BuildContext context) {
     Navigator.pushNamed(
       context,
-      RoutesValues.documentAdd,
-      arguments: DocumentAddArgs(travelerId: widget.id!),
+      RoutesValues.noteAdd,
+      arguments: CommonAddArgs(tripId: widget.id!),
     ).then((value) {
       refreshData();
     });
@@ -107,12 +116,13 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
   void navigateNoteEdit(String id) {
     Navigator.pushNamed(
       context,
-      RoutesValues.documentAdd,
-      arguments: DocumentAddArgs(id: id, travelerId: widget.id!),
+      RoutesValues.noteAdd,
+      arguments: CommonAddArgs(id: id, tripId: widget.id!),
     ).then((value) {
       refreshData();
     });
   }
+
 
   void showDataWarning() {
     DialogHandler.showConfirmDialog(
@@ -184,7 +194,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
           SingleChildScrollView(
             padding: const EdgeInsets.only(
               top: 16.0,
-              bottom: 8.0,
+              bottom: 16.0,
               left: 16,
               right: 16,
             ),
@@ -213,8 +223,8 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
                 bookingPage(),
                 locationPage(),
                 pathPage(),
-                descriptionPage(),
-                notesPage(),
+                descriptionPage(state.trip),
+                notesPage(state.notes),
               ],
             ),
           ),
@@ -222,6 +232,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
       ),
     );
   }
+
 
   Widget itineraryPage() {
     return const Center(child: Text("Itinerary"));
@@ -239,13 +250,86 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     return const Center(child: Text("Path"));
   }
 
-  Widget descriptionPage() {
-    return const Center(child: Text("Description"));
+  Widget descriptionPage(TripModel? trip) {
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        DescriptionItem(title: 'Title', child: Text(
+          trip?.title ?? '',
+          style: const TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          )
+        )),
+        DescriptionItem(title: 'Start Date & End Date', child: Text(
+          '${trip?.startDate} - ${trip?.endDate}',
+          style: const TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          )
+        )),
+        DescriptionItem(title: 'Description', child: Text(
+          trip?.description ?? '',
+          style: const TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          )
+        )),
+        DescriptionItem(title: 'Image', separator: false, child: Container(
+          width: double.infinity,
+          height: 200,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          alignment: Alignment.center,
+          child: trip?.photoBytes != null
+              ? ClipRRect(
+            borderRadius: BorderRadius.circular(12.0),
+            child: Image.memory(
+              trip!.photoBytes!,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              height: 200,
+            ),
+          ) : Container(),
+        ),
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              RoutesValues.viewImage,
+              arguments: trip?.photoBytes,
+            );
+          },
+        )
+      ],
+    );
   }
 
-  Widget notesPage() {
-    return const Center(child: Text("Notes"));
+  Widget notesPage(List<NoteModel> notes) {
+    if (notes.isEmpty) {
+      return EmptyState(
+        title: "No Records",
+        subtitle: "You haven’t added any note. Once you do, they’ll appear here.",
+        tapText: "Add Note +",
+        onTap: () => navigateNoteAdd(context),
+        onLearn: showDataWarning,
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: notes.length,
+      itemBuilder: (context, index) {
+        final note = notes[index];
+        return NoteItem(
+          item: note,
+          onTap: (id) => navigateNoteEdit(id),
+        );
+      },
+    );
   }
+
+
 
   @override
   Widget build(BuildContext context) {

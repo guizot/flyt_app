@@ -1,3 +1,4 @@
+import 'package:flyt_app/data/models/local/note_model.dart';
 import 'package:flyt_app/domain/repositories/hive_repo.dart';
 import 'package:intl/intl.dart';
 import '../../data/models/local/trip_model.dart';
@@ -85,6 +86,22 @@ class TripUseCases {
     } catch (e) {
       return [];
     }
+  }
+
+  List<NoteModel> getAllNote(String tripId) {
+    return hiveRepo.getAllNote().where((note) => note.tripId == tripId).toList();
+  }
+
+  NoteModel? getNote(String id) {
+    return hiveRepo.getNote(id);
+  }
+
+  Future<void> saveNote(NoteModel item) async {
+    await hiveRepo.saveNote(item.id, item);
+  }
+
+  Future<void> deleteNote(String id) async {
+    await hiveRepo.deleteNote(id);
   }
 
 }

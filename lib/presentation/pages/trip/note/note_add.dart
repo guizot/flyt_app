@@ -1,14 +1,10 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:flyt_app/data/models/local/note_model.dart';
 import 'package:uuid/uuid.dart';
-import '../../../../data/models/local/trip_model.dart';
 import '../../../../injector.dart';
-import '../../../core/constant/form_type.dart';
 import '../../../core/handler/dialog_handler.dart';
 import '../../../core/model/arguments/common_add_args.dart';
-import '../../../core/widget/add_image_item.dart';
 import '../../../core/widget/loading_state.dart';
 import '../../../core/widget/text_field_item.dart';
 import '../cubit/trip_cubit.dart';
@@ -37,17 +33,12 @@ class NoteAdd extends StatefulWidget {
 class _NoteAddState extends State<NoteAdd> {
 
   TextEditingController titleController = TextEditingController();
-  TextEditingController startDateController = TextEditingController();
-  TextEditingController endDateController = TextEditingController();
   TextEditingController descController = TextEditingController();
-  TripModel? trip;
-  Uint8List? imagePhoto;
+  NoteModel? note;
 
   Map<String, String> populateForm() {
     return {
       'title': titleController.text,
-      'startDate': startDateController.text,
-      'endDate': endDateController.text,
       'description': descController.text,
     };
   }
@@ -56,14 +47,11 @@ class _NoteAddState extends State<NoteAdd> {
   void initState() {
     super.initState();
     if (widget.item.id != null) {
-      trip = BlocProvider.of<TripCubit>(context).getTrip(widget.item.id!);
-      if(trip != null) {
+      note = BlocProvider.of<TripCubit>(context).getNote(widget.item.id!);
+      if(note != null) {
         setState(() {
-          imagePhoto = trip!.photoBytes;
-          titleController.text = trip!.title;
-          startDateController.text = trip!.startDate;
-          endDateController.text = trip!.endDate;
-          descController.text = trip!.description;
+          titleController.text = note!.title;
+          descController.text = note!.description;
         });
       }
     }
@@ -71,48 +59,12 @@ class _NoteAddState extends State<NoteAdd> {
 
   void validateForm(BuildContext context) async {
     final formData = populateForm();
-    if (imagePhoto == null) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "Photo cannot be empty",
-      );
-      return;
-    }
     if (formData['title']!.trim().isEmpty) {
       DialogHandler.showSnackBar(context: context, message: "Title cannot be empty");
       return;
     }
-    if (formData['startDate']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "Start Date Date cannot be empty",
-      );
-      return;
-    }
-    if (formData['endDate']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "End Date Date cannot be empty",
-      );
-      return;
-    }
     if (formData['description']!.trim().isEmpty) {
       DialogHandler.showSnackBar(context: context, message: "Description cannot be empty");
-      return;
-    }
-    try {
-      final dateFormat = DateFormat('dd MMM yyyy');
-      final startDate = dateFormat.parse(formData['startDate']!);
-      final endDate = dateFormat.parse(formData['endDate']!);
-
-      if (endDate.isBefore(startDate)) {
-        DialogHandler.showSnackBar(
-            context: context,
-            message: "End Time cannot be earlier than Start Time");
-        return;
-      }
-    } catch (e) {
-      DialogHandler.showSnackBar(context: context, message: "Invalid date format");
       return;
     }
     if(widget.item.id != null) {
@@ -124,16 +76,14 @@ class _NoteAddState extends State<NoteAdd> {
 
   void onSubmit(BuildContext context, Map<String, String> data) async {
     try {
-      await BlocProvider.of<TripCubit>(context).saveTrip(
-          TripModel(
-            id: widget.item.id != null ? widget.item.id! : const Uuid().v4(),
-            title: data['title']!,
-            description: data['description']!,
-            startDate: data['startDate']!,
-            endDate: data['endDate']!,
-            photoBytes: imagePhoto,
-            createdAt: widget.item.id != null ? trip!.createdAt : DateTime.now(),
-          )
+      await BlocProvider.of<TripCubit>(context).saveNote(
+        NoteModel(
+          id: widget.item.id != null ? widget.item.id! : const Uuid().v4(),
+          title: data['title']!,
+          description: data['description']!,
+          tripId: widget.item.tripId,
+          createdAt: widget.item.id != null ? note!.createdAt : DateTime.now(),
+        )
       );
       if(context.mounted) {
         Navigator.pop(context);
@@ -160,9 +110,8 @@ class _NoteAddState extends State<NoteAdd> {
 
   void onDelete(BuildContext context) async {
     Navigator.pop(context);
-    await BlocProvider.of<TripCubit>(context).deleteTrip(widget.item.id!);
+    await BlocProvider.of<TripCubit>(context).deleteNote(widget.item.id!);
     if(context.mounted) {
-      Navigator.pop(context);
       Navigator.pop(context);
     }
   }
@@ -184,28 +133,9 @@ class _NoteAddState extends State<NoteAdd> {
             child: ListView(
               padding: const EdgeInsets.all(16.0),
               children: [
-                AddImageItem(
-                  title: "Image",
-                  onImagePicked: (bytes) {
-                    setState(() {
-                      imagePhoto = bytes;
-                    });
-                  },
-                  initialImageBytes: imagePhoto,
-                ),
                 TextFieldItem(
                     title: "Title",
                     controller: titleController
-                ),
-                TextFieldItem(
-                  title: "Start Date",
-                  formType: FormType.date,
-                  controller: startDateController,
-                ),
-                TextFieldItem(
-                  title: "End Date",
-                  formType: FormType.date,
-                  controller: endDateController,
                 ),
                 TextFieldItem(
                     title: "Description",

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../data/models/local/note_model.dart';
 import '../../../../data/models/local/trip_model.dart';
 import '../../../../domain/usecases/trip_usecases.dart';
 import '../trip_display_item.dart';
@@ -56,15 +57,32 @@ class TripCubit extends Cubit<TripCubitState> {
     }
   }
 
+
   Future<void> getAllDetail(String id) async {
-    // emit(TripLoading());
-    // List<TripModel> trips = tripUseCases.getAllTrip();
-    // if(trips.isEmpty) {
-    //   emit(TripEmpty());
-    // } else if(trips.isNotEmpty) {
-    //   emit(TripLoaded(trips: trips));
-    // }
-    emit(const TripDetailLoaded(trips: []));
+    emit(TripLoading());
+    TripModel? trip = tripUseCases.getTrip(id);
+    List<NoteModel> notes = tripUseCases.getAllNote(id);
+    emit(TripDetailLoaded(
+      trip: trip,
+      notes: notes
+    ));
+  }
+
+  NoteModel? getNote(String id) {
+    emit(TripLoading());
+    NoteModel? note = tripUseCases.getNote(id);
+    emit(TripInitial());
+    return note;
+  }
+
+  Future<void> saveNote(NoteModel item) async {
+    await tripUseCases.saveNote(item);
+  }
+
+  Future<void> deleteNote(String id) async {
+    emit(TripLoading());
+    await tripUseCases.deleteNote(id);
+    emit(TripInitial());
   }
 
 }

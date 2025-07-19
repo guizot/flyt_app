@@ -1,27 +1,27 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flyt_app/presentation/core/model/arguments/document_add_args.dart';
-import 'package:flyt_app/presentation/core/model/arguments/phrases_add_args.dart';
-import 'package:flyt_app/presentation/pages/trip/location/location_add.dart';
-import 'package:flyt_app/presentation/pages/trip/notes/note_add.dart';
-import 'package:flyt_app/presentation/pages/trip/path/path_add.dart';
-import 'package:flyt_app/presentation/pages/trip/trip_add.dart';
-import 'package:flyt_app/presentation/pages/packing/packing_add.dart';
-import 'package:flyt_app/presentation/pages/phrases/language_add.dart';
-import 'package:flyt_app/presentation/pages/phrases/phrases_detail.dart';
-import 'package:flyt_app/presentation/pages/traveler/traveler_add.dart';
 import '../../pages/home.dart';
+import '../../pages/packing/packing_add.dart';
+import '../../pages/phrases/language_add.dart';
 import '../../pages/phrases/phrases_add.dart';
+import '../../pages/phrases/phrases_detail.dart';
 import '../../pages/setting/setting.dart';
 import '../../pages/traveler/document_add.dart';
+import '../../pages/traveler/traveler_add.dart';
 import '../../pages/traveler/traveler_detail.dart';
 import '../../pages/trip/booking/booking_add.dart';
 import '../../pages/trip/booking/booking_detail.dart';
 import '../../pages/trip/itinerary/itinerary_add.dart';
+import '../../pages/trip/location/location_add.dart';
 import '../../pages/trip/location/location_detail.dart';
+import '../../pages/trip/note/note_add.dart';
+import '../../pages/trip/path/path_add.dart';
+import '../../pages/trip/trip_add.dart';
 import '../../pages/trip/trip_detail.dart';
 import '../constant/routes_values.dart';
 import '../model/arguments/common_add_args.dart';
+import '../model/arguments/document_add_args.dart';
+import '../model/arguments/phrases_add_args.dart';
 import '../widget/image_view.dart';
 
 class RouteService {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flyt_app/data/models/local/note_model.dart';
+import 'package:flyt_app/data/models/local/path_model.dart';
 import 'package:flyt_app/presentation/core/model/arguments/common_add_args.dart';
+import 'package:flyt_app/presentation/pages/trip/path/path_item.dart';
 import '../../../data/models/local/location_model.dart';
 import '../../../data/models/local/trip_model.dart';
 import '../../../injector.dart';
@@ -86,6 +88,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     } else if (selectedTabIndex == 2) {
       navigateLocationAdd(context);
     } else if (selectedTabIndex == 3) {
+      navigatePathAdd(context);
     } else if (selectedTabIndex == 4) {
       navigateTripEdit(context);
     } else if (selectedTabIndex == 5) {
@@ -140,6 +143,26 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     Navigator.pushNamed(
       context,
       RoutesValues.locationDetail,
+      arguments: CommonAddArgs(id: id, tripId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
+  }
+
+  void navigatePathAdd(BuildContext context) {
+    Navigator.pushNamed(
+      context,
+      RoutesValues.pathAdd,
+      arguments: CommonAddArgs(tripId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
+  }
+
+  void navigatePathEdit(String id) {
+    Navigator.pushNamed(
+      context,
+      RoutesValues.pathAdd,
       arguments: CommonAddArgs(id: id, tripId: widget.id!),
     ).then((value) {
       refreshData();
@@ -245,7 +268,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
                 itineraryPage(),
                 bookingPage(),
                 locationPage(state.locations),
-                pathPage(),
+                pathPage(state.paths, state.locations),
                 descriptionPage(state.trip),
                 notesPage(state.notes),
               ],
@@ -288,8 +311,28 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     );
   }
 
-  Widget pathPage() {
-    return const Center(child: Text("Path"));
+  Widget pathPage(List<PathModel> paths, List<LocationModel> locations) {
+    if (paths.isEmpty) {
+      return EmptyState(
+        title: "No Records",
+        subtitle: "You haven’t added any path. Once you do, they’ll appear here.",
+        tapText: "Add Path +",
+        onTap: () => navigatePathAdd(context),
+        onLearn: showDataWarning,
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: paths.length,
+      itemBuilder: (context, index) {
+        final path = paths[index];
+        return PathItem(
+          item: path,
+          onTap: (id) => navigatePathEdit(id),
+          locations: locations
+        );
+      },
+    );
   }
 
   Widget descriptionPage(TripModel? trip) {

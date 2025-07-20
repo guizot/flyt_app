@@ -2,6 +2,7 @@ import 'package:flyt_app/data/models/local/note_model.dart';
 import 'package:flyt_app/domain/repositories/hive_repo.dart';
 import 'package:intl/intl.dart';
 import '../../data/models/local/location_model.dart';
+import '../../data/models/local/path_model.dart';
 import '../../data/models/local/trip_model.dart';
 import '../../presentation/pages/trip/trip_display_item.dart';
 
@@ -131,6 +132,28 @@ class TripUseCases {
 
   Future<void> deleteLocation(String id) async {
     await hiveRepo.deleteLocation(id);
+  }
+
+
+  List<PathModel> getAllPath(String tripId) {
+    final paths = hiveRepo
+        .getAllPath()
+        .where((path) => path.tripId == tripId)
+        .toList();
+    paths.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return paths;
+  }
+
+  PathModel? getPath(String id) {
+    return hiveRepo.getPath(id);
+  }
+
+  Future<void> savePath(PathModel item) async {
+    await hiveRepo.savePath(item.id, item);
+  }
+
+  Future<void> deletePath(String id) async {
+    await hiveRepo.deletePath(id);
   }
 
 }

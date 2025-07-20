@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 
+import 'location_model.dart';
+
 part 'path_model.g.dart';
 
 @HiveType(typeId: 7)
@@ -38,4 +40,21 @@ class PathModel extends HiveObject {
     required this.tripId,
     required this.createdAt,
   });
+
+  LocationModel? getFromLocation(List<LocationModel> locations) {
+    try {
+      return locations.firstWhere((loc) => loc.id == fromLocationId);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  LocationModel? getToLocation(List<LocationModel> locations) {
+    try {
+      return locations.firstWhere((loc) => loc.id == toLocationId);
+    } catch (_) {
+      return null;
+    }
+  }
+
 }

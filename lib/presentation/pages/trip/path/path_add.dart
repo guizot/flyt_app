@@ -1,14 +1,12 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:flyt_app/presentation/core/model/static/transport_mode.dart';
 import 'package:uuid/uuid.dart';
-import '../../../../data/models/local/trip_model.dart';
+import '../../../../data/models/local/path_model.dart';
 import '../../../../injector.dart';
-import '../../../core/constant/form_type.dart';
 import '../../../core/handler/dialog_handler.dart';
 import '../../../core/model/arguments/common_add_args.dart';
-import '../../../core/widget/add_image_item.dart';
+import '../../../core/widget/drop_down_item.dart';
 import '../../../core/widget/loading_state.dart';
 import '../../../core/widget/text_field_item.dart';
 import '../cubit/trip_cubit.dart';
@@ -36,34 +34,45 @@ class PathAdd extends StatefulWidget {
 
 class _PathAddState extends State<PathAdd> {
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController startDateController = TextEditingController();
-  TextEditingController endDateController = TextEditingController();
-  TextEditingController descController = TextEditingController();
-  TripModel? trip;
-  Uint8List? imagePhoto;
+  TextEditingController formController = TextEditingController();
+  TextEditingController toController = TextEditingController();
+  TextEditingController distanceController = TextEditingController();
+  TextEditingController estimatedTimeController = TextEditingController();
+  TextEditingController transportController = TextEditingController();
+  PathModel? path;
+  List<Map<String, String>> locationItems = [];
 
   Map<String, String> populateForm() {
     return {
-      'title': titleController.text,
-      'startDate': startDateController.text,
-      'endDate': endDateController.text,
-      'description': descController.text,
+      'form': formController.text,
+      'to': toController.text,
+      'distance': distanceController.text,
+      'estimatedTime': estimatedTimeController.text,
+      'transport': transportController.text,
     };
+  }
+
+  String getLocationNameById(String id) {
+    final match = locationItems.firstWhere((item) => item['value'] == id, orElse: () => {});
+    return match['title'] ?? id;
   }
 
   @override
   void initState() {
     super.initState();
+    final locations = BlocProvider.of<TripCubit>(context).getAllLocation(widget.item.tripId);
+    locationItems = locations
+        .map((loc) => {'title': loc.name, 'value': loc.id})
+        .toList();
     if (widget.item.id != null) {
-      trip = BlocProvider.of<TripCubit>(context).getTrip(widget.item.id!);
-      if(trip != null) {
+      path = BlocProvider.of<TripCubit>(context).getPath(widget.item.id!);
+      if(path != null) {
         setState(() {
-          imagePhoto = trip!.photoBytes;
-          titleController.text = trip!.title;
-          startDateController.text = trip!.startDate;
-          endDateController.text = trip!.endDate;
-          descController.text = trip!.description;
+          formController.text = path!.fromLocationId;
+          toController.text = path!.toLocationId;
+          distanceController.text = path!.distance;
+          estimatedTimeController.text = path!.estimatedTime;
+          transportController.text = path!.transport;
         });
       }
     }
@@ -71,48 +80,24 @@ class _PathAddState extends State<PathAdd> {
 
   void validateForm(BuildContext context) async {
     final formData = populateForm();
-    if (imagePhoto == null) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "Photo cannot be empty",
-      );
+    if (formData['form']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "From Location cannot be empty");
       return;
     }
-    if (formData['title']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Title cannot be empty");
+    if (formData['to']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "To Location cannot be empty");
       return;
     }
-    if (formData['startDate']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "Start Date Date cannot be empty",
-      );
+    if (formData['distance']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Distance cannot be empty");
       return;
     }
-    if (formData['endDate']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "End Date Date cannot be empty",
-      );
+    if (formData['estimatedTime']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Estimated Time cannot be empty");
       return;
     }
-    if (formData['description']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Description cannot be empty");
-      return;
-    }
-    try {
-      final dateFormat = DateFormat('dd MMM yyyy');
-      final startDate = dateFormat.parse(formData['startDate']!);
-      final endDate = dateFormat.parse(formData['endDate']!);
-
-      if (endDate.isBefore(startDate)) {
-        DialogHandler.showSnackBar(
-            context: context,
-            message: "End Time cannot be earlier than Start Time");
-        return;
-      }
-    } catch (e) {
-      DialogHandler.showSnackBar(context: context, message: "Invalid date format");
+    if (formData['transport']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Transport cannot be empty");
       return;
     }
     if(widget.item.id != null) {
@@ -124,16 +109,17 @@ class _PathAddState extends State<PathAdd> {
 
   void onSubmit(BuildContext context, Map<String, String> data) async {
     try {
-      await BlocProvider.of<TripCubit>(context).saveTrip(
-          TripModel(
-            id: widget.item.id != null ? widget.item.id! : const Uuid().v4(),
-            title: data['title']!,
-            description: data['description']!,
-            startDate: data['startDate']!,
-            endDate: data['endDate']!,
-            photoBytes: imagePhoto,
-            createdAt: widget.item.id != null ? trip!.createdAt : DateTime.now(),
-          )
+      await BlocProvider.of<TripCubit>(context).savePath(
+        PathModel(
+          id: widget.item.id != null ? widget.item.id! : const Uuid().v4(),
+          fromLocationId: data['form']!,
+          toLocationId: data['to']!,
+          distance: data['distance']!,
+          estimatedTime: data['estimatedTime']!,
+          transport: data['transport']!,
+          tripId: widget.item.tripId,
+          createdAt: widget.item.id != null ? path!.createdAt : DateTime.now(),
+        )
       );
       if(context.mounted) {
         Navigator.pop(context);
@@ -160,9 +146,8 @@ class _PathAddState extends State<PathAdd> {
 
   void onDelete(BuildContext context) async {
     Navigator.pop(context);
-    await BlocProvider.of<TripCubit>(context).deleteTrip(widget.item.id!);
+    await BlocProvider.of<TripCubit>(context).deletePath(widget.item.id!);
     if(context.mounted) {
-      Navigator.pop(context);
       Navigator.pop(context);
     }
   }
@@ -184,33 +169,32 @@ class _PathAddState extends State<PathAdd> {
             child: ListView(
               padding: const EdgeInsets.all(16.0),
               children: [
-                AddImageItem(
-                  title: "Image",
-                  onImagePicked: (bytes) {
-                    setState(() {
-                      imagePhoto = bytes;
-                    });
-                  },
-                  initialImageBytes: imagePhoto,
+                DropDownItem(
+                  title: "From Location",
+                  controller: formController,
+                  items: locationItems,
+                  useValue: true,
+                ),
+                DropDownItem(
+                  title: "To Location",
+                  controller: toController,
+                  items: locationItems,
+                  useValue: true,
                 ),
                 TextFieldItem(
-                    title: "Title",
-                    controller: titleController
+                  title: "Distance",
+                  controller: distanceController
                 ),
                 TextFieldItem(
-                  title: "Start Date",
-                  formType: FormType.date,
-                  controller: startDateController,
+                  title: "Estimated Time",
+                  controller: estimatedTimeController
                 ),
-                TextFieldItem(
-                  title: "End Date",
-                  formType: FormType.date,
-                  controller: endDateController,
-                ),
-                TextFieldItem(
-                    title: "Description",
-                    inputType: TextInputType.multiline,
-                    controller: descController
+                DropDownItem(
+                  title: "Transport",
+                  controller: transportController,
+                  items: transportModes
+                      .map((c) => {'title': c.name, 'icon': c.icon})
+                      .toList(),
                 ),
               ],
             )

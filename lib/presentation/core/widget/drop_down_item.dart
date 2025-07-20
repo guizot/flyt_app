@@ -4,11 +4,13 @@ class DropDownItem extends StatefulWidget {
   const DropDownItem({
     super.key,
     required this.title,
+    this.useValue = false,
     required this.controller,
     required this.items, // List<Map<String, String>>
   });
 
   final String title;
+  final bool useValue;
   final TextEditingController controller;
   final List<Map<String, String>> items;
 
@@ -73,10 +75,11 @@ class _DropDownItemState extends State<DropDownItem> {
                     fillColor: Theme.of(context).colorScheme.surface,
                   ),
                   items: widget.items.map((item) {
+                    final value = item['value'] ?? '';
                     final title = item['title'] ?? '';
                     final icon = item['icon'];
                     return DropdownMenuItem<String>(
-                      value: title,
+                      value: widget.useValue ? value : title,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flyt_app/data/models/local/booking_model.dart';
-import 'package:flyt_app/data/models/local/itinerary_model.dart';
 import 'package:flyt_app/data/models/local/note_model.dart';
 import 'package:flyt_app/data/models/local/path_model.dart';
 import 'package:flyt_app/presentation/core/model/arguments/common_add_args.dart';
@@ -19,7 +18,6 @@ import 'cubit/trip_cubit.dart';
 import 'cubit/trip_state.dart';
 import 'description/description_item.dart';
 import 'itinerary/itinerary_group_item.dart';
-import 'itinerary/itinerary_item.dart';
 import 'location/location_item.dart';
 import 'note/note_item.dart';
 

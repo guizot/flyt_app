@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import '../../../../data/models/local/booking_model.dart';
-import '../../../../data/models/local/itinerary_model.dart';
 import '../../../../data/models/local/location_model.dart';
 import '../../../../data/models/local/note_model.dart';
 import '../../../../data/models/local/path_model.dart';

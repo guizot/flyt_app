@@ -1,4 +1,7 @@
+import 'package:flyt_app/data/models/local/path_model.dart';
 import 'package:hive/hive.dart';
+
+import 'location_model.dart';
 
 part 'itinerary_model.g.dart';
 
@@ -42,4 +45,20 @@ class ItineraryModel extends HiveObject {
     required this.tripId,
     required this.createdAt,
   });
+
+  LocationModel? getLocation(List<LocationModel> locations) {
+    try {
+      return locations.firstWhere((loc) => loc.id == locationId);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  PathModel? getPath(List<PathModel> paths) {
+    try {
+      return paths.firstWhere((path) => path.id == pathId);
+    } catch (_) {
+      return null;
+    }
+  }
 }

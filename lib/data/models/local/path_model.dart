@@ -57,4 +57,10 @@ class PathModel extends HiveObject {
     }
   }
 
+  String getRouteName(List<LocationModel> locations) {
+    final from = getFromLocation(locations)?.name ?? 'Unknown';
+    final to = getToLocation(locations)?.name ?? 'Unknown';
+    return '$from to $to';
+  }
+
 }

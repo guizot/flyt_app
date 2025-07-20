@@ -13,6 +13,7 @@ class TextFieldItem extends StatefulWidget {
     this.formType = FormType.text,
     this.inputType = TextInputType.text,
     this.preText = "",
+    this.pickerMode = CupertinoDatePickerMode.date,
     required this.controller
   });
 
@@ -20,6 +21,7 @@ class TextFieldItem extends StatefulWidget {
   final FormType formType;
   final TextInputType inputType;
   final String preText;
+  final CupertinoDatePickerMode pickerMode;
   final TextEditingController controller;
 
   @override
@@ -39,14 +41,14 @@ class _TextFieldItemState extends State<TextFieldItem> {
           switchValue = widget.controller.text == 'true' ? true : false;
           widget.controller.text = switchValue.toString();
         case FormType.date:
+          DateFormat formatter = DateFormat(widget.pickerMode == CupertinoDatePickerMode.date ? 'dd MMM yyyy' : 'HH:mm');
           try {
-            DateFormat format = DateFormat('dd MMM yyyy');
-            DateTime dateTime = format.parse(widget.controller.text);
+            DateTime dateTime = formatter.parse(widget.controller.text);
             dateTempValue = dateTime;
           } catch(e) {
-            dateTempValue = DateTime.now();
+            dateTempValue = DateTime.now().copyWith(hour: 8, minute: 0, second: 0, millisecond: 0, microsecond: 0);
           }
-          String formattedDate = DateFormat('dd MMM yyyy').format(dateTempValue!);
+          String formattedDate = formatter.format(dateTempValue!);
           widget.controller.text = formattedDate;
       }
     });
@@ -225,10 +227,11 @@ class _TextFieldItemState extends State<TextFieldItem> {
                           color: Theme.of(context).colorScheme.surface,
                           child: CupertinoDatePicker(
                             initialDateTime: dateTempValue,
-                            mode: CupertinoDatePickerMode.date,
+                            mode: widget.pickerMode,
                             onDateTimeChanged: (DateTime newDate) {
                               dateTempValue = newDate;
                             },
+                            use24hFormat: true,
                           )
                       ),
                     ),
@@ -239,7 +242,7 @@ class _TextFieldItemState extends State<TextFieldItem> {
                     child: FilledButton(
                       onPressed: () {
                         setState(() {
-                          String formattedDate = DateFormat('dd MMM yyyy').format(dateTempValue ?? DateTime.now());
+                          String formattedDate = DateFormat(widget.pickerMode == CupertinoDatePickerMode.date ? 'dd MMM yyyy' : 'HH:mm').format(dateTempValue ?? DateTime.now());
                           widget.controller.text = formattedDate;
                         });
                         Navigator.pop(context);

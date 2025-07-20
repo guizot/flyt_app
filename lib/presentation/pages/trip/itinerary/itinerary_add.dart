@@ -1,14 +1,15 @@
-import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-import '../../../../data/models/local/trip_model.dart';
+import '../../../../data/models/local/itinerary_model.dart';
 import '../../../../injector.dart';
 import '../../../core/constant/form_type.dart';
 import '../../../core/handler/dialog_handler.dart';
 import '../../../core/model/arguments/common_add_args.dart';
-import '../../../core/widget/add_image_item.dart';
+import '../../../core/model/static/itinerary_type.dart';
+import '../../../core/widget/drop_down_item.dart';
 import '../../../core/widget/loading_state.dart';
 import '../../../core/widget/text_field_item.dart';
 import '../cubit/trip_cubit.dart';
@@ -36,34 +37,83 @@ class ItineraryAdd extends StatefulWidget {
 
 class _ItineraryAddState extends State<ItineraryAdd> {
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController startDateController = TextEditingController();
-  TextEditingController endDateController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
   TextEditingController descController = TextEditingController();
-  TripModel? trip;
-  Uint8List? imagePhoto;
+  TextEditingController typeController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController pathController = TextEditingController();
+  ItineraryModel? itinerary;
+  List<Map<String, String>> locationItems = [];
+  List<Map<String, String>> pathItems = [];
+  List<Map<String, String>> dateItems = [];
 
   Map<String, String> populateForm() {
     return {
-      'title': titleController.text,
-      'startDate': startDateController.text,
-      'endDate': endDateController.text,
+      'date': dateController.text,
+      'time': timeController.text,
       'description': descController.text,
+      'type': typeController.text,
+      'location': locationController.text,
+      'path': pathController.text,
     };
+  }
+
+  void initTypeController() {
+    typeController.addListener(() {
+      locationController.text = '';
+      pathController.text = '';
+      setState(() {});
+    });
+  }
+
+  void initTrip() {
+    final trip = BlocProvider.of<TripCubit>(context).getTrip(widget.item.tripId);
+    if (trip != null) {
+      final formatter = DateFormat('dd MMM yyyy');
+      final start = formatter.parse(trip.startDate);
+      final end = formatter.parse(trip.endDate);
+
+      final dates = <Map<String, String>>[];
+      for (var date = start;
+      !date.isAfter(end);
+      date = date.add(const Duration(days: 1))) {
+        final formatted = formatter.format(date);
+        dates.add({'title': formatted, 'value': formatted});
+      }
+      setState(() {
+        dateItems = dates;
+      });
+    }
+  }
+
+  void initLocationAndPath() {
+    final locations = BlocProvider.of<TripCubit>(context).getAllLocation(widget.item.tripId);
+    locationItems = locations
+        .map((loc) => {'title': loc.name, 'value': loc.id})
+        .toList();
+    final paths = BlocProvider.of<TripCubit>(context).getAllPath(widget.item.tripId);
+    pathItems = paths
+        .map((loc) => {'title': loc.getRouteName(locations), 'value': loc.id})
+        .toList();
   }
 
   @override
   void initState() {
     super.initState();
+    initTypeController();
+    initTrip();
+    initLocationAndPath();
     if (widget.item.id != null) {
-      trip = BlocProvider.of<TripCubit>(context).getTrip(widget.item.id!);
-      if(trip != null) {
+      itinerary = BlocProvider.of<TripCubit>(context).getItinerary(widget.item.id!);
+      if(itinerary != null) {
         setState(() {
-          imagePhoto = trip!.photoBytes;
-          titleController.text = trip!.title;
-          startDateController.text = trip!.startDate;
-          endDateController.text = trip!.endDate;
-          descController.text = trip!.description;
+          dateController.text = itinerary!.date;
+          timeController.text = itinerary!.time;
+          descController.text = itinerary!.description;
+          typeController.text = itinerary!.type;
+          locationController.text = itinerary!.locationId ?? '';
+          pathController.text = itinerary!.pathId ?? '';
         });
       }
     }
@@ -71,28 +121,17 @@ class _ItineraryAddState extends State<ItineraryAdd> {
 
   void validateForm(BuildContext context) async {
     final formData = populateForm();
-    if (imagePhoto == null) {
+    if (formData['date']!.trim().isEmpty) {
       DialogHandler.showSnackBar(
         context: context,
-        message: "Photo cannot be empty",
+        message: "Date cannot be empty",
       );
       return;
     }
-    if (formData['title']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Title cannot be empty");
-      return;
-    }
-    if (formData['startDate']!.trim().isEmpty) {
+    if (formData['time']!.trim().isEmpty) {
       DialogHandler.showSnackBar(
         context: context,
-        message: "Start Date Date cannot be empty",
-      );
-      return;
-    }
-    if (formData['endDate']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "End Date Date cannot be empty",
+        message: "Time cannot be empty",
       );
       return;
     }
@@ -100,19 +139,8 @@ class _ItineraryAddState extends State<ItineraryAdd> {
       DialogHandler.showSnackBar(context: context, message: "Description cannot be empty");
       return;
     }
-    try {
-      final dateFormat = DateFormat('dd MMM yyyy');
-      final startDate = dateFormat.parse(formData['startDate']!);
-      final endDate = dateFormat.parse(formData['endDate']!);
-
-      if (endDate.isBefore(startDate)) {
-        DialogHandler.showSnackBar(
-            context: context,
-            message: "End Time cannot be earlier than Start Time");
-        return;
-      }
-    } catch (e) {
-      DialogHandler.showSnackBar(context: context, message: "Invalid date format");
+    if (formData['type']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Itinerary Type cannot be empty");
       return;
     }
     if(widget.item.id != null) {
@@ -124,15 +152,17 @@ class _ItineraryAddState extends State<ItineraryAdd> {
 
   void onSubmit(BuildContext context, Map<String, String> data) async {
     try {
-      await BlocProvider.of<TripCubit>(context).saveTrip(
-          TripModel(
+      await BlocProvider.of<TripCubit>(context).saveItinerary(
+          ItineraryModel(
             id: widget.item.id != null ? widget.item.id! : const Uuid().v4(),
-            title: data['title']!,
+            date: data['date']!,
+            time: data['time']!,
             description: data['description']!,
-            startDate: data['startDate']!,
-            endDate: data['endDate']!,
-            photoBytes: imagePhoto,
-            createdAt: widget.item.id != null ? trip!.createdAt : DateTime.now(),
+            type: data['type']!,
+            locationId: data['location']!,
+            pathId: data['path']!,
+            tripId: widget.item.tripId,
+            createdAt: widget.item.id != null ? itinerary!.createdAt : DateTime.now(),
           )
       );
       if(context.mounted) {
@@ -160,9 +190,8 @@ class _ItineraryAddState extends State<ItineraryAdd> {
 
   void onDelete(BuildContext context) async {
     Navigator.pop(context);
-    await BlocProvider.of<TripCubit>(context).deleteTrip(widget.item.id!);
+    await BlocProvider.of<TripCubit>(context).deleteItinerary(widget.item.id!);
     if(context.mounted) {
-      Navigator.pop(context);
       Navigator.pop(context);
     }
   }
@@ -184,34 +213,44 @@ class _ItineraryAddState extends State<ItineraryAdd> {
             child: ListView(
               padding: const EdgeInsets.all(16.0),
               children: [
-                AddImageItem(
-                  title: "Image",
-                  onImagePicked: (bytes) {
-                    setState(() {
-                      imagePhoto = bytes;
-                    });
-                  },
-                  initialImageBytes: imagePhoto,
+                DropDownItem(
+                  title: "Date",
+                  controller: dateController,
+                  items: dateItems,
+                  useValue: true,
                 ),
                 TextFieldItem(
-                    title: "Title",
-                    controller: titleController
-                ),
-                TextFieldItem(
-                  title: "Start Date",
+                  title: "Time",
                   formType: FormType.date,
-                  controller: startDateController,
-                ),
-                TextFieldItem(
-                  title: "End Date",
-                  formType: FormType.date,
-                  controller: endDateController,
+                  pickerMode: CupertinoDatePickerMode.time,
+                  controller: timeController,
                 ),
                 TextFieldItem(
                     title: "Description",
                     inputType: TextInputType.multiline,
                     controller: descController
                 ),
+                DropDownItem(
+                  title: "Itinerary Type",
+                  controller: typeController,
+                  items: itineraryTypes
+                      .map((c) => {'title': c.name, 'icon': c.icon})
+                      .toList(),
+                ),
+                if (typeController.text == 'Travel')
+                  DropDownItem(
+                    title: "Travel Path",
+                    controller: pathController,
+                    items: pathItems,
+                    useValue: true,
+                  ),
+                if (['Activity', 'Meal', 'Rest'].contains(typeController.text))
+                  DropDownItem(
+                    title: "Location",
+                    controller: locationController,
+                    items: locationItems,
+                    useValue: true,
+                  ),
               ],
             )
         ),

@@ -90,14 +90,20 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
   void navigateAction(BuildContext context) {
     if (selectedTabIndex == 0) {
       navigateItineraryAdd(context);
-    } else if (selectedTabIndex == 1) {
-    } else if (selectedTabIndex == 2) {
+    }
+    else if (selectedTabIndex == 1) {
+      navigateBookingAdd(context);
+    }
+    else if (selectedTabIndex == 2) {
       navigateLocationAdd(context);
-    } else if (selectedTabIndex == 3) {
+    }
+    else if (selectedTabIndex == 3) {
       navigatePathAdd(context);
-    } else if (selectedTabIndex == 4) {
+    }
+    else if (selectedTabIndex == 4) {
       navigateTripEdit(context);
-    } else if (selectedTabIndex == 5) {
+    }
+    else if (selectedTabIndex == 5) {
       navigateNoteAdd(context);
     }
   }
@@ -219,7 +225,11 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
 
   // region PAGES
 
-  Widget itineraryPage(List<ItineraryModel> itineraries) {
+  Widget itineraryPage(
+      List<ItineraryModel> itineraries,
+      List<LocationModel> locations,
+      List<PathModel> paths
+  ) {
     if (itineraries.isEmpty) {
       return EmptyState(
         title: "No Records",
@@ -237,6 +247,8 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
         return ItineraryItem(
           item: itinerary,
           onTap: (id) => navigateItineraryEdit(id),
+          locations: locations,
+          paths: paths
         );
       },
     );
@@ -488,7 +500,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
                 scrollToSelectedTab();
               },
               children: [
-                itineraryPage(state.itineraries),
+                itineraryPage(state.itineraries, state.locations, state.paths),
                 bookingPage(state.bookings),
                 locationPage(state.locations),
                 pathPage(state.paths, state.locations),

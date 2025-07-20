@@ -128,6 +128,10 @@ class TripCubit extends Cubit<TripCubitState> {
   }
 
 
+  List<PathModel> getAllPath(String id) {
+    return tripUseCases.getAllPath(id);
+  }
+
   PathModel? getPath(String id) {
     emit(TripLoading());
     PathModel? path = tripUseCases.getPath(id);

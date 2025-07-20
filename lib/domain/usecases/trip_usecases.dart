@@ -63,9 +63,9 @@ class TripUseCases {
       }
 
       // Sort if needed
-      ongoing.sort((a, b) => a.startDate.compareTo(b.startDate));
-      upcoming.sort((a, b) => a.startDate.compareTo(b.startDate));
-      past.sort((a, b) => b.endDate.compareTo(a.endDate));
+      ongoing.sort((a, b) => b.startDate.compareTo(a.startDate));
+      upcoming.sort((a, b) => b.startDate.compareTo(a.startDate));
+      past.sort((a, b) => a.endDate.compareTo(b.endDate));
 
       List<TripDisplayItem> result = [];
 

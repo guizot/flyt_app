@@ -27,6 +27,12 @@ class _DropDownItemState extends State<DropDownItem> {
     _selectedTitle = widget.controller.text.isNotEmpty ? widget.controller.text : null;
   }
 
+  bool _isInItems(String? value) {
+    if (value == null) return false;
+    return widget.items.any((item) =>
+    (widget.useValue ? item['value'] : item['title']) == value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -63,7 +69,7 @@ class _DropDownItemState extends State<DropDownItem> {
                 ),
                 const SizedBox(height: 8.0),
                 DropdownButtonFormField<String>(
-                  value: _selectedTitle,
+                  value: _isInItems(_selectedTitle) ? _selectedTitle : null,
                   isExpanded: true,
                   decoration: InputDecoration(
                     hintText: 'Select ${widget.title.toLowerCase()}',

@@ -51,12 +51,15 @@ class _ItineraryGroupItemState extends State<ItineraryGroupItem> {
                   children: [
                     const Icon(Icons.calendar_month, size: 18),
                     const SizedBox(width: 16),
-                    Text(
-                      group.date,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    Expanded(
+                      child: Text(
+                        group.date,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    const Spacer(),
-                    Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
+                    Icon(isExpanded ? Icons.expand_less : Icons.expand_more)
                   ],
                 ),
               ),

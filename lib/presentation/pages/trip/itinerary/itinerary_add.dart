@@ -63,6 +63,7 @@ class _ItineraryAddState extends State<ItineraryAdd> {
     typeController.addListener(() {
       locationController.text = '';
       pathController.text = '';
+
       setState(() {});
     });
   }

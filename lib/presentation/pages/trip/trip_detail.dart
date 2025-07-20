@@ -214,7 +214,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
   void navigateBookingDetail(String id) {
     Navigator.pushNamed(
       context,
-      RoutesValues.bookingDetail,
+      RoutesValues.bookingAdd,
       arguments: CommonAddArgs(id: id, tripId: widget.id!),
     ).then((value) {
       refreshData();

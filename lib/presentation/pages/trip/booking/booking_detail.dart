@@ -3,27 +3,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../injector.dart';
 import '../../../core/constant/routes_values.dart';
 import '../../../core/handler/dialog_handler.dart';
+import '../../../core/model/arguments/common_add_args.dart';
 import '../../../core/model/arguments/document_add_args.dart';
 import '../../../core/widget/loading_state.dart';
 import '../cubit/trip_cubit.dart';
 import '../cubit/trip_state.dart';
 
 class BookingDetailPageProvider extends StatelessWidget {
-  const BookingDetailPageProvider({super.key, this.id});
-  final String? id;
+  const BookingDetailPageProvider({super.key, required this.item });
+  final CommonAddArgs item;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<TripCubit>(),
-      child: BookingDetailPage(id: id),
+      child: BookingDetailPage(item: item),
     );
   }
 }
 
 class BookingDetailPage extends StatefulWidget {
-  const BookingDetailPage({super.key, this.id});
-  final String? id;
+  const BookingDetailPage({super.key, required this.item });
+  final CommonAddArgs item;
   @override
   State<BookingDetailPage> createState() => _BookingDetailPageState();
 }
@@ -37,7 +38,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> with SingleTicker
   }
 
   void refreshData() {
-    context.read<TripCubit>().getAllDetail(widget.id!);
+    context.read<TripCubit>().getAllDetail(widget.item.id!);
   }
 
   void navigateBookingEdit(String id) {
@@ -75,7 +76,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> with SingleTicker
             child: IconButton(
               icon: const Icon(Icons.edit_note_outlined),
               tooltip: 'Edit',
-              onPressed: () => navigateBookingEdit(widget.id!),
+              onPressed: () => navigateBookingEdit(widget.item.id!),
             ),
           ),
         ],

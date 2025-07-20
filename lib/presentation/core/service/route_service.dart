@@ -78,8 +78,8 @@ class RouteService {
         var args = settings.arguments as CommonAddArgs;
         return MaterialPageRoute(builder: (_) => PathAddProvider(item: args));
       case RoutesValues.bookingDetail:
-        var id = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) => BookingDetailPageProvider(id: id));
+        var args = settings.arguments as CommonAddArgs;
+        return MaterialPageRoute(builder: (_) => BookingDetailPageProvider(item: args));
       case RoutesValues.locationDetail:
         var args = settings.arguments as CommonAddArgs;
         return MaterialPageRoute(builder: (_) => LocationDetailPageProvider(item: args));

@@ -1,14 +1,20 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyt_app/data/models/local/bookingdetail/accommodation_detail_model.dart';
+import 'package:flyt_app/data/models/local/bookingdetail/activity_detail_model.dart';
+import 'package:flyt_app/data/models/local/bookingdetail/booking_detail_model.dart';
+import 'package:flyt_app/data/models/local/bookingdetail/transportation_detail_model.dart';
 import 'package:flyt_app/presentation/core/model/arguments/common_add_args.dart';
-import 'package:intl/intl.dart';
+import 'package:flyt_app/presentation/core/model/static/accommodation_type.dart';
+import 'package:flyt_app/presentation/core/model/static/activity_type.dart';
+import 'package:flyt_app/presentation/core/model/static/transportation_type.dart';
 import 'package:uuid/uuid.dart';
-import '../../../../data/models/local/trip_model.dart';
+import '../../../../data/models/local/booking_model.dart';
 import '../../../../injector.dart';
 import '../../../core/constant/form_type.dart';
 import '../../../core/handler/dialog_handler.dart';
-import '../../../core/widget/add_image_item.dart';
+import '../../../core/model/static/booking_category.dart';
+import '../../../core/widget/drop_down_item.dart';
 import '../../../core/widget/loading_state.dart';
 import '../../../core/widget/text_field_item.dart';
 import '../cubit/trip_cubit.dart';
@@ -36,34 +42,77 @@ class BookingAdd extends StatefulWidget {
 
 class _BookingAddState extends State<BookingAdd> {
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController startDateController = TextEditingController();
-  TextEditingController endDateController = TextEditingController();
-  TextEditingController descController = TextEditingController();
-  TripModel? trip;
-  Uint8List? imagePhoto;
+  TextEditingController providerNameController = TextEditingController();
+  TextEditingController bookingCodeController = TextEditingController();
+  TextEditingController bookingTypeController = TextEditingController();
+
+  // TRANSPORTATION
+  TextEditingController transportationTypeController = TextEditingController();
+  TextEditingController transportationNameController = TextEditingController();
+  TextEditingController vehicleNameController = TextEditingController();
+  TextEditingController seatNumberController = TextEditingController();
+  TextEditingController departureTimeController = TextEditingController();
+  TextEditingController arrivalTimeController = TextEditingController();
+  TextEditingController pickupPointController = TextEditingController();
+  TextEditingController dropOffPointController = TextEditingController();
+  TextEditingController departureLocationController = TextEditingController();
+  TextEditingController arrivalLocationController = TextEditingController();
+
+  // ACCOMMODATION
+  TextEditingController accommodationTypeController = TextEditingController();
+  TextEditingController accommodationNameController = TextEditingController();
+  TextEditingController accommodationAddressController = TextEditingController();
+  TextEditingController roomTypeController = TextEditingController();
+  TextEditingController roomNumberController = TextEditingController();
+  TextEditingController checkInController = TextEditingController();
+  TextEditingController checkOutController = TextEditingController();
+  TextEditingController accommodationContactController = TextEditingController();
+  TextEditingController accommodationEmailController = TextEditingController();
+
+  // ACTIVITY
+  TextEditingController activityTypeController = TextEditingController();
+  TextEditingController activityNameController = TextEditingController();
+  TextEditingController activityAddressController = TextEditingController();
+  TextEditingController startTimeController = TextEditingController();
+  TextEditingController endTimeController = TextEditingController();
+  TextEditingController activityContactController = TextEditingController();
+  TextEditingController activityGuideNameController = TextEditingController();
+
+  BookingModel? booking;
 
   Map<String, String> populateForm() {
     return {
-      'title': titleController.text,
-      'startDate': startDateController.text,
-      'endDate': endDateController.text,
-      'description': descController.text,
+      'providerName': providerNameController.text,
+      'bookingCode': bookingCodeController.text,
+      'bookingType': bookingTypeController.text,
+      // TRANSPORTATION
+      'transportationType': transportationTypeController.text,
+      // ACCOMMODATION
+      'accommodationType': accommodationTypeController.text,
+      // ACTIVITY
+      'activityType': activityTypeController.text,
     };
   }
 
   @override
   void initState() {
     super.initState();
+    bookingTypeController.addListener(() {
+      setState(() {});
+    });
     if (widget.item.id != null) {
-      trip = BlocProvider.of<TripCubit>(context).getTrip(widget.item.id!);
-      if(trip != null) {
+      booking = BlocProvider.of<TripCubit>(context).getBooking(widget.item.id!);
+      if(booking != null) {
         setState(() {
-          imagePhoto = trip!.photoBytes;
-          titleController.text = trip!.title;
-          startDateController.text = trip!.startDate;
-          endDateController.text = trip!.endDate;
-          descController.text = trip!.description;
+          providerNameController.text = booking!.providerName;
+          bookingCodeController.text = booking!.bookingCode;
+          bookingTypeController.text = booking!.bookingType;
+          // TRANSPORTATION
+          transportationTypeController.text = (booking!.detail as TransportationDetailModel).transportType;
+          // ACCOMMODATION
+          accommodationTypeController.text = (booking!.detail as AccommodationDetailModel).accommodationType;
+          // ACTIVITY
+          activityTypeController.text = (booking!.detail as ActivityDetailModel).activityType;
         });
       }
     }
@@ -71,50 +120,21 @@ class _BookingAddState extends State<BookingAdd> {
 
   void validateForm(BuildContext context) async {
     final formData = populateForm();
-    if (imagePhoto == null) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "Photo cannot be empty",
-      );
+    if (formData['providerName']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Provider Name cannot be empty");
       return;
     }
-    if (formData['title']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Title cannot be empty");
+    if (formData['bookingCode']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Booking Code cannot be empty");
       return;
     }
-    if (formData['startDate']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "Start Date Date cannot be empty",
-      );
+    if (formData['bookingType']!.trim().isEmpty) {
+      DialogHandler.showSnackBar(context: context, message: "Booking Type cannot be empty");
       return;
     }
-    if (formData['endDate']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(
-        context: context,
-        message: "End Date Date cannot be empty",
-      );
-      return;
-    }
-    if (formData['description']!.trim().isEmpty) {
-      DialogHandler.showSnackBar(context: context, message: "Description cannot be empty");
-      return;
-    }
-    try {
-      final dateFormat = DateFormat('dd MMM yyyy');
-      final startDate = dateFormat.parse(formData['startDate']!);
-      final endDate = dateFormat.parse(formData['endDate']!);
-
-      if (endDate.isBefore(startDate)) {
-        DialogHandler.showSnackBar(
-            context: context,
-            message: "End Time cannot be earlier than Start Time");
-        return;
-      }
-    } catch (e) {
-      DialogHandler.showSnackBar(context: context, message: "Invalid date format");
-      return;
-    }
+    // TRANSPORTATION
+    // ACCOMMODATION
+    // ACTIVITY
     if(widget.item.id != null) {
       showSaveDialog(context, formData);
     } else {
@@ -123,16 +143,54 @@ class _BookingAddState extends State<BookingAdd> {
   }
 
   void onSubmit(BuildContext context, Map<String, String> data) async {
+    BookingDetailModel detail = BookingDetailModel();
+    if(data['bookingType'] == 'Transportation') {
+      detail = TransportationDetailModel(
+          transportType: 'transportType',
+          transportName: 'transportName',
+          vehicleName: 'vehicleName',
+          seatNumber: 'seatNumber',
+          departureTime: DateTime.now(),
+          arrivalTime: DateTime.now(),
+          pickUpPoint: 'pickUpPoint',
+          dropOffPoint: 'dropOffPoint',
+          departureLocation: 'departureLocation',
+          arrivalLocation: 'arrivalLocation'
+      );
+    } else if(data['bookingType'] == 'Accommodation') {
+      detail = AccommodationDetailModel(
+          accommodationType: 'accommodationType',
+          accommodationName: 'accommodationName',
+          address: 'address',
+          roomType: 'roomType',
+          roomNumber: 'roomNumber',
+          checkIn: DateTime.now(),
+          checkOut: DateTime.now(),
+          contact: 'contact',
+          email: 'email'
+      );
+    } else if(data['bookingType'] == 'Activity') {
+      detail = ActivityDetailModel(
+          activityType: 'activityType',
+          activityName: 'activityName',
+          address: 'address',
+          startTime: DateTime.now(),
+          endTime: DateTime.now(),
+          contact: 'contact',
+          guideName: 'guideName'
+      );
+    }
     try {
-      await BlocProvider.of<TripCubit>(context).saveTrip(
-          TripModel(
+      await BlocProvider.of<TripCubit>(context).saveBooking(
+          BookingModel(
             id: widget.item.id != null ? widget.item.id! : const Uuid().v4(),
-            title: data['title']!,
-            description: data['description']!,
-            startDate: data['startDate']!,
-            endDate: data['endDate']!,
-            photoBytes: imagePhoto,
-            createdAt: widget.item.id != null ? trip!.createdAt : DateTime.now(),
+            providerName: data['providerName']!,
+            bookingCode: data['bookingCode']!,
+            bookingType: data['bookingType']!,
+            attachments: [],
+            detail: detail,
+            tripId: widget.item.tripId,
+            createdAt: widget.item.id != null ? booking!.createdAt : DateTime.now(),
           )
       );
       if(context.mounted) {
@@ -160,7 +218,7 @@ class _BookingAddState extends State<BookingAdd> {
 
   void onDelete(BuildContext context) async {
     Navigator.pop(context);
-    await BlocProvider.of<TripCubit>(context).deleteTrip(widget.item.id!);
+    await BlocProvider.of<TripCubit>(context).deleteBooking(widget.item.id!);
     if(context.mounted) {
       Navigator.pop(context);
       Navigator.pop(context);
@@ -177,6 +235,22 @@ class _BookingAddState extends State<BookingAdd> {
     );
   }
 
+  Widget headerItem(String title) {
+    return Container(
+        padding: const EdgeInsets.only(top: 8, bottom: 24, left: 8, right: 8),
+        child: Row(
+          children: [
+            const Icon(Icons.circle, size: 18),
+            const SizedBox(width: 16),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
+  }
+
   Widget bookingInitial(BuildContext context) {
     return Column(
       children: [
@@ -184,34 +258,159 @@ class _BookingAddState extends State<BookingAdd> {
             child: ListView(
               padding: const EdgeInsets.all(16.0),
               children: [
-                AddImageItem(
-                  title: "Image",
-                  onImagePicked: (bytes) {
-                    setState(() {
-                      imagePhoto = bytes;
-                    });
-                  },
-                  initialImageBytes: imagePhoto,
+                TextFieldItem(
+                    title: "Provider Name",
+                    controller: providerNameController
                 ),
                 TextFieldItem(
-                    title: "Title",
-                    controller: titleController
-                ),
-                TextFieldItem(
-                  title: "Start Date",
-                  formType: FormType.date,
-                  controller: startDateController,
-                ),
-                TextFieldItem(
-                  title: "End Date",
-                  formType: FormType.date,
-                  controller: endDateController,
-                ),
-                TextFieldItem(
-                    title: "Description",
+                    title: "Booking Code",
                     inputType: TextInputType.multiline,
-                    controller: descController
+                    controller: bookingCodeController
                 ),
+                DropDownItem(
+                  title: "Booking Type",
+                  controller: bookingTypeController,
+                  items: bookingCategoryTypes
+                      .map((c) => {'title': c.name, 'icon': c.icon})
+                      .toList(),
+                ),
+                if (bookingTypeController.text == 'Transportation')
+                  Column(
+                    children: [
+                      headerItem('Transportation Detail'),
+                      DropDownItem(
+                        title: "Transportation Type",
+                        controller: transportationTypeController,
+                        items: transportationTypes
+                            .map((c) => {'title': c.name, 'icon': c.icon})
+                            .toList(),
+                      ),
+                      TextFieldItem(
+                          title: "Transportation Name",
+                          controller: transportationNameController
+                      ),
+                      TextFieldItem(
+                          title: "Vehicle Name",
+                          controller: vehicleNameController
+                      ),
+                      TextFieldItem(
+                          title: "Seat Number",
+                          controller: seatNumberController
+                      ),
+                      TextFieldItem(
+                        title: "Departure Time",
+                        formType: FormType.date,
+                        controller: departureTimeController,
+                      ),
+                      TextFieldItem(
+                        title: "Arrival Time",
+                        formType: FormType.date,
+                        controller: arrivalTimeController,
+                      ),
+                      TextFieldItem(
+                          title: "Pickup Point",
+                          controller: pickupPointController
+                      ),
+                      TextFieldItem(
+                          title: "Drop off Point",
+                          controller: dropOffPointController
+                      ),
+                      TextFieldItem(
+                          title: "Departure Location",
+                          controller: departureLocationController
+                      ),
+                      TextFieldItem(
+                          title: "Arrival Location",
+                          controller: arrivalLocationController
+                      ),
+                    ],
+                  ),
+                if (bookingTypeController.text == 'Accommodation')
+                  Column(
+                    children: [
+                      headerItem('Accommodation Detail'),
+                      DropDownItem(
+                        title: "Accommodation Type",
+                        controller: accommodationTypeController,
+                        items: accommodationTypes
+                            .map((c) => {'title': c.name, 'icon': c.icon})
+                            .toList(),
+                      ),
+                      TextFieldItem(
+                          title: "Accommodation Name",
+                          controller: accommodationNameController
+                      ),
+                      TextFieldItem(
+                          title: "Address",
+                          controller: accommodationAddressController
+                      ),
+                      TextFieldItem(
+                          title: "Room Type",
+                          controller: roomTypeController
+                      ),
+                      TextFieldItem(
+                          title: "Room Number",
+                          controller: roomNumberController
+                      ),
+                      TextFieldItem(
+                        title: "Check-In",
+                        formType: FormType.date,
+                        controller: checkInController,
+                      ),
+                      TextFieldItem(
+                        title: "Check-Out",
+                        formType: FormType.date,
+                        controller: checkOutController,
+                      ),
+                      TextFieldItem(
+                          title: "Contact",
+                          controller: accommodationContactController
+                      ),
+                      TextFieldItem(
+                          title: "Email",
+                          controller: accommodationEmailController
+                      ),
+                    ],
+                  ),
+                if (bookingTypeController.text == 'Activity')
+                  Column(
+                    children: [
+                      headerItem('Activity Detail'),
+                      DropDownItem(
+                        title: "Activity Type",
+                        controller: activityTypeController,
+                        items: activityTypes
+                            .map((c) => {'title': c.name, 'icon': c.icon})
+                            .toList(),
+                      ),
+                      TextFieldItem(
+                          title: "Activity Name",
+                          controller: activityNameController
+                      ),
+                      TextFieldItem(
+                          title: "Address",
+                          controller: activityAddressController
+                      ),
+                      TextFieldItem(
+                        title: "Start Time",
+                        formType: FormType.date,
+                        controller: startTimeController,
+                      ),
+                      TextFieldItem(
+                        title: "End Time",
+                        formType: FormType.date,
+                        controller: endTimeController,
+                      ),
+                      TextFieldItem(
+                          title: "Contact",
+                          controller: activityContactController
+                      ),
+                      TextFieldItem(
+                          title: "Guide Name",
+                          controller: activityGuideNameController
+                      ),
+                    ],
+                  ),
               ],
             )
         ),

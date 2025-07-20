@@ -140,7 +140,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     Navigator.pushNamed(
       context,
       RoutesValues.locationDetail,
-      arguments: id
+      arguments: CommonAddArgs(id: id, tripId: widget.id!),
     ).then((value) {
       refreshData();
     });

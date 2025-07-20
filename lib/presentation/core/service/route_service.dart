@@ -81,8 +81,8 @@ class RouteService {
         var id = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => BookingDetailPageProvider(id: id));
       case RoutesValues.locationDetail:
-        var id = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) => LocationDetailPageProvider(id: id));
+        var args = settings.arguments as CommonAddArgs;
+        return MaterialPageRoute(builder: (_) => LocationDetailPageProvider(item: args));
       default:
         return MaterialPageRoute(builder: (_) {
           return Scaffold(

@@ -58,3 +58,11 @@ class TripError extends TripCubitState {
   @override
   List<Object?> get props => [message];
 }
+
+class LocationDetailLoaded extends TripCubitState {
+  final LocationModel? location;
+  const LocationDetailLoaded({required this.location});
+
+  @override
+  List<Object?> get props => [location];
+}

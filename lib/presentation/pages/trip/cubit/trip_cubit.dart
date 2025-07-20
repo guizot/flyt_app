@@ -90,6 +90,13 @@ class TripCubit extends Cubit<TripCubitState> {
   }
 
 
+  LocationModel? getLocationDetail(String id) {
+    emit(TripLoading());
+    LocationModel? location = tripUseCases.getLocation(id);
+    emit(LocationDetailLoaded(location: location));
+    return location;
+  }
+
   LocationModel? getLocation(String id) {
     emit(TripLoading());
     LocationModel? location = tripUseCases.getLocation(id);

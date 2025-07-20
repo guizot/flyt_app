@@ -168,7 +168,7 @@ class _LocationAddState extends State<LocationAdd> {
 
   void onDelete(BuildContext context) async {
     Navigator.pop(context);
-    await BlocProvider.of<TripCubit>(context).deleteTrip(widget.item.id!);
+    await BlocProvider.of<TripCubit>(context).deleteLocation(widget.item.id!);
     if(context.mounted) {
       Navigator.pop(context);
       Navigator.pop(context);
@@ -231,10 +231,12 @@ class _LocationAddState extends State<LocationAdd> {
                 ),
                 TextFieldItem(
                     title: "Google Maps URL",
+                    inputType: TextInputType.multiline,
                     controller: urlController
                 ),
                 TextFieldItem(
                     title: "Notes",
+                    inputType: TextInputType.multiline,
                     controller: noteController
                 ),
               ],

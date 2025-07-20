@@ -46,7 +46,9 @@ class _AddImageItemState extends State<AddImageItem> {
       if (context.mounted) {
         DialogHandler.showSnackBar(context: context, message: result);
       }
-      widget.onImagePicked?.call(null);
+      if(result != 'No image selected.') {
+        widget.onImagePicked?.call(null);
+      }
     }
   }
 

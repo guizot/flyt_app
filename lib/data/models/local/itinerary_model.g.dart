@@ -24,14 +24,15 @@ class ItineraryModelAdapter extends TypeAdapter<ItineraryModel> {
       type: fields[4] as String,
       pathId: fields[5] as String?,
       locationId: fields[6] as String?,
-      createdAt: fields[7] as DateTime,
+      tripId: fields[7] as String,
+      createdAt: fields[8] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, ItineraryModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,6 +48,8 @@ class ItineraryModelAdapter extends TypeAdapter<ItineraryModel> {
       ..writeByte(6)
       ..write(obj.locationId)
       ..writeByte(7)
+      ..write(obj.tripId)
+      ..writeByte(8)
       ..write(obj.createdAt);
   }
 

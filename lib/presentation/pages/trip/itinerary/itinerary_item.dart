@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flyt_app/data/models/local/trip_model.dart';
+import 'package:flyt_app/data/models/local/itinerary_model.dart';
 
 class ItineraryItem extends StatefulWidget {
   const ItineraryItem({super.key, required this.item, required this.onTap });
-  final TripModel item;
+  final ItineraryModel item;
   final Function(String) onTap;
 
   @override
@@ -33,7 +33,7 @@ class _ItineraryItemState extends State<ItineraryItem> {
               children: [
                 Expanded(
                   child: Text(
-                    widget.item.title,
+                    widget.item.description,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 18,

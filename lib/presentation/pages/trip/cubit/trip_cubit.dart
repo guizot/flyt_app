@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../data/models/local/booking_model.dart';
+import '../../../../data/models/local/itinerary_model.dart';
 import '../../../../data/models/local/location_model.dart';
 import '../../../../data/models/local/note_model.dart';
 import '../../../../data/models/local/path_model.dart';
@@ -66,11 +68,15 @@ class TripCubit extends Cubit<TripCubitState> {
     List<NoteModel> notes = tripUseCases.getAllNote(id);
     List<LocationModel> locations = tripUseCases.getAllLocation(id);
     List<PathModel> paths = tripUseCases.getAllPath(id);
+    List<ItineraryModel> itineraries = tripUseCases.getAllItinerary(id);
+    List<BookingModel> bookings = tripUseCases.getAllBooking(id);
     emit(TripDetailLoaded(
       trip: trip,
       notes: notes,
       locations: locations,
-      paths: paths
+      paths: paths,
+      itineraries: itineraries,
+      bookings: bookings
     ));
   }
 
@@ -136,6 +142,42 @@ class TripCubit extends Cubit<TripCubitState> {
   Future<void> deletePath(String id) async {
     emit(TripLoading());
     await tripUseCases.deletePath(id);
+    emit(TripInitial());
+  }
+
+
+  ItineraryModel? getItinerary(String id) {
+    emit(TripLoading());
+    ItineraryModel? path = tripUseCases.getItinerary(id);
+    emit(TripInitial());
+    return path;
+  }
+
+  Future<void> saveItinerary(ItineraryModel item) async {
+    await tripUseCases.saveItinerary(item);
+  }
+
+  Future<void> deleteItinerary(String id) async {
+    emit(TripLoading());
+    await tripUseCases.deleteItinerary(id);
+    emit(TripInitial());
+  }
+
+
+  BookingModel? getBooking(String id) {
+    emit(TripLoading());
+    BookingModel? path = tripUseCases.getBooking(id);
+    emit(TripInitial());
+    return path;
+  }
+
+  Future<void> saveBooking(BookingModel item) async {
+    await tripUseCases.saveBooking(item);
+  }
+
+  Future<void> deleteBooking(String id) async {
+    emit(TripLoading());
+    await tripUseCases.deleteBooking(id);
     emit(TripInitial());
   }
 

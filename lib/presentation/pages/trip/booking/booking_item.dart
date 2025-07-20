@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flyt_app/data/models/local/trip_model.dart';
+import 'package:flyt_app/data/models/local/booking_model.dart';
 
 class BookingItem extends StatefulWidget {
   const BookingItem({super.key, required this.item, required this.onTap });
-  final TripModel item;
+  final BookingModel item;
   final Function(String) onTap;
 
   @override
@@ -33,7 +33,7 @@ class _BookingItemState extends State<BookingItem> {
               children: [
                 Expanded(
                   child: Text(
-                    widget.item.title,
+                    widget.item.providerName,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 18,

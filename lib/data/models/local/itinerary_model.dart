@@ -26,6 +26,9 @@ class ItineraryModel extends HiveObject {
   String? locationId;
 
   @HiveField(7)
+  String tripId;
+
+  @HiveField(8)
   DateTime createdAt;
 
   ItineraryModel({
@@ -36,6 +39,7 @@ class ItineraryModel extends HiveObject {
     required this.type,
     this.pathId,
     this.locationId,
+    required this.tripId,
     required this.createdAt,
   });
 }

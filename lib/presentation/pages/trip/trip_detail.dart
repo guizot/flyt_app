@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flyt_app/data/models/local/booking_model.dart';
+import 'package:flyt_app/data/models/local/itinerary_model.dart';
 import 'package:flyt_app/data/models/local/note_model.dart';
 import 'package:flyt_app/data/models/local/path_model.dart';
 import 'package:flyt_app/presentation/core/model/arguments/common_add_args.dart';
+import 'package:flyt_app/presentation/pages/trip/booking/booking_item.dart';
 import 'package:flyt_app/presentation/pages/trip/path/path_item.dart';
 import '../../../data/models/local/location_model.dart';
 import '../../../data/models/local/trip_model.dart';
@@ -14,6 +17,7 @@ import '../../core/widget/loading_state.dart';
 import 'cubit/trip_cubit.dart';
 import 'cubit/trip_state.dart';
 import 'description/description_item.dart';
+import 'itinerary/itinerary_item.dart';
 import 'location/location_item.dart';
 import 'note/note_item.dart';
 
@@ -38,6 +42,7 @@ class TripDetailPage extends StatefulWidget {
 }
 
 class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProviderStateMixin {
+
   int selectedTabIndex = 0;
   late PageController _pageController;
   late ScrollController _tabScrollController;
@@ -62,7 +67,6 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     context.read<TripCubit>().getAllDetail(widget.id!);
   }
 
-
   void scrollToSelectedTab() {
     final keyContext = _tabKeys[selectedTabIndex].currentContext;
     if (keyContext != null) {
@@ -81,9 +85,11 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     scrollToSelectedTab();
   }
 
+  // region NAVIGATION
 
   void navigateAction(BuildContext context) {
     if (selectedTabIndex == 0) {
+      navigateItineraryAdd(context);
     } else if (selectedTabIndex == 1) {
     } else if (selectedTabIndex == 2) {
       navigateLocationAdd(context);
@@ -169,123 +175,94 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     });
   }
 
+  void navigateItineraryAdd(BuildContext context) {
+    Navigator.pushNamed(
+      context,
+      RoutesValues.itineraryAdd,
+      arguments: CommonAddArgs(tripId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
+  }
 
-  void showDataWarning() {
-    DialogHandler.showConfirmDialog(
-      context: context,
-      title: "Data Protection",
-      description:
-          "All data is stored locally on your device. Uninstalling or clearing the app will permanently delete it. Be sure to back up anything important.",
-      confirmText: "I Understand",
-      onConfirm: () => Navigator.pop(context),
-      isCancelable: false,
+  void navigateItineraryEdit(String id) {
+    Navigator.pushNamed(
+      context,
+      RoutesValues.itineraryAdd,
+      arguments: CommonAddArgs(id: id, tripId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
+  }
+
+  void navigateBookingAdd(BuildContext context) {
+    Navigator.pushNamed(
+      context,
+      RoutesValues.bookingAdd,
+      arguments: CommonAddArgs(tripId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
+  }
+
+  void navigateBookingDetail(String id) {
+    Navigator.pushNamed(
+      context,
+      RoutesValues.bookingDetail,
+      arguments: CommonAddArgs(id: id, tripId: widget.id!),
+    ).then((value) {
+      refreshData();
+    });
+  }
+
+  // endregion
+
+  // region PAGES
+
+  Widget itineraryPage(List<ItineraryModel> itineraries) {
+    if (itineraries.isEmpty) {
+      return EmptyState(
+        title: "No Records",
+        subtitle: "You haven’t added any itinerary. Once you do, they’ll appear here.",
+        tapText: "Add Itinerary +",
+        onTap: () => navigateItineraryAdd(context),
+        onLearn: showDataWarning,
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: itineraries.length,
+      itemBuilder: (context, index) {
+        final itinerary = itineraries[index];
+        return ItineraryItem(
+          item: itinerary,
+          onTap: (id) => navigateItineraryEdit(id),
+        );
+      },
     );
   }
 
-  Widget buildTab(String label, int index, {Key? key}) {
-    final isSelected = selectedTabIndex == index;
-    return Container(
-      key: key,
-      child: GestureDetector(
-        onTap: () => changeTab(index),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-          margin: EdgeInsets.only(right: index != 5 ? 12 : 0),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? Theme.of(context).iconTheme.color
-                : Theme.of(context).hoverColor,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: isSelected
-                  ? Theme.of(context).colorScheme.surface
-                  : Theme.of(context).iconTheme.color,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
+  Widget bookingPage(List<BookingModel> bookings) {
+    if (bookings.isEmpty) {
+      return EmptyState(
+        title: "No Records",
+        subtitle: "You haven’t added any booking. Once you do, they’ll appear here.",
+        tapText: "Add Booking +",
+        onTap: () => navigateBookingAdd(context),
+        onLearn: showDataWarning,
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: bookings.length,
+      itemBuilder: (context, index) {
+        final booking = bookings[index];
+        return BookingItem(
+          item: booking,
+          onTap: (id) => navigateBookingDetail(id),
+        );
+      },
     );
-  }
-
-  Widget travelerDetailLoaded(BuildContext context, TripDetailLoaded state) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        title: const Text('Trip Detail'),
-        centerTitle: true,
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 8.0),
-            child: IconButton(
-              icon: Icon(
-                selectedTabIndex != 4
-                    ? Icons.add_circle_outline_sharp
-                    : Icons.edit_note_outlined,
-              ),
-              tooltip: selectedTabIndex != 4 ? 'Add' : 'Edit',
-              onPressed: () => navigateAction(context),
-            ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.only(
-              top: 16.0,
-              bottom: 16.0,
-              left: 16,
-              right: 16,
-            ),
-            controller: _tabScrollController,
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                buildTab("Itinerary", 0, key: _tabKeys[0]),
-                buildTab("Booking", 1, key: _tabKeys[1]),
-                buildTab("Location", 2, key: _tabKeys[2]),
-                buildTab("Path", 3, key: _tabKeys[3]),
-                buildTab("Description", 4, key: _tabKeys[4]),
-                buildTab("Notes", 5, key: _tabKeys[5]),
-              ],
-            ),
-          ),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => selectedTabIndex = index);
-                scrollToSelectedTab();
-              },
-              children: [
-                itineraryPage(),
-                bookingPage(),
-                locationPage(state.locations),
-                pathPage(state.paths, state.locations),
-                descriptionPage(state.trip),
-                notesPage(state.notes),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-  Widget itineraryPage() {
-    return const Center(child: Text("Itinerary"));
-  }
-
-  Widget bookingPage() {
-    return const Center(child: Text("Booking"));
   }
 
   Widget locationPage(List<LocationModel> locations) {
@@ -327,9 +304,9 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
       itemBuilder: (context, index) {
         final path = paths[index];
         return PathItem(
-          item: path,
-          onTap: (id) => navigatePathEdit(id),
-          locations: locations
+            item: path,
+            onTap: (id) => navigatePathEdit(id),
+            locations: locations
         );
       },
     );
@@ -340,25 +317,25 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
       padding: const EdgeInsets.all(16.0),
       children: [
         DescriptionItem(title: 'Title', child: Text(
-          trip?.title ?? '',
-          style: const TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-          )
+            trip?.title ?? '',
+            style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+            )
         )),
         DescriptionItem(title: 'Start Date & End Date', child: Text(
-          '${trip?.startDate} - ${trip?.endDate}',
-          style: const TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-          )
+            '${trip?.startDate} - ${trip?.endDate}',
+            style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+            )
         )),
         DescriptionItem(title: 'Description', child: Text(
-          trip?.description ?? '',
-          style: const TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-          )
+            trip?.description ?? '',
+            style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+            )
         )),
         DescriptionItem(title: 'Image', separator: false, child: Container(
           width: double.infinity,
@@ -414,7 +391,116 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     );
   }
 
+  // endregion
 
+  void showDataWarning() {
+    DialogHandler.showConfirmDialog(
+      context: context,
+      title: "Data Protection",
+      description:
+          "All data is stored locally on your device. Uninstalling or clearing the app will permanently delete it. Be sure to back up anything important.",
+      confirmText: "I Understand",
+      onConfirm: () => Navigator.pop(context),
+      isCancelable: false,
+    );
+  }
+
+  Widget buildTab(String label, int index, {Key? key}) {
+    final isSelected = selectedTabIndex == index;
+    return Container(
+      key: key,
+      child: GestureDetector(
+        onTap: () => changeTab(index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          margin: EdgeInsets.only(right: index != 5 ? 12 : 0),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? Theme.of(context).iconTheme.color
+                : Theme.of(context).hoverColor,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.surface
+                  : Theme.of(context).iconTheme.color,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget tripDetailLoaded(BuildContext context, TripDetailLoaded state) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        title: const Text('Trip Detail'),
+        centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              icon: Icon(
+                selectedTabIndex != 4
+                    ? Icons.add_circle_outline_sharp
+                    : Icons.edit_note_outlined,
+              ),
+              tooltip: selectedTabIndex != 4 ? 'Add' : 'Edit',
+              onPressed: () => navigateAction(context),
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.only(
+              top: 16.0,
+              bottom: 16.0,
+              left: 16,
+              right: 16,
+            ),
+            controller: _tabScrollController,
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                buildTab("Itinerary", 0, key: _tabKeys[0]),
+                buildTab("Booking", 1, key: _tabKeys[1]),
+                buildTab("Location", 2, key: _tabKeys[2]),
+                buildTab("Path", 3, key: _tabKeys[3]),
+                buildTab("Description", 4, key: _tabKeys[4]),
+                buildTab("Notes", 5, key: _tabKeys[5]),
+              ],
+            ),
+          ),
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() => selectedTabIndex = index);
+                scrollToSelectedTab();
+              },
+              children: [
+                itineraryPage(state.itineraries),
+                bookingPage(state.bookings),
+                locationPage(state.locations),
+                pathPage(state.paths, state.locations),
+                descriptionPage(state.trip),
+                notesPage(state.notes),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -422,13 +508,16 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
       builder: (context, state) {
         if (state is TripInitial) {
           return const SizedBox.shrink();
-        } else if (state is TripLoading) {
+        }
+        else if (state is TripLoading) {
           return Scaffold(appBar: AppBar(), body: const LoadingState());
-        } else if (state is TripDetailLoaded) {
-          return travelerDetailLoaded(context, state);
+        }
+        else if (state is TripDetailLoaded) {
+          return tripDetailLoaded(context, state);
         }
         return const SizedBox.shrink();
       },
     );
   }
+
 }

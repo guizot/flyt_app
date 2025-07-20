@@ -1,6 +1,8 @@
 import 'package:flyt_app/data/models/local/note_model.dart';
 import 'package:flyt_app/domain/repositories/hive_repo.dart';
 import 'package:intl/intl.dart';
+import '../../data/models/local/booking_model.dart';
+import '../../data/models/local/itinerary_model.dart';
 import '../../data/models/local/location_model.dart';
 import '../../data/models/local/path_model.dart';
 import '../../data/models/local/trip_model.dart';
@@ -154,6 +156,50 @@ class TripUseCases {
 
   Future<void> deletePath(String id) async {
     await hiveRepo.deletePath(id);
+  }
+
+
+  List<ItineraryModel> getAllItinerary(String tripId) {
+    final itineraries = hiveRepo
+        .getAllItinerary()
+        .where((itinerary) => itinerary.tripId == tripId)
+        .toList();
+    itineraries.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    return itineraries;
+  }
+
+  ItineraryModel? getItinerary(String id) {
+    return hiveRepo.getItinerary(id);
+  }
+
+  Future<void> saveItinerary(ItineraryModel item) async {
+    await hiveRepo.saveItinerary(item.id, item);
+  }
+
+  Future<void> deleteItinerary(String id) async {
+    await hiveRepo.deleteItinerary(id);
+  }
+
+
+  List<BookingModel> getAllBooking(String tripId) {
+    final bookings = hiveRepo
+        .getAllBooking()
+        .where((booking) => booking.tripId == tripId)
+        .toList();
+    bookings.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    return bookings;
+  }
+
+  BookingModel? getBooking(String id) {
+    return hiveRepo.getBooking(id);
+  }
+
+  Future<void> saveBooking(BookingModel item) async {
+    await hiveRepo.saveBooking(item.id, item);
+  }
+
+  Future<void> deleteBooking(String id) async {
+    await hiveRepo.deleteItinerary(id);
   }
 
 }

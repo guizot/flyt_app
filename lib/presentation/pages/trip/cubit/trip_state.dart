@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import '../../../../data/models/local/booking_model.dart';
+import '../../../../data/models/local/itinerary_model.dart';
 import '../../../../data/models/local/location_model.dart';
 import '../../../../data/models/local/note_model.dart';
 import '../../../../data/models/local/path_model.dart';
@@ -29,10 +31,12 @@ class TripDetailLoaded extends TripCubitState {
   final List<NoteModel> notes;
   final List<LocationModel> locations;
   final List<PathModel> paths;
-  const TripDetailLoaded({required this.trip, required this.notes, required this.locations, required this.paths});
+  final List<ItineraryModel> itineraries;
+  final List<BookingModel> bookings;
+  const TripDetailLoaded({required this.trip, required this.notes, required this.locations, required this.paths, required this.itineraries, required this.bookings});
 
   @override
-  List<Object?> get props => [trip, notes, locations, paths];
+  List<Object?> get props => [trip, notes, locations, paths, itineraries, bookings];
 }
 
 class TripGroupedLoaded extends TripCubitState {

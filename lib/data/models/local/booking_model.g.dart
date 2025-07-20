@@ -23,14 +23,15 @@ class BookingModelAdapter extends TypeAdapter<BookingModel> {
       bookingType: fields[3] as String,
       attachments: (fields[4] as List).cast<Uint8List>(),
       detail: fields[5] as BookingDetailModel,
-      createdAt: fields[6] as DateTime,
+      tripId: fields[6] as String,
+      createdAt: fields[7] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, BookingModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,6 +45,8 @@ class BookingModelAdapter extends TypeAdapter<BookingModel> {
       ..writeByte(5)
       ..write(obj.detail)
       ..writeByte(6)
+      ..write(obj.tripId)
+      ..writeByte(7)
       ..write(obj.createdAt);
   }
 

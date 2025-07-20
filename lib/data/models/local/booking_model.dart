@@ -25,6 +25,9 @@ class BookingModel extends HiveObject {
   BookingDetailModel detail;
 
   @HiveField(6)
+  String tripId;
+
+  @HiveField(7)
   DateTime createdAt;
 
   BookingModel({
@@ -34,6 +37,7 @@ class BookingModel extends HiveObject {
     required this.bookingType,
     required this.attachments,
     required this.detail,
+    required this.tripId,
     required this.createdAt,
   });
 }

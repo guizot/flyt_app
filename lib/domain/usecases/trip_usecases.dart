@@ -6,6 +6,7 @@ import '../../data/models/local/itinerary_model.dart';
 import '../../data/models/local/location_model.dart';
 import '../../data/models/local/path_model.dart';
 import '../../data/models/local/trip_model.dart';
+import '../../presentation/core/model/common/itinerary_group.dart';
 import '../../presentation/pages/trip/trip_display_item.dart';
 
 class TripUseCases {
@@ -159,13 +160,13 @@ class TripUseCases {
   }
 
 
-  List<ItineraryModel> getAllItinerary(String tripId) {
+  List<ItineraryGroup> getAllItinerary(String tripId) {
     final itineraries = hiveRepo
         .getAllItinerary()
         .where((itinerary) => itinerary.tripId == tripId)
         .toList();
     itineraries.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-    return itineraries;
+    return groupItinerariesByDate(itineraries);
   }
 
   ItineraryModel? getItinerary(String id) {
@@ -178,6 +179,23 @@ class TripUseCases {
 
   Future<void> deleteItinerary(String id) async {
     await hiveRepo.deleteItinerary(id);
+  }
+
+  List<ItineraryGroup> groupItinerariesByDate(List<ItineraryModel> itineraries) {
+    Map<String, List<ItineraryModel>> grouped = {};
+
+    for (final itinerary in itineraries) {
+      grouped.putIfAbsent(itinerary.date, () => []).add(itinerary);
+    }
+
+    final sortedGroups = grouped.entries.map((entry) {
+      return ItineraryGroup(date: entry.key, items: entry.value);
+    }).toList();
+
+    // Optional: sort groups by date
+    sortedGroups.sort((a, b) => a.date.compareTo(b.date));
+
+    return sortedGroups;
   }
 
 

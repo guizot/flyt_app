@@ -5,6 +5,7 @@ import '../../../../data/models/local/location_model.dart';
 import '../../../../data/models/local/note_model.dart';
 import '../../../../data/models/local/path_model.dart';
 import '../../../../data/models/local/trip_model.dart';
+import '../../../core/model/common/itinerary_group.dart';
 import '../trip_display_item.dart';
 
 abstract class TripCubitState extends Equatable {
@@ -31,7 +32,7 @@ class TripDetailLoaded extends TripCubitState {
   final List<NoteModel> notes;
   final List<LocationModel> locations;
   final List<PathModel> paths;
-  final List<ItineraryModel> itineraries;
+  final List<ItineraryGroup> itineraries;
   final List<BookingModel> bookings;
   const TripDetailLoaded({required this.trip, required this.notes, required this.locations, required this.paths, required this.itineraries, required this.bookings});
 

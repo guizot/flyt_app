@@ -6,6 +6,7 @@ import '../../../../data/models/local/note_model.dart';
 import '../../../../data/models/local/path_model.dart';
 import '../../../../data/models/local/trip_model.dart';
 import '../../../../domain/usecases/trip_usecases.dart';
+import '../../../core/model/common/itinerary_group.dart';
 import '../trip_display_item.dart';
 import 'trip_state.dart';
 
@@ -68,7 +69,7 @@ class TripCubit extends Cubit<TripCubitState> {
     List<NoteModel> notes = tripUseCases.getAllNote(id);
     List<LocationModel> locations = tripUseCases.getAllLocation(id);
     List<PathModel> paths = tripUseCases.getAllPath(id);
-    List<ItineraryModel> itineraries = tripUseCases.getAllItinerary(id);
+    List<ItineraryGroup> itineraries = tripUseCases.getAllItinerary(id);
     List<BookingModel> bookings = tripUseCases.getAllBooking(id);
     emit(TripDetailLoaded(
       trip: trip,

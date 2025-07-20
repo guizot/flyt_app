@@ -5,6 +5,7 @@ import 'package:flyt_app/data/models/local/itinerary_model.dart';
 import 'package:flyt_app/data/models/local/note_model.dart';
 import 'package:flyt_app/data/models/local/path_model.dart';
 import 'package:flyt_app/presentation/core/model/arguments/common_add_args.dart';
+import 'package:flyt_app/presentation/core/model/common/itinerary_group.dart';
 import 'package:flyt_app/presentation/pages/trip/booking/booking_item.dart';
 import 'package:flyt_app/presentation/pages/trip/path/path_item.dart';
 import '../../../data/models/local/location_model.dart';
@@ -17,6 +18,7 @@ import '../../core/widget/loading_state.dart';
 import 'cubit/trip_cubit.dart';
 import 'cubit/trip_state.dart';
 import 'description/description_item.dart';
+import 'itinerary/itinerary_group_item.dart';
 import 'itinerary/itinerary_item.dart';
 import 'location/location_item.dart';
 import 'note/note_item.dart';
@@ -226,7 +228,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
   // region PAGES
 
   Widget itineraryPage(
-      List<ItineraryModel> itineraries,
+      List<ItineraryGroup> itineraries,
       List<LocationModel> locations,
       List<PathModel> paths
   ) {
@@ -239,18 +241,11 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
         onLearn: showDataWarning,
       );
     }
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: itineraries.length,
-      itemBuilder: (context, index) {
-        final itinerary = itineraries[index];
-        return ItineraryItem(
-          item: itinerary,
-          onTap: (id) => navigateItineraryEdit(id),
-          locations: locations,
-          paths: paths
-        );
-      },
+    return ItineraryGroupItem(
+      groups: itineraries,
+      onTap: (id) => navigateItineraryEdit(id),
+      locations: locations,
+      paths: paths,
     );
   }
 

@@ -41,7 +41,7 @@ class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
     if (pickedFile != null) {
       final bytes = await pickedFile.readAsBytes();
       final sizeKB = bytes.lengthInBytes / 1024;
-      if (sizeKB > widget.maxSizeKB) {
+      if (sizeKB > widget.maxSizeKB && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Image must be less than ${widget.maxSizeKB} KB'),
@@ -80,10 +80,7 @@ class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(16.0)),
         color: Theme.of(context).hoverColor,
-        border: Border.all(
-          color: Theme.of(context).hoverColor,
-          width: 2,
-        ),
+        border: Border.all(color: Theme.of(context).hoverColor, width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

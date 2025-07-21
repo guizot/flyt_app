@@ -24,13 +24,16 @@ class _DropDownItemState extends State<DropDownItem> {
   @override
   void initState() {
     super.initState();
-    _selectedTitle = widget.controller.text.isNotEmpty ? widget.controller.text : null;
+    _selectedTitle = widget.controller.text.isNotEmpty
+        ? widget.controller.text
+        : null;
   }
 
   bool _isInItems(String? value) {
     if (value == null) return false;
-    return widget.items.any((item) =>
-    (widget.useValue ? item['value'] : item['title']) == value);
+    return widget.items.any(
+      (item) => (widget.useValue ? item['value'] : item['title']) == value,
+    );
   }
 
   @override
@@ -43,10 +46,7 @@ class _DropDownItemState extends State<DropDownItem> {
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(16.0)),
             color: Theme.of(context).hoverColor,
-            border: Border.all(
-              color: Theme.of(context).hoverColor,
-              width: 2,
-            ),
+            border: Border.all(color: Theme.of(context).hoverColor, width: 2),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,6 +78,18 @@ class _DropDownItemState extends State<DropDownItem> {
                   ),
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.surface,
+                  suffixIcon:
+                      _selectedTitle != null && _selectedTitle!.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear, size: 20),
+                          onPressed: () {
+                            setState(() {
+                              _selectedTitle = null;
+                              widget.controller.clear();
+                            });
+                          },
+                        )
+                      : null,
                 ),
                 items: widget.items.map((item) {
                   final value = item['value'] ?? '';
@@ -91,8 +103,7 @@ class _DropDownItemState extends State<DropDownItem> {
                       children: [
                         if (icon != null)
                           Text(icon, style: const TextStyle(fontSize: 18)),
-                        if (icon != null)
-                          const SizedBox(width: 8),
+                        if (icon != null) const SizedBox(width: 8),
                         Expanded(
                           child: Text(title, overflow: TextOverflow.ellipsis),
                         ),

@@ -4,8 +4,8 @@ import '../../../../injector.dart';
 import '../../../core/constant/routes_values.dart';
 import '../../../core/handler/dialog_handler.dart';
 import '../../../core/model/arguments/common_add_args.dart';
-import '../../../core/model/arguments/document_add_args.dart';
 import '../../../core/widget/loading_state.dart';
+import '../../../core/widget/not_found_state.dart';
 import '../cubit/trip_cubit.dart';
 import '../cubit/trip_state.dart';
 
@@ -38,14 +38,14 @@ class _BookingDetailPageState extends State<BookingDetailPage> with SingleTicker
   }
 
   void refreshData() {
-    context.read<TripCubit>().getAllDetail(widget.item.id!);
+    context.read<TripCubit>().getBookingDetail(widget.item.id!);
   }
 
-  void navigateBookingEdit(String id) {
+  void navigateBookingEdit() {
     Navigator.pushNamed(
       context,
-      RoutesValues.documentAdd,
-      arguments: DocumentAddArgs(travelerId: id),
+      RoutesValues.bookingAdd,
+      arguments: CommonAddArgs(id: widget.item.id, tripId: widget.item.tripId),
     ).then((value) {
       refreshData();
     });
@@ -63,12 +63,14 @@ class _BookingDetailPageState extends State<BookingDetailPage> with SingleTicker
     );
   }
 
-  Widget bookingDetailLoaded(BuildContext context, TripDetailLoaded state) {
+  Widget bookingDetailLoaded(BuildContext context, BookingDetailLoaded state) {
+    final booking = state.booking;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         surfaceTintColor: Colors.transparent,
-        title: const Text('Trip Detail'),
+        title: const Text('Booking Detail'),
         centerTitle: true,
         actions: [
           Container(
@@ -76,14 +78,21 @@ class _BookingDetailPageState extends State<BookingDetailPage> with SingleTicker
             child: IconButton(
               icon: const Icon(Icons.edit_note_outlined),
               tooltip: 'Edit',
-              onPressed: () => navigateBookingEdit(widget.item.id!),
+              onPressed: navigateBookingEdit,
             ),
           ),
         ],
       ),
-      body: const Center(
-        child: Text("Booking Detail"),
+      body: booking == null
+          ? const NotFoundState(
+        title: 'Booking not found',
+        subtitle: 'We couldn\'t find the booking you are looking for.',
       )
+          : ListView(
+            children: [
+              Text(booking.providerName)
+          ],
+      ),
     );
   }
 
@@ -95,7 +104,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> with SingleTicker
           return const SizedBox.shrink();
         } else if (state is TripLoading) {
           return Scaffold(appBar: AppBar(), body: const LoadingState());
-        } else if (state is TripDetailLoaded) {
+        } else if (state is BookingDetailLoaded) {
           return bookingDetailLoaded(context, state);
         }
         return const SizedBox.shrink();

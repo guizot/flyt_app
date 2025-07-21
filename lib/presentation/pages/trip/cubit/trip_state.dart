@@ -72,3 +72,11 @@ class LocationDetailLoaded extends TripCubitState {
   @override
   List<Object?> get props => [location];
 }
+
+class BookingDetailLoaded extends TripCubitState {
+  final BookingModel? booking;
+  const BookingDetailLoaded({required this.booking});
+
+  @override
+  List<Object?> get props => [booking];
+}

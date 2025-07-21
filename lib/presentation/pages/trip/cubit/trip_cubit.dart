@@ -169,6 +169,12 @@ class TripCubit extends Cubit<TripCubitState> {
   }
 
 
+  Future<void> getBookingDetail(String id) async {
+    emit(TripLoading());
+    BookingModel? booking = tripUseCases.getBooking(id);
+    emit(BookingDetailLoaded(booking: booking));
+  }
+
   BookingModel? getBooking(String id) {
     emit(TripLoading());
     BookingModel? path = tripUseCases.getBooking(id);

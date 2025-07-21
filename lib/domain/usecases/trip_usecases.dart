@@ -217,7 +217,7 @@ class TripUseCases {
   }
 
   Future<void> deleteBooking(String id) async {
-    await hiveRepo.deleteItinerary(id);
+    await hiveRepo.deleteBooking(id);
   }
 
 }

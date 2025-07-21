@@ -20,8 +20,8 @@ class ActivityDetailModelAdapter extends TypeAdapter<ActivityDetailModel> {
       activityType: fields[0] as String,
       activityName: fields[1] as String,
       address: fields[2] as String,
-      startTime: fields[3] as DateTime,
-      endTime: fields[4] as DateTime,
+      startTime: fields[3] as String,
+      endTime: fields[4] as String,
       contact: fields[5] as String,
       guideName: fields[6] as String,
     );

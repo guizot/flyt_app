@@ -41,15 +41,22 @@ class _TextFieldItemState extends State<TextFieldItem> {
           switchValue = widget.controller.text == 'true' ? true : false;
           widget.controller.text = switchValue.toString();
         case FormType.date:
-          DateFormat formatter = DateFormat(widget.pickerMode == CupertinoDatePickerMode.date ? 'dd MMM yyyy' : 'HH:mm');
+          late DateFormat formatter;
+          if (widget.pickerMode == CupertinoDatePickerMode.date) {
+            formatter = DateFormat('dd MMM yyyy');
+          } else if (widget.pickerMode == CupertinoDatePickerMode.time) {
+            formatter = DateFormat('HH:mm');
+          } else if (widget.pickerMode == CupertinoDatePickerMode.dateAndTime) {
+            formatter = DateFormat('dd MMM yyyy - HH:mm');
+          } else {
+            formatter = DateFormat('dd MMM yyyy');
+          }
           try {
-            DateTime dateTime = formatter.parse(widget.controller.text);
-            dateTempValue = dateTime;
-          } catch(e) {
+            dateTempValue = formatter.parse(widget.controller.text);
+          } catch (e) {
             dateTempValue = DateTime.now().copyWith(hour: 8, minute: 0, second: 0, millisecond: 0, microsecond: 0);
           }
-          String formattedDate = formatter.format(dateTempValue!);
-          widget.controller.text = formattedDate;
+          widget.controller.text = formatter.format(dateTempValue!);
       }
     });
   }
@@ -242,7 +249,16 @@ class _TextFieldItemState extends State<TextFieldItem> {
                     child: FilledButton(
                       onPressed: () {
                         setState(() {
-                          String formattedDate = DateFormat(widget.pickerMode == CupertinoDatePickerMode.date ? 'dd MMM yyyy' : 'HH:mm').format(dateTempValue ?? DateTime.now());
+                          String formattedDate;
+                          if (widget.pickerMode == CupertinoDatePickerMode.date) {
+                            formattedDate = DateFormat('dd MMM yyyy').format(dateTempValue ?? DateTime.now());
+                          } else if (widget.pickerMode == CupertinoDatePickerMode.time) {
+                            formattedDate = DateFormat('HH:mm').format(dateTempValue ?? DateTime.now());
+                          } else if (widget.pickerMode == CupertinoDatePickerMode.dateAndTime) {
+                            formattedDate = DateFormat('dd MMM yyyy - HH:mm').format(dateTempValue ?? DateTime.now());
+                          } else {
+                            formattedDate = DateFormat('dd MMM yyyy').format(dateTempValue ?? DateTime.now()); // fallback
+                          }
                           widget.controller.text = formattedDate;
                         });
                         Navigator.pop(context);

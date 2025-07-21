@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flyt_app/data/models/local/bookingdetail/accommodation_detail_model.dart';
@@ -45,7 +46,6 @@ class _BookingAddState extends State<BookingAdd> {
   TextEditingController providerNameController = TextEditingController();
   TextEditingController bookingCodeController = TextEditingController();
   TextEditingController bookingTypeController = TextEditingController();
-
   // TRANSPORTATION
   TextEditingController transportationTypeController = TextEditingController();
   TextEditingController transportationNameController = TextEditingController();
@@ -57,7 +57,6 @@ class _BookingAddState extends State<BookingAdd> {
   TextEditingController dropOffPointController = TextEditingController();
   TextEditingController departureLocationController = TextEditingController();
   TextEditingController arrivalLocationController = TextEditingController();
-
   // ACCOMMODATION
   TextEditingController accommodationTypeController = TextEditingController();
   TextEditingController accommodationNameController = TextEditingController();
@@ -68,7 +67,6 @@ class _BookingAddState extends State<BookingAdd> {
   TextEditingController checkOutController = TextEditingController();
   TextEditingController accommodationContactController = TextEditingController();
   TextEditingController accommodationEmailController = TextEditingController();
-
   // ACTIVITY
   TextEditingController activityTypeController = TextEditingController();
   TextEditingController activityNameController = TextEditingController();
@@ -87,10 +85,33 @@ class _BookingAddState extends State<BookingAdd> {
       'bookingType': bookingTypeController.text,
       // TRANSPORTATION
       'transportationType': transportationTypeController.text,
+      'transportationName': transportationNameController.text,
+      'vehicleName': vehicleNameController.text,
+      'seatNumber': seatNumberController.text,
+      'departureTime': departureTimeController.text,
+      'arrivalTime': arrivalTimeController.text,
+      'pickupPoint': pickupPointController.text,
+      'dropOffPoint': dropOffPointController.text,
+      'departureLocation': departureLocationController.text,
+      'arrivalLocation': arrivalLocationController.text,
       // ACCOMMODATION
       'accommodationType': accommodationTypeController.text,
+      'accommodationName': accommodationNameController.text,
+      'accommodationAddress': accommodationAddressController.text,
+      'roomType': roomTypeController.text,
+      'roomNumber': roomNumberController.text,
+      'checkIn': checkInController.text,
+      'checkOut': checkOutController.text,
+      'accommodationContact': accommodationContactController.text,
+      'accommodationEmail': accommodationEmailController.text,
       // ACTIVITY
       'activityType': activityTypeController.text,
+      'activityName': activityNameController.text,
+      'activityAddress': activityAddressController.text,
+      'startTime': startTimeController.text,
+      'endTime': endTimeController.text,
+      'activityContact': activityContactController.text,
+      'activityGuideName': activityGuideNameController.text,
     };
   }
 
@@ -107,12 +128,45 @@ class _BookingAddState extends State<BookingAdd> {
           providerNameController.text = booking!.providerName;
           bookingCodeController.text = booking!.bookingCode;
           bookingTypeController.text = booking!.bookingType;
+
           // TRANSPORTATION
-          transportationTypeController.text = (booking!.detail as TransportationDetailModel).transportType;
+          if(booking!.bookingType == 'Transportation') {
+            TransportationDetailModel dtl = booking!.detail as TransportationDetailModel;
+            transportationTypeController.text = dtl.transportType;
+            transportationNameController.text = dtl.transportName;
+            vehicleNameController.text = dtl.vehicleName;
+            seatNumberController.text = dtl.seatNumber;
+            departureTimeController.text = dtl.departureTime.toString();
+            arrivalTimeController.text = dtl.arrivalTime.toString();
+            pickupPointController.text = dtl.pickUpPoint;
+            dropOffPointController.text = dtl.dropOffPoint;
+            departureLocationController.text = dtl.departureLocation;
+            arrivalLocationController.text = dtl.arrivalLocation;
+          }
           // ACCOMMODATION
-          accommodationTypeController.text = (booking!.detail as AccommodationDetailModel).accommodationType;
+          else if(booking!.bookingType == 'Accommodation') {
+            AccommodationDetailModel dtl = booking!.detail as AccommodationDetailModel;
+            accommodationTypeController.text = dtl.accommodationType;
+            accommodationNameController.text = dtl.accommodationName;
+            accommodationAddressController.text = dtl.address;
+            roomTypeController.text = dtl.roomType;
+            roomNumberController.text = dtl.roomNumber;
+            checkInController.text = dtl.checkIn.toString();
+            checkOutController.text = dtl.checkOut.toString();
+            accommodationContactController.text = dtl.contact;
+            accommodationEmailController.text = dtl.email;
+          }
           // ACTIVITY
-          activityTypeController.text = (booking!.detail as ActivityDetailModel).activityType;
+          else if(booking!.bookingType == 'Activity') {
+            ActivityDetailModel dtl = booking!.detail as ActivityDetailModel;
+            activityTypeController.text = dtl.activityType;
+            activityNameController.text = dtl.activityName;
+            activityAddressController.text = dtl.address;
+            startTimeController.text = dtl.startTime.toString();
+            endTimeController.text = dtl.endTime.toString();
+            activityContactController.text = dtl.contact;
+            activityGuideNameController.text = dtl.guideName;
+          }
         });
       }
     }
@@ -132,9 +186,120 @@ class _BookingAddState extends State<BookingAdd> {
       DialogHandler.showSnackBar(context: context, message: "Booking Type cannot be empty");
       return;
     }
+
     // TRANSPORTATION
+    if(formData['bookingType'] == 'Transportation') {
+      if (formData['transportationType']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Transportation Type cannot be empty");
+        return;
+      }
+      if (formData['transportationName']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Transportation Name cannot be empty");
+        return;
+      }
+      if (formData['vehicleName']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Vehicle Name cannot be empty");
+        return;
+      }
+      if (formData['seatNumber']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Seat Number cannot be empty");
+        return;
+      }
+      if (formData['departureTime']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Departure Time cannot be empty");
+        return;
+      }
+      if (formData['arrivalTime']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Arrival Time cannot be empty");
+        return;
+      }
+      if (formData['pickupPoint']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Pickup Point cannot be empty");
+        return;
+      }
+      if (formData['dropOffPoint']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Drop Off Point cannot be empty");
+        return;
+      }
+      if (formData['departureLocation']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Departure Location cannot be empty");
+        return;
+      }
+      if (formData['arrivalLocation']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Arrival Location cannot be empty");
+        return;
+      }
+    }
     // ACCOMMODATION
+    else if(formData['bookingType'] == 'Accommodation') {
+      if (formData['accommodationType']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Accommodation Type cannot be empty");
+        return;
+      }
+      if (formData['accommodationName']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Accommodation Name cannot be empty");
+        return;
+      }
+      if (formData['accommodationAddress']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Address cannot be empty");
+        return;
+      }
+      if (formData['roomType']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Room Type cannot be empty");
+        return;
+      }
+      if (formData['roomNumber']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Room Number cannot be empty");
+        return;
+      }
+      if (formData['checkIn']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Check-In cannot be empty");
+        return;
+      }
+      if (formData['checkOut']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Check-Out cannot be empty");
+        return;
+      }
+      if (formData['accommodationContact']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Contact cannot be empty");
+        return;
+      }
+      if (formData['accommodationEmail']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Email cannot be empty");
+        return;
+      }
+    }
     // ACTIVITY
+    else if(formData['bookingType'] == 'Activity') {
+      if (formData['activityType']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Activity Type cannot be empty");
+        return;
+      }
+      if (formData['activityName']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Activity Name cannot be empty");
+        return;
+      }
+      if (formData['activityAddress']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Address cannot be empty");
+        return;
+      }
+      if (formData['startTime']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Start Time cannot be empty");
+        return;
+      }
+      if (formData['endTime']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "End Time cannot be empty");
+        return;
+      }
+      if (formData['activityContact']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Contact cannot be empty");
+        return;
+      }
+      if (formData['activityGuideName']!.trim().isEmpty) {
+        DialogHandler.showSnackBar(context: context, message: "Guide Name cannot be empty");
+        return;
+      }
+    }
     if(widget.item.id != null) {
       showSaveDialog(context, formData);
     } else {
@@ -146,38 +311,40 @@ class _BookingAddState extends State<BookingAdd> {
     BookingDetailModel detail = BookingDetailModel();
     if(data['bookingType'] == 'Transportation') {
       detail = TransportationDetailModel(
-          transportType: 'transportType',
-          transportName: 'transportName',
-          vehicleName: 'vehicleName',
-          seatNumber: 'seatNumber',
-          departureTime: DateTime.now(),
-          arrivalTime: DateTime.now(),
-          pickUpPoint: 'pickUpPoint',
-          dropOffPoint: 'dropOffPoint',
-          departureLocation: 'departureLocation',
-          arrivalLocation: 'arrivalLocation'
+          transportType: data['transportationType']!,
+          transportName: data['transportationName']!,
+          vehicleName: data['vehicleName']!,
+          seatNumber: data['seatNumber']!,
+          departureTime: data['departureTime']!,
+          arrivalTime: data['arrivalTime']!,
+          pickUpPoint: data['pickupPoint']!,
+          dropOffPoint: data['dropOffPoint']!,
+          departureLocation: data['departureLocation']!,
+          arrivalLocation: data['arrivalLocation']!,
       );
-    } else if(data['bookingType'] == 'Accommodation') {
+    }
+    else if(data['bookingType'] == 'Accommodation') {
       detail = AccommodationDetailModel(
-          accommodationType: 'accommodationType',
-          accommodationName: 'accommodationName',
-          address: 'address',
-          roomType: 'roomType',
-          roomNumber: 'roomNumber',
-          checkIn: DateTime.now(),
-          checkOut: DateTime.now(),
-          contact: 'contact',
-          email: 'email'
+          accommodationType: data['accommodationType']!,
+          accommodationName: data['accommodationName']!,
+          address: data['accommodationAddress']!,
+          roomType: data['roomType']!,
+          roomNumber: data['roomNumber']!,
+          checkIn: data['checkIn']!,
+          checkOut: data['checkOut']!,
+          contact: data['accommodationContact']!,
+          email: data['accommodationEmail']!,
       );
-    } else if(data['bookingType'] == 'Activity') {
+    }
+    else if(data['bookingType'] == 'Activity') {
       detail = ActivityDetailModel(
-          activityType: 'activityType',
-          activityName: 'activityName',
-          address: 'address',
-          startTime: DateTime.now(),
-          endTime: DateTime.now(),
-          contact: 'contact',
-          guideName: 'guideName'
+          activityType: data['activityType']!,
+          activityName: data['activityName']!,
+          address: data['activityAddress']!,
+          startTime: data['startTime']!,
+          endTime: data['endTime']!,
+          contact: data['activityContact']!,
+          guideName: data['activityGuideName']!,
       );
     }
     try {
@@ -187,8 +354,8 @@ class _BookingAddState extends State<BookingAdd> {
             providerName: data['providerName']!,
             bookingCode: data['bookingCode']!,
             bookingType: data['bookingType']!,
-            attachments: [],
             detail: detail,
+            attachments: [],
             tripId: widget.item.tripId,
             createdAt: widget.item.id != null ? booking!.createdAt : DateTime.now(),
           )
@@ -274,7 +441,7 @@ class _BookingAddState extends State<BookingAdd> {
                       .map((c) => {'title': c.name, 'icon': c.icon})
                       .toList(),
                 ),
-                if (bookingTypeController.text == 'Transportation')
+                bookingTypeController.text == 'Transportation' ?
                   Column(
                     children: [
                       headerItem('Transportation Detail'),
@@ -300,11 +467,13 @@ class _BookingAddState extends State<BookingAdd> {
                       TextFieldItem(
                         title: "Departure Time",
                         formType: FormType.date,
+                        pickerMode: CupertinoDatePickerMode.dateAndTime,
                         controller: departureTimeController,
                       ),
                       TextFieldItem(
                         title: "Arrival Time",
                         formType: FormType.date,
+                        pickerMode: CupertinoDatePickerMode.dateAndTime,
                         controller: arrivalTimeController,
                       ),
                       TextFieldItem(
@@ -324,8 +493,8 @@ class _BookingAddState extends State<BookingAdd> {
                           controller: arrivalLocationController
                       ),
                     ],
-                  ),
-                if (bookingTypeController.text == 'Accommodation')
+                  ) : Container(),
+                bookingTypeController.text == 'Accommodation' ?
                   Column(
                     children: [
                       headerItem('Accommodation Detail'),
@@ -355,11 +524,13 @@ class _BookingAddState extends State<BookingAdd> {
                       TextFieldItem(
                         title: "Check-In",
                         formType: FormType.date,
+                        pickerMode: CupertinoDatePickerMode.dateAndTime,
                         controller: checkInController,
                       ),
                       TextFieldItem(
                         title: "Check-Out",
                         formType: FormType.date,
+                        pickerMode: CupertinoDatePickerMode.dateAndTime,
                         controller: checkOutController,
                       ),
                       TextFieldItem(
@@ -371,8 +542,8 @@ class _BookingAddState extends State<BookingAdd> {
                           controller: accommodationEmailController
                       ),
                     ],
-                  ),
-                if (bookingTypeController.text == 'Activity')
+                  ) : Container(),
+                bookingTypeController.text == 'Activity' ?
                   Column(
                     children: [
                       headerItem('Activity Detail'),
@@ -394,11 +565,13 @@ class _BookingAddState extends State<BookingAdd> {
                       TextFieldItem(
                         title: "Start Time",
                         formType: FormType.date,
+                        pickerMode: CupertinoDatePickerMode.dateAndTime,
                         controller: startTimeController,
                       ),
                       TextFieldItem(
                         title: "End Time",
                         formType: FormType.date,
+                        pickerMode: CupertinoDatePickerMode.dateAndTime,
                         controller: endTimeController,
                       ),
                       TextFieldItem(
@@ -410,7 +583,7 @@ class _BookingAddState extends State<BookingAdd> {
                           controller: activityGuideNameController
                       ),
                     ],
-                  ),
+                  ) : Container(),
               ],
             )
         ),

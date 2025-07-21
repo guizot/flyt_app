@@ -16,10 +16,10 @@ class ActivityDetailModel extends BookingDetailModel {
   String address;
 
   @HiveField(3)
-  DateTime startTime;
+  String startTime;
 
   @HiveField(4)
-  DateTime endTime;
+  String endTime;
 
   @HiveField(5)
   String contact;

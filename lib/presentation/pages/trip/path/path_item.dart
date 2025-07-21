@@ -32,7 +32,7 @@ class _PathItemState extends State<PathItem> {
                   width: imageSize,
                   height: imageSize,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    shape: BoxShape.circle,
                     image: DecorationImage(
                       image: MemoryImage(location.photoBytes!),
                       fit: BoxFit.cover,
@@ -42,7 +42,7 @@ class _PathItemState extends State<PathItem> {
                   width: imageSize,
                   height: imageSize,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    shape: BoxShape.circle,
                     color: Theme.of(context).colorScheme.surface,
                   ),
                   alignment: Alignment.center,
@@ -50,7 +50,7 @@ class _PathItemState extends State<PathItem> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  location != null ? location.name : "Location Not Found",
+                  location != null ? location.name : "Not Found",
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                   ),
@@ -64,6 +64,42 @@ class _PathItemState extends State<PathItem> {
       );
   }
 
+  Widget blockItem(String key, String value) {
+    return Expanded(
+      child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+            color: Theme.of(context).hoverColor,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                key,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ],
+          )
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -75,7 +111,7 @@ class _PathItemState extends State<PathItem> {
       return Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            locationItem(fromLocation, 50),
+            locationItem(fromLocation, 40),
             Expanded(
                 flex: 1,
                 child: Column(
@@ -114,7 +150,7 @@ class _PathItemState extends State<PathItem> {
                   ],
                 )
             ),
-            locationItem(toLocation, 50),
+            locationItem(toLocation, 40),
           ],
         );
     }
@@ -138,7 +174,7 @@ class _PathItemState extends State<PathItem> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    locationItem(fromLocation, 60),
+                    locationItem(fromLocation, 40),
                     Expanded(
                       flex: 1,
                       child: Column(
@@ -177,113 +213,17 @@ class _PathItemState extends State<PathItem> {
                         ],
                       )
                     ),
-                    locationItem(toLocation, 60),
+                    locationItem(toLocation, 40),
                   ],
                 ),
                 const CommonSeparator(color: Colors.grey),
                 Row(
                   children: [
-                    Expanded(
-                      child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
-                            color: Theme.of(context).hoverColor,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Distance',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                    fontSize: 13
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                widget.item.distance,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 13
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ],
-                          )
-                      ),
-                    ),
+                    blockItem('Distance', widget.item.distance),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
-                            color: Theme.of(context).hoverColor,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Transport',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                    fontSize: 13
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                widget.item.transport,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 13
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ],
-                          )
-                      ),
-                    ),
+                    blockItem('Transport', widget.item.transport),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(24.0)),
-                            color: Theme.of(context).hoverColor,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Est. Time',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                widget.item.estimatedTime,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                    fontSize: 13
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ],
-                          )
-                      ),
-                    ),
+                    blockItem('Est. Time', widget.item.estimatedTime),
                   ],
                 )
               ],

@@ -18,40 +18,53 @@ class BookingItem extends StatefulWidget {
 
 class _BookingItemState extends State<BookingItem> {
 
-  Widget headerItem(String title, String subtitle) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+  Widget headerItem(String title, String subtitle, String bookingType, String type) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
+        Row(
+          children: [
+            Text(
+              bookingType,
+              style: const TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
               ),
-              const SizedBox(height: 4.0),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodySmall?.color,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.arrow_forward_ios_rounded, size: 12),
+            const SizedBox(width: 4),
+            Text(
+              type,
+              style: const TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        const SizedBox(width: 16.0),
-        const Icon(Icons.arrow_forward_ios_rounded, size: 20),
+        const CommonSeparator(color: Colors.grey),
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+        ),
+        const SizedBox(height: 4.0),
+        Text(
+          subtitle,
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodySmall?.color,
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
       ],
     );
   }
@@ -78,9 +91,9 @@ class _BookingItemState extends State<BookingItem> {
   Widget blockItem(String key, String value) {
     return Expanded(
         child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
               color: Theme.of(context).hoverColor,
             ),
             child: Column(
@@ -116,28 +129,36 @@ class _BookingItemState extends State<BookingItem> {
 
     Widget headerChild = Container();
     Widget lowerChild = Container();
+    const dateTimeFormat = 'dd MMM yyyy - HH:mm';
+    const dateFormat = 'dd MMMM yyyy';
+    const dayMonthFormat = 'dd MMM';
+    const hourMinuteFormat = 'HH:mm';
 
     if(widget.item.detail is TransportationDetailModel) {
       final dtl = widget.item.detail as TransportationDetailModel;
-      String dayMonth = DateFormat('dd MMM').format(dtl.departureTime);
-      String hourMinute = DateFormat('HH:mm').format(dtl.departureTime);
-      headerChild = headerItem(dtl.transportName, '${dtl.departureLocation} - ${dtl.arrivalLocation}');
+      final date = DateFormat(dateTimeFormat).parse(dtl.departureTime);
+      String dayMonth = DateFormat(dayMonthFormat).format(date);
+      String hourMinute = DateFormat(hourMinuteFormat).format(date);
+      headerChild = headerItem(dtl.transportName, '${dtl.departureLocation} - ${dtl.arrivalLocation}', widget.item.bookingType, dtl.transportType);
       lowerChild = lowerItem('Date', dayMonth,'Time', hourMinute, 'Code', widget.item.bookingCode);
     }
     else if(widget.item.detail is AccommodationDetailModel) {
       final dtl = widget.item.detail as AccommodationDetailModel;
-      String dateCheckIn = DateFormat('dd MMMM yyyy').format(dtl.checkIn);
-      String dateCheckOut = DateFormat('dd MMMM yyyy').format(dtl.checkOut);
-      String hourCheckIn = DateFormat('HH:mm').format(dtl.checkIn);
-      String hourCheckOut = DateFormat('HH:mm').format(dtl.checkOut);
-      headerChild = headerItem(dtl.accommodationName, '$dateCheckIn - $dateCheckOut');
-      lowerChild = lowerItem('Check-In', hourCheckIn, 'Check-Out', hourCheckOut, 'Code', widget.item.bookingCode);
+      final dateCheckInParse = DateFormat(dateTimeFormat).parse(dtl.checkIn);
+      String dateCheckIn = DateFormat(dateFormat).format(dateCheckInParse);
+      String hourCheckIn = DateFormat(hourMinuteFormat).format(dateCheckInParse);
+      final dateCheckOutParse = DateFormat(dateTimeFormat).parse(dtl.checkOut);
+      String dateCheckOut = DateFormat(dateFormat).format(dateCheckOutParse);
+      String hourCheckOut = DateFormat(hourMinuteFormat).format(dateCheckOutParse);
+      headerChild = headerItem(dtl.accommodationName, '$dateCheckIn - $dateCheckOut', widget.item.bookingType, dtl.accommodationType);
+      lowerChild = lowerItem('Check In', hourCheckIn, 'Check Out', hourCheckOut, 'Code', widget.item.bookingCode);
     }
     else if(widget.item.detail is ActivityDetailModel) {
       final dtl = widget.item.detail as ActivityDetailModel;
-      String dayMonth = DateFormat('dd MMM').format(dtl.startTime);
-      String hourMinute = DateFormat('HH:mm').format(dtl.startTime);
-      headerChild = headerItem(dtl.activityName, dtl.activityType);
+      final date = DateFormat(dateTimeFormat).parse(dtl.startTime);
+      String dayMonth = DateFormat(dayMonthFormat).format(date);
+      String hourMinute = DateFormat(hourMinuteFormat).format(date);
+      headerChild = headerItem(dtl.activityName, dtl.activityType, widget.item.bookingType, dtl.activityType);
       lowerChild = lowerItem('Date', dayMonth,'Time', hourMinute, 'Code', widget.item.bookingCode);
     }
 
@@ -158,7 +179,7 @@ class _BookingItemState extends State<BookingItem> {
               child: Column(
                 children: [
                   headerChild,
-                  const CommonSeparator(color: Colors.grey),
+                  const SizedBox(height: 16),
                   lowerChild
                 ],
               )

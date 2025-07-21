@@ -23,8 +23,8 @@ class AccommodationDetailModelAdapter
       address: fields[2] as String,
       roomType: fields[3] as String,
       roomNumber: fields[4] as String,
-      checkIn: fields[5] as DateTime,
-      checkOut: fields[6] as DateTime,
+      checkIn: fields[5] as String,
+      checkOut: fields[6] as String,
       contact: fields[7] as String,
       email: fields[8] as String,
     );

@@ -22,10 +22,10 @@ class AccommodationDetailModel extends BookingDetailModel {
   String roomNumber;
 
   @HiveField(5)
-  DateTime checkIn;
+  String checkIn;
 
   @HiveField(6)
-  DateTime checkOut;
+  String checkOut;
 
   @HiveField(7)
   String contact;

@@ -19,10 +19,10 @@ class TransportationDetailModel extends BookingDetailModel {
   String seatNumber;
 
   @HiveField(4)
-  DateTime departureTime;
+  String departureTime;
 
   @HiveField(5)
-  DateTime arrivalTime;
+  String arrivalTime;
 
   @HiveField(6)
   String pickUpPoint;

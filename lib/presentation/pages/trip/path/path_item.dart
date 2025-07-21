@@ -119,7 +119,7 @@ class _PathItemState extends State<PathItem> {
       return Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            locationItem(fromLocation, 40),
+            locationItem(fromLocation, 55),
             Expanded(
                 flex: 1,
                 child: Column(
@@ -158,7 +158,7 @@ class _PathItemState extends State<PathItem> {
                   ],
                 )
             ),
-            locationItem(toLocation, 40),
+            locationItem(toLocation, 55),
           ],
         );
     }
@@ -186,7 +186,7 @@ class _PathItemState extends State<PathItem> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    locationItem(fromLocation, 40),
+                    locationItem(fromLocation, 55),
                     Expanded(
                       flex: 1,
                       child: Column(
@@ -225,7 +225,7 @@ class _PathItemState extends State<PathItem> {
                         ],
                       )
                     ),
-                    locationItem(toLocation, 40),
+                    locationItem(toLocation, 55),
                   ],
                 ),
                 const CommonSeparator(color: Colors.grey),

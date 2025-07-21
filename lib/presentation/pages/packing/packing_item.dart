@@ -26,6 +26,10 @@ class _PackingItemState extends State<PackingItem> {
                   Radius.circular(24.0)
               ),
               color: Theme.of(context).hoverColor,
+              border: Border.all(
+                color: Theme.of(context).hoverColor,
+                width: 2,
+              ),
             ),
             padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
             child: Column(

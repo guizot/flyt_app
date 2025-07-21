@@ -42,10 +42,10 @@ class _TripItemState extends State<TripItem> {
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(24.0)),
               color: Theme.of(context).hoverColor,
-              // border: Border.all(
-              //   color: Colors.grey, // or any color you want
-              //   width: 0.5, // border width
-              // ),
+              border: Border.all(
+                color: Theme.of(context).hoverColor,
+                width: 2,
+              ),
             ),
             padding: const EdgeInsets.symmetric(
               vertical: 20.0,

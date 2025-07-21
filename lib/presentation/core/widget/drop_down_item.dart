@@ -38,78 +38,76 @@ class _DropDownItemState extends State<DropDownItem> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ClipPath(
-          clipper: const ShapeBorderClipper(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(16.0)),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+            color: Theme.of(context).hoverColor,
+            border: Border.all(
+              color: Theme.of(context).hoverColor,
+              width: 2,
             ),
           ),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).hoverColor,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.arrow_circle_right_rounded, size: 18),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: Text(
-                        widget.title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.arrow_circle_right_rounded, size: 18),
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: Text(
+                      widget.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8.0),
-                DropdownButtonFormField<String>(
-                  value: _isInItems(_selectedTitle) ? _selectedTitle : null,
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    hintText: 'Select ${widget.title.toLowerCase()}',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
                   ),
-                  items: widget.items.map((item) {
-                    final value = item['value'] ?? '';
-                    final title = item['title'] ?? '';
-                    final icon = item['icon'];
-                    return DropdownMenuItem<String>(
-                      value: widget.useValue ? value : title,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (icon != null)
-                            Text(icon, style: const TextStyle(fontSize: 18)),
-                          if (icon != null)
-                            const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(title, overflow: TextOverflow.ellipsis),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedTitle = value;
-                      widget.controller.text = value ?? '';
-                    });
-                  },
+                ],
+              ),
+              const SizedBox(height: 8.0),
+              DropdownButtonFormField<String>(
+                value: _isInItems(_selectedTitle) ? _selectedTitle : null,
+                isExpanded: true,
+                decoration: InputDecoration(
+                  hintText: 'Select ${widget.title.toLowerCase()}',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.surface,
                 ),
-              ],
-            ),
+                items: widget.items.map((item) {
+                  final value = item['value'] ?? '';
+                  final title = item['title'] ?? '';
+                  final icon = item['icon'];
+                  return DropdownMenuItem<String>(
+                    value: widget.useValue ? value : title,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (icon != null)
+                          Text(icon, style: const TextStyle(fontSize: 18)),
+                        if (icon != null)
+                          const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(title, overflow: TextOverflow.ellipsis),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedTitle = value;
+                    widget.controller.text = value ?? '';
+                  });
+                },
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),

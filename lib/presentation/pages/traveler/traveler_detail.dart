@@ -188,6 +188,10 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
                             decoration: BoxDecoration(
                               color: Theme.of(context).hoverColor,
                               borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Theme.of(context).hoverColor,
+                                width: 2,
+                              ),
                             ),
                             padding: const EdgeInsets.all(16),
                             child: Column(
@@ -219,6 +223,10 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
                             decoration: BoxDecoration(
                               color: Theme.of(context).hoverColor,
                               borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Theme.of(context).hoverColor,
+                                width: 2,
+                              ),
                             ),
                             padding: const EdgeInsets.all(16),
                             child: Column(

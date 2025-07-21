@@ -25,10 +25,10 @@ class _DocumentItemState extends State<DocumentItem> {
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(24.0)),
               color: Theme.of(context).hoverColor,
-              // border: Border.all(
-              //   color: Colors.grey, // or any color you want
-              //   width: 0.5, // border width
-              // ),
+              border: Border.all(
+                color: Theme.of(context).hoverColor,
+                width: 2,
+              ),
             ),
             padding: const EdgeInsets.symmetric(
               vertical: 20.0,
@@ -84,6 +84,7 @@ class _DocumentItemState extends State<DocumentItem> {
                         ? ClipRRect(
                       borderRadius: BorderRadius.circular(12.0),
                       child: Image.memory(
+                        fit: BoxFit.fill,
                         widget.item.imageBytes!,
                         width: double.infinity,
                         height: 200,

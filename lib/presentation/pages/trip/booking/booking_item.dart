@@ -95,6 +95,10 @@ class _BookingItemState extends State<BookingItem> {
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(16.0)),
               color: Theme.of(context).hoverColor,
+              border: Border.all(
+                color: Theme.of(context).hoverColor,
+                width: 1,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,6 +175,10 @@ class _BookingItemState extends State<BookingItem> {
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(24.0)),
                 color: Theme.of(context).hoverColor,
+                border: Border.all(
+                  color: Theme.of(context).hoverColor,
+                  width: 2,
+                ),
               ),
               padding: const EdgeInsets.symmetric(
                 vertical: 20.0,

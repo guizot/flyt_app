@@ -312,45 +312,43 @@ class _TextFieldItemState extends State<TextFieldItem> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ClipPath(
-            clipper: const ShapeBorderClipper(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16.0))
-                )
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+            color: Theme.of(context).hoverColor,
+            border: Border.all(
+              color: Theme.of(context).hoverColor,
+              width: 2,
             ),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                  color: Theme.of(context).hoverColor
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.arrow_circle_right_rounded,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8.0),
-                      Expanded(
-                          child: Text(
-                            widget.title,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16
-                            ),
-                          )
-                      ),
-                      const SizedBox(width: 8.0),
-                    ],
+                  const Icon(
+                    Icons.arrow_circle_right_rounded,
+                    size: 18,
                   ),
-                  const SizedBox(height: 8.0,),
-                  formWidget(context)
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16
+                        ),
+                      )
+                  ),
+                  const SizedBox(width: 8.0),
                 ],
               ),
-            )
+              const SizedBox(height: 8.0,),
+              formWidget(context)
+            ],
+          ),
         ),
         const SizedBox(height: 16),
       ],

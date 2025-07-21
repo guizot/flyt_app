@@ -75,106 +75,106 @@ class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipPath(
-      clipper: const ShapeBorderClipper(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+        color: Theme.of(context).hoverColor,
+        border: Border.all(
+          color: Theme.of(context).hoverColor,
+          width: 2,
         ),
       ),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Theme.of(context).hoverColor),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(Icons.arrow_circle_right_rounded, size: 18),
-                const SizedBox(width: 8.0),
-                Expanded(
-                  child: Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.arrow_circle_right_rounded, size: 18),
+              const SizedBox(width: 8.0),
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
                   ),
                 ),
-                const SizedBox(width: 8.0),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (_images.isEmpty)
-              Container(
-                height: 120,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  'No images added',
-                  style: TextStyle(color: Theme.of(context).hintColor),
-                ),
               ),
-            if (_images.isNotEmpty)
-              SizedBox(
-                height: 120,
-                child: ListView.separated(
-                  controller: _scrollController,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _images.length,
-                  separatorBuilder: (context, idx) => const SizedBox(width: 12),
-                  itemBuilder: (context, idx) {
-                    return Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.memory(
-                            _images[idx],
-                            width: 120,
-                            height: 120,
-                            fit: BoxFit.cover,
-                          ),
+              const SizedBox(width: 8.0),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (_images.isEmpty)
+            Container(
+              height: 120,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                'No images added',
+                style: TextStyle(color: Theme.of(context).hintColor),
+              ),
+            ),
+          if (_images.isNotEmpty)
+            SizedBox(
+              height: 120,
+              child: ListView.separated(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: _images.length,
+                separatorBuilder: (context, idx) => const SizedBox(width: 12),
+                itemBuilder: (context, idx) {
+                  return Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.memory(
+                          _images[idx],
+                          width: 120,
+                          height: 120,
+                          fit: BoxFit.cover,
                         ),
-                        Positioned(
-                          top: 4,
-                          right: 4,
-                          child: GestureDetector(
-                            onTap: () => _removeImage(idx),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black54,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(
-                                Icons.close,
-                                color: Colors.white,
-                                size: 20,
-                              ),
+                      ),
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () => _removeImage(idx),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 20,
                             ),
                           ),
                         ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _pickImage,
-              style: FilledButton.styleFrom(
-                backgroundColor: Theme.of(context).hoverColor,
-                padding: const EdgeInsets.all(16.0),
-              ),
-              child: Text(
-                'Add New +',
-                style: TextStyle(color: Theme.of(context).iconTheme.color),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
-          ],
-        ),
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: _pickImage,
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).hoverColor,
+              padding: const EdgeInsets.all(16.0),
+            ),
+            child: Text(
+              'Add New +',
+              style: TextStyle(color: Theme.of(context).iconTheme.color),
+            ),
+          ),
+        ],
       ),
     );
   }

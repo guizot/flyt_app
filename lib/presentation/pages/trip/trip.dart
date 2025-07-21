@@ -145,6 +145,10 @@ class TripPageState extends State<TripPage> {
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(24.0)),
             color: Theme.of(context).hoverColor,
+            border: Border.all(
+              color: Theme.of(context).hoverColor,
+              width: 2,
+            ),
           ),
           child: Row(
             children: [

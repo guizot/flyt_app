@@ -23,6 +23,7 @@ class AddMultipleImageItem extends StatefulWidget {
 class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
   late List<Uint8List> _images;
   final ImagePicker _picker = ImagePicker();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -52,6 +53,16 @@ class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
         _images.add(bytes);
       });
       widget.onImagesChanged?.call(List<Uint8List>.from(_images));
+      // Scroll to the last image after the frame is rendered
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
     }
   }
 
@@ -79,19 +90,16 @@ class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.arrow_circle_right_rounded,
-                  size: 18,
-                ),
+                const Icon(Icons.arrow_circle_right_rounded, size: 18),
                 const SizedBox(width: 8.0),
                 Expanded(
-                    child: Text(
-                      widget.title,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16
-                      ),
-                    )
+                  child: Text(
+                    widget.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 8.0),
               ],
@@ -111,42 +119,47 @@ class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
                 ),
               ),
             if (_images.isNotEmpty)
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: List.generate(_images.length, (idx) {
-                  return Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.memory(
-                          _images[idx],
-                          width: 120,
-                          height: 120,
-                          fit: BoxFit.cover,
+              SizedBox(
+                height: 120,
+                child: ListView.separated(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _images.length,
+                  separatorBuilder: (context, idx) => const SizedBox(width: 12),
+                  itemBuilder: (context, idx) {
+                    return Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.memory(
+                            _images[idx],
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        top: 4,
-                        right: 4,
-                        child: GestureDetector(
-                          onTap: () => _removeImage(idx),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 20,
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: GestureDetector(
+                            onTap: () => _removeImage(idx),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }),
+                      ],
+                    );
+                  },
+                ),
               ),
             const SizedBox(height: 16),
             FilledButton(
@@ -157,11 +170,9 @@ class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
               ),
               child: Text(
                 'Add New +',
-                style: TextStyle(
-                  color: Theme.of(context).iconTheme.color
-                ),
+                style: TextStyle(color: Theme.of(context).iconTheme.color),
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -66,18 +66,18 @@ class TripCubit extends Cubit<TripCubitState> {
   Future<void> getAllDetail(String id) async {
     emit(TripLoading());
     TripModel? trip = tripUseCases.getTrip(id);
-    List<NoteModel> notes = tripUseCases.getAllNote(id);
-    List<LocationModel> locations = tripUseCases.getAllLocation(id);
-    List<PathModel> paths = tripUseCases.getAllPath(id);
     List<ItineraryGroup> itineraries = tripUseCases.getAllItinerary(id);
     List<BookingModel> bookings = tripUseCases.getAllBooking(id);
+    List<LocationModel> locations = tripUseCases.getAllLocation(id);
+    List<PathModel> paths = tripUseCases.getAllPath(id);
+    List<NoteModel> notes = tripUseCases.getAllNote(id);
     emit(TripDetailLoaded(
       trip: trip,
-      notes: notes,
+      itineraries: itineraries,
+      bookings: bookings,
       locations: locations,
       paths: paths,
-      itineraries: itineraries,
-      bookings: bookings
+      notes: notes,
     ));
   }
 

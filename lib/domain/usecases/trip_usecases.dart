@@ -54,9 +54,9 @@ class TripUseCases {
 
       for (final trip in allTrips) {
         final start = formatter.parse(trip.startDate);
-        final end = formatter.parse(trip.endDate);
+        final end = formatter.parse(trip.endDate).add(const Duration(days: 1)).subtract(const Duration(seconds: 1));
 
-        if (now.isAfter(start.subtract(const Duration(days: 1))) && now.isBefore(end.add(const Duration(days: 1)))) {
+        if (!now.isBefore(start) && !now.isAfter(end)) {
           ongoing.add(trip);
         } else if (now.isBefore(start)) {
           upcoming.add(trip);

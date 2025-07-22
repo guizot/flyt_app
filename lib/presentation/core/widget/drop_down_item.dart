@@ -5,12 +5,14 @@ class DropDownItem extends StatefulWidget {
     super.key,
     required this.title,
     this.useValue = false,
+    this.clearable = true,
     required this.controller,
     required this.items, // List<Map<String, String>>
   });
 
   final String title;
   final bool useValue;
+  final bool clearable;
   final TextEditingController controller;
   final List<Map<String, String>> items;
 
@@ -79,7 +81,7 @@ class _DropDownItemState extends State<DropDownItem> {
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.surface,
                   suffixIcon:
-                      _selectedTitle != null && _selectedTitle!.isNotEmpty
+                      _selectedTitle != null && _selectedTitle!.isNotEmpty && widget.clearable
                       ? IconButton(
                           icon: const Icon(Icons.clear, size: 20),
                           onPressed: () {

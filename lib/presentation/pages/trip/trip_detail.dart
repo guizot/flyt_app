@@ -6,6 +6,7 @@ import 'package:flyt_app/data/models/local/path_model.dart';
 import 'package:flyt_app/presentation/core/model/arguments/common_add_args.dart';
 import 'package:flyt_app/presentation/core/model/common/itinerary_group.dart';
 import 'package:flyt_app/presentation/pages/trip/booking/booking_item.dart';
+import 'package:flyt_app/presentation/pages/trip/path/path_filter.dart';
 import 'package:flyt_app/presentation/pages/trip/path/path_item.dart';
 import '../../../data/models/local/location_model.dart';
 import '../../../data/models/local/trip_model.dart';
@@ -14,10 +15,12 @@ import '../../core/constant/routes_values.dart';
 import '../../core/handler/dialog_handler.dart';
 import '../../core/widget/empty_state.dart';
 import '../../core/widget/loading_state.dart';
+import 'booking/booking_filter.dart';
 import 'cubit/trip_cubit.dart';
 import 'cubit/trip_state.dart';
 import 'description/description_item.dart';
 import 'itinerary/itinerary_group_item.dart';
+import 'location/location_filter.dart';
 import 'location/location_item.dart';
 import 'note/note_item.dart';
 
@@ -84,6 +87,57 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     _pageController.jumpToPage(index);
     scrollToSelectedTab();
   }
+
+  // region FILTER
+
+  TextEditingController bookingTypeController = TextEditingController();
+  TextEditingController bookingTypeItemController = TextEditingController();
+
+  void filterBooking() {
+    DialogHandler.showBottomSheet(
+        context: context,
+        child: BookingFilter(
+          bookingTypeController: bookingTypeController,
+          bookingTypeItemController: bookingTypeItemController,
+          onFilterApplied: () {
+            setState(() {}); // Update booking list
+          },
+        )
+    );
+  }
+
+  TextEditingController locationController = TextEditingController();
+
+  void filterLocation() {
+    DialogHandler.showBottomSheet(
+        context: context,
+        child: LocationFilter(
+          controller: locationController,
+          onFilterApplied: () {
+            setState(() {}); // Update booking list
+          },
+        )
+    );
+  }
+
+  TextEditingController fromToController = TextEditingController();
+  TextEditingController locationListController = TextEditingController();
+
+  void filterPath(List<LocationModel> locations) {
+    DialogHandler.showBottomSheet(
+        context: context,
+        child: PathFilter(
+          fromToController: fromToController,
+          locationListController: locationListController,
+          locations: locations,
+          onFilterApplied: () {
+            setState(() {}); // Update booking list
+          },
+        )
+    );
+  }
+
+  // endregion
 
   // region NAVIGATION
 
@@ -257,11 +311,17 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
         onLearn: showDataWarning,
       );
     }
+
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
-      itemCount: bookings.length,
+      itemCount: bookings.length + 1,
       itemBuilder: (context, index) {
-        final booking = bookings[index];
+        if (index == 0) {
+          return filterItem('All Booking - All Type', () {
+            filterBooking();
+          });
+        }
+        final booking = bookings[index - 1];
         return BookingItem(
           item: booking,
           onTap: (id) => navigateBookingDetail(id),
@@ -282,9 +342,14 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     }
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
-      itemCount: locations.length,
+      itemCount: locations.length + 1,
       itemBuilder: (context, index) {
-        final location = locations[index];
+        if (index == 0) {
+          return filterItem('All Location', () {
+            filterLocation();
+          });
+        }
+        final location = locations[index -1 ];
         return LocationItem(
           item: location,
           onTap: (id) => navigateLocationDetail(id),
@@ -305,9 +370,14 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     }
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
-      itemCount: paths.length,
+      itemCount: paths.length + 1,
       itemBuilder: (context, index) {
-        final path = paths[index];
+        if (index == 0) {
+          return filterItem('From - All Location', () {
+            filterPath(locations);
+          });
+        }
+        final path = paths[index - 1];
         return PathItem(
             item: path,
             onTap: (id) => navigatePathEdit(id),
@@ -397,6 +467,30 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
   }
 
   // endregion
+
+  Widget filterItem(String text, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.only(top: 8, bottom: 20, left: 8, right: 8),
+        child: Row(
+          children: [
+            const Icon(Icons.circle, size: 16),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const Icon(Icons.filter_list_rounded)
+          ],
+        ),
+      )
+    );
+  }
 
   void showDataWarning() {
     DialogHandler.showConfirmDialog(

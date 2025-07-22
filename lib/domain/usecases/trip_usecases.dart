@@ -27,6 +27,37 @@ class TripUseCases {
   }
 
   Future<void> deleteTrip(String id) async {
+    // Delete related itineraries
+    final allItineraries = hiveRepo.getAllItinerary().where((item) => item.tripId == id);
+    for (final item in allItineraries) {
+      await hiveRepo.deleteItinerary(item.id);
+    }
+
+    // Delete related bookings
+    final allBookings = hiveRepo.getAllBooking().where((item) => item.tripId == id);
+    for (final item in allBookings) {
+      await hiveRepo.deleteBooking(item.id);
+    }
+
+    // Delete related locations
+    final allLocations = hiveRepo.getAllLocation().where((item) => item.tripId == id);
+    for (final item in allLocations) {
+      await hiveRepo.deleteLocation(item.id);
+    }
+
+    // Delete related paths
+    final allPaths = hiveRepo.getAllPath().where((item) => item.tripId == id);
+    for (final item in allPaths) {
+      await hiveRepo.deletePath(item.id);
+    }
+
+    // Delete related notes
+    final allNotes = hiveRepo.getAllNote().where((item) => item.tripId == id);
+    for (final item in allNotes) {
+      await hiveRepo.deleteNote(item.id);
+    }
+
+    // Finally, delete the trip itself
     await hiveRepo.deleteTrip(id);
   }
 

@@ -54,17 +54,18 @@ class _PackingItemState extends State<PackingItem> {
                         child: SizedBox(
                             child: widget.item.selected ? Container(
                               decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.inversePrimary,
+                                  color: Theme.of(context).iconTheme.color,
                                   shape: BoxShape.circle
                               ),
                               padding: const EdgeInsets.all(4.0),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.check,
                                 size: 18,
+                                color: Theme.of(context).colorScheme.surface,
                               ),
                             ) : Container(
                               decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.surfaceDim,
+                                  color: Theme.of(context).colorScheme.surface,
                                   shape: BoxShape.circle
                               ),
                               padding: const EdgeInsets.all(4.0),

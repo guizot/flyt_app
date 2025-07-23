@@ -354,7 +354,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
           Expanded(
             child: EmptyState(
               title: "No Records",
-              subtitle: "No booking found with the current filter.",
+              subtitle: "You haven’t added any booking. Once you do, they’ll appear here.",
               tapText: "Add Booking +",
               onTap: () => navigateBookingAdd(context),
               onLearn: showDataWarning,
@@ -420,7 +420,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
           Expanded(
             child: EmptyState(
               title: "No Records",
-              subtitle: "No location found with the current filter.",
+              subtitle: "You haven’t added any location. Once you do, they’ll appear here.",
               tapText: "Add Location +",
               onTap: () => navigateLocationAdd(context),
               onLearn: showDataWarning,
@@ -494,7 +494,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
           Expanded(
             child: EmptyState(
               title: "No Records",
-              subtitle: "No path found with the current filter.",
+              subtitle: "You haven’t added any path. Once you do, they’ll appear here.",
               tapText: "Add Path +",
               onTap: () => navigatePathAdd(context),
               onLearn: showDataWarning,

@@ -104,7 +104,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
           bookingTypeController: bookingTypeController,
           bookingTypeItemController: bookingTypeItemController,
           onFilterApplied: () {
-            setState(() {}); // Update booking list
+            setState(() {});
           },
         )
     );
@@ -134,7 +134,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
           locationListController: locationListController,
           locations: locations,
           onFilterApplied: () {
-            setState(() {}); // Update booking list
+            setState(() {});
           },
         )
     );
@@ -456,29 +456,75 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
   }
 
   Widget pathPage(List<PathModel> paths, List<LocationModel> locations) {
-    if (paths.isEmpty) {
-      return EmptyState(
-        title: "No Records",
-        subtitle: "You haven’t added any path. Once you do, they’ll appear here.",
-        tapText: "Add Path +",
-        onTap: () => navigatePathAdd(context),
-        onLearn: showDataWarning,
+    String filter = locationListController.text.trim();
+    bool isFiltered = filter.isNotEmpty;
+    String filterName = '';
+
+    List<PathModel> filteredPaths = paths.where((path) {
+      final fromLocation = locations.firstWhere((l) => l.id == path.fromLocationId);
+      final toLocation = locations.firstWhere((l) => l.id == path.toLocationId);
+      return filter.isEmpty ||
+          fromLocation.id.toLowerCase().contains(filter.toLowerCase()) ||
+          toLocation.id.toLowerCase().contains(filter.toLowerCase());
+    }).toList();
+
+    if(filter != '')  {
+      filterName = locations.firstWhere((l) => l.id == filter).name;
+    } else {
+      filterName = 'All Locations';
+    }
+
+    final currentFilterText = isFiltered ? filterName : 'All Locations';
+
+    if (filteredPaths.isEmpty) {
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+            child: filterItem(
+              currentFilterText,
+              () => filterPath(locations),
+              () {
+                locationListController.clear();
+                setState(() {});
+              },
+              isFiltered,
+            ),
+          ),
+          Expanded(
+            child: EmptyState(
+              title: "No Records",
+              subtitle: "No path found with the current filter.",
+              tapText: "Add Path +",
+              onTap: () => navigatePathAdd(context),
+              onLearn: showDataWarning,
+            ),
+          ),
+        ],
       );
     }
+
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
-      itemCount: paths.length + 1,
+      itemCount: filteredPaths.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
-          return filterItem('All Locations', () {
-            filterPath(locations);
-          }, () {}, false);
+          return filterItem(
+            currentFilterText,
+            () => filterPath(locations),
+            () {
+              locationListController.clear();
+              setState(() {});
+            },
+            isFiltered,
+          );
         }
-        final path = paths[index - 1];
+
+        final path = filteredPaths[index - 1];
         return PathItem(
-            item: path,
-            onTap: (id) => navigatePathEdit(id),
-            locations: locations
+          item: path,
+          onTap: (id) => navigatePathEdit(id),
+          locations: locations,
         );
       },
     );

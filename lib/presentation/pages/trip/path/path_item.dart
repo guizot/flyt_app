@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flyt_app/data/models/local/location_model.dart';
 import 'package:flyt_app/data/models/local/path_model.dart';
 import 'package:flyt_app/presentation/core/widget/common_separator.dart';
@@ -124,9 +125,18 @@ class _PathItemState extends State<PathItem> {
                 flex: 1,
                 child: Column(
                   children: [
-                    Text(
-                      mode.icon,
-                      style: const TextStyle(fontSize: 22),
+                    // Text(
+                    //   mode.icon,
+                    //   style: const TextStyle(fontSize: 22),
+                    // ),
+                    SvgPicture.asset(
+                      'assets/svg/${mode.name.toLowerCase()}.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(
+                          Theme.of(context).iconTheme.color ?? Colors.grey,
+                          BlendMode.srcIn
+                      ),
                     ),
                     const SizedBox(height: 12),
                     LayoutBuilder(
@@ -191,9 +201,18 @@ class _PathItemState extends State<PathItem> {
                       flex: 1,
                       child: Column(
                         children: [
-                          Text(
-                            mode.icon,
-                            style: const TextStyle(fontSize: 22),
+                          // Text(
+                          //   mode.icon,
+                          //   style: const TextStyle(fontSize: 22),
+                          // ),
+                          SvgPicture.asset(
+                            'assets/svg/${mode.name.toLowerCase()}.svg',
+                            width: 20,
+                            height: 20,
+                            colorFilter: ColorFilter.mode(
+                                Theme.of(context).iconTheme.color ?? Colors.grey,
+                                BlendMode.srcIn
+                            ),
                           ),
                           const SizedBox(height: 12),
                           LayoutBuilder(

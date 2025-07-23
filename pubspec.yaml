@@ -92,6 +92,15 @@ flutter:
     - assets/svg/phrases.svg
     - assets/svg/traveler.svg
     - assets/svg/trip.svg
+    - assets/svg/walk.svg
+    - assets/svg/bicycle.svg
+    - assets/svg/motorbike.svg
+    - assets/svg/car.svg
+    - assets/svg/bus.svg
+    - assets/svg/train.svg
+    - assets/svg/ferry.svg
+    - assets/svg/flight.svg
+    - assets/svg/other.svg
 
 flutter_launcher_icons:
   android: "launcher_icon"

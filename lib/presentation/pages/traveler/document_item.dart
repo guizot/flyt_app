@@ -84,7 +84,7 @@ class _DocumentItemState extends State<DocumentItem> {
                         ? ClipRRect(
                       borderRadius: BorderRadius.circular(12.0),
                       child: Image.memory(
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                         widget.item.imageBytes!,
                         width: double.infinity,
                         height: 200,

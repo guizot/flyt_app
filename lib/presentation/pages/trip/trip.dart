@@ -91,7 +91,7 @@ class TripPageState extends State<TripPage> {
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             child: Row(
               children: [
-                Text(item.icon, style: const TextStyle(fontSize: 20)),
+                const Icon(Icons.circle, size: 18),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(

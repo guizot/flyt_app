@@ -29,8 +29,8 @@ class _TravelerItemState extends State<TravelerItem> {
               ),
             ),
             padding: const EdgeInsets.symmetric(
-              vertical: 20.0,
-              horizontal: 20.0,
+              vertical: 16.0,
+              horizontal: 16.0,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -38,8 +38,8 @@ class _TravelerItemState extends State<TravelerItem> {
                 // Left: Image
                 widget.item.imageBytes != null
                     ? Container(
-                        width: 72,
-                        height: 72,
+                        width: 80,
+                        height: 80,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           image: DecorationImage(
@@ -49,8 +49,8 @@ class _TravelerItemState extends State<TravelerItem> {
                         ),
                       )
                     : Container(
-                        width: 72,
-                        height: 72,
+                        width: 80,
+                        height: 80,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           color: Theme.of(context).colorScheme.surface,
@@ -69,7 +69,7 @@ class _TravelerItemState extends State<TravelerItem> {
                         widget.item.name,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 18,
+                          fontSize: 16,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,

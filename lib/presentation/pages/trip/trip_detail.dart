@@ -8,6 +8,10 @@ import 'package:flyt_app/presentation/core/model/common/itinerary_group.dart';
 import 'package:flyt_app/presentation/pages/trip/booking/booking_item.dart';
 import 'package:flyt_app/presentation/pages/trip/path/path_filter.dart';
 import 'package:flyt_app/presentation/pages/trip/path/path_item.dart';
+import '../../../data/models/local/bookingdetail/accommodation_detail_model.dart';
+import '../../../data/models/local/bookingdetail/activity_detail_model.dart';
+import '../../../data/models/local/bookingdetail/booking_detail_model.dart';
+import '../../../data/models/local/bookingdetail/transportation_detail_model.dart';
 import '../../../data/models/local/location_model.dart';
 import '../../../data/models/local/trip_model.dart';
 import '../../../injector.dart';
@@ -302,32 +306,75 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
   }
 
   Widget bookingPage(List<BookingModel> bookings) {
-    if (bookings.isEmpty) {
-      return EmptyState(
-        title: "No Records",
-        subtitle: "You haven’t added any booking. Once you do, they’ll appear here.",
-        tapText: "Add Booking +",
-        onTap: () => navigateBookingAdd(context),
-        onLearn: showDataWarning,
+    String typeFilter = bookingTypeController.text.trim();
+    String itemFilter = bookingTypeItemController.text.trim();
+
+    List<BookingModel> filteredBookings = bookings.where((booking) {
+      final matchType = typeFilter.isEmpty || booking.bookingType.toLowerCase() == typeFilter.toLowerCase();
+      bool matchItem = false;
+      switch (booking.bookingType.toLowerCase()) {
+        case 'transportation':
+          matchItem = itemFilter.isEmpty || (booking.detail as TransportationDetailModel)
+              .transportType
+              .toLowerCase()
+              .contains(itemFilter.toLowerCase());
+          break;
+        case 'activity':
+          matchItem = itemFilter.isEmpty || (booking.detail as ActivityDetailModel)
+              .activityType
+              .toLowerCase()
+              .contains(itemFilter.toLowerCase());
+          break;
+        case 'accommodation':
+          matchItem = itemFilter.isEmpty || (booking.detail as AccommodationDetailModel)
+              .accommodationType
+              .toLowerCase()
+              .contains(itemFilter.toLowerCase());
+          break;
+      }
+      return matchType && matchItem;
+    }).toList();
+
+    final currentFilterText = typeFilter.isNotEmpty || itemFilter.isNotEmpty
+        ? '${typeFilter.isNotEmpty ? typeFilter : 'All'} - ${itemFilter.isNotEmpty ? itemFilter : 'All'}'
+        : 'All Booking - All Type';
+
+    if (filteredBookings.isEmpty) {
+      // ❌ No booking, show filterItem + empty state in a Column
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+            child: filterItem(currentFilterText, filterBooking),
+          ),
+          Expanded(
+            child: EmptyState(
+              title: "No Records",
+              subtitle: "No booking found with the current filter.",
+              tapText: "Add Booking +",
+              onTap: () => navigateBookingAdd(context),
+              onLearn: showDataWarning,
+            ),
+          ),
+        ],
+      );
+    } else {
+      // ✅ Has data, inject filterItem as the first item in ListView
+      return ListView.builder(
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 16.0),
+        itemCount: filteredBookings.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return filterItem(currentFilterText, filterBooking);
+          }
+          final booking = filteredBookings[index - 1];
+          return BookingItem(
+            item: booking,
+            onTap: (id) => navigateBookingDetail(id),
+          );
+        },
       );
     }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: bookings.length + 1,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return filterItem('All Booking - All Type', () {
-            filterBooking();
-          });
-        }
-        final booking = bookings[index - 1];
-        return BookingItem(
-          item: booking,
-          onTap: (id) => navigateBookingDetail(id),
-        );
-      },
-    );
   }
 
   Widget locationPage(List<LocationModel> locations) {

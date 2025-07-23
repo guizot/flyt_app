@@ -91,8 +91,8 @@ class _LocationItemState extends State<LocationItem> {
               ),
             ),
             padding: const EdgeInsets.symmetric(
-              vertical: 20.0,
-              horizontal: 20.0,
+              vertical: 16.0,
+              horizontal: 16.0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,10 +103,10 @@ class _LocationItemState extends State<LocationItem> {
                     // Left: Image
                     widget.item.photoBytes != null
                         ? Container(
-                      width: 72,
-                      height: 72,
+                      width: 55,
+                      height: 55,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(8),
                         image: DecorationImage(
                           image: MemoryImage(widget.item.photoBytes!),
                           fit: BoxFit.cover,
@@ -114,16 +114,16 @@ class _LocationItemState extends State<LocationItem> {
                       ),
                     )
                         : Container(
-                      width: 72,
-                      height: 72,
+                      width: 55,
+                      height: 55,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(8),
                         color: Theme.of(context).colorScheme.surface,
                       ),
                       alignment: Alignment.center,
                       child: const Icon(Icons.person, size: 32),
                     ),
-                    const SizedBox(width: 24.0),
+                    const SizedBox(width: 16.0),
                     // Middle: Name above, birthdate below
                     Expanded(
                       child: Column(
@@ -145,7 +145,7 @@ class _LocationItemState extends State<LocationItem> {
                             style: TextStyle(
                               color: Theme.of(context).textTheme.bodySmall?.color,
                               fontWeight: FontWeight.w400,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,

@@ -48,8 +48,8 @@ class _TripItemState extends State<TripItem> {
               ),
             ),
             padding: const EdgeInsets.symmetric(
-              vertical: 20.0,
-              horizontal: 20.0,
+              vertical: 16.0,
+              horizontal: 16.0,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,

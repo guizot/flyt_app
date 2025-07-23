@@ -23,7 +23,7 @@ class _PathItemState extends State<PathItem> {
         child: Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
               color: Theme.of(context).hoverColor,
               border: Border.all(
                 color: Theme.of(context).hoverColor,
@@ -36,7 +36,7 @@ class _PathItemState extends State<PathItem> {
                   width: imageSize,
                   height: imageSize,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(8),
                     image: DecorationImage(
                       image: MemoryImage(location.photoBytes!),
                       fit: BoxFit.cover,
@@ -46,7 +46,7 @@ class _PathItemState extends State<PathItem> {
                   width: imageSize,
                   height: imageSize,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(8),
                     color: Theme.of(context).colorScheme.surface,
                   ),
                   alignment: Alignment.center,
@@ -178,8 +178,8 @@ class _PathItemState extends State<PathItem> {
               ),
             ),
             padding: const EdgeInsets.symmetric(
-              vertical: 20.0,
-              horizontal: 20.0,
+              vertical: 16.0,
+              horizontal: 16.0,
             ),
             child: Column(
               children: [

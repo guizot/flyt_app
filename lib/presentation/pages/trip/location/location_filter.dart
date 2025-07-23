@@ -5,11 +5,13 @@ import '../../../core/widget/drop_down_item.dart';
 class LocationFilter extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onFilterApplied;
+  final List<LocationType> usedLocationTypes;
 
   const LocationFilter({
     super.key,
     required this.controller,
     required this.onFilterApplied,
+    required this.usedLocationTypes,
   });
 
   @override
@@ -17,7 +19,6 @@ class LocationFilter extends StatefulWidget {
 }
 
 class _LocationFilterState extends State<LocationFilter> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,7 +31,7 @@ class _LocationFilterState extends State<LocationFilter> {
           DropDownItem(
             title: "Location Type",
             controller: widget.controller,
-            items: locationTypes
+            items: widget.usedLocationTypes
                 .map((c) => {'title': c.name, 'icon': c.icon})
                 .toList(),
           ),

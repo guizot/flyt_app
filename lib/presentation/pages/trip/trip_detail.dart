@@ -16,6 +16,7 @@ import '../../../data/models/local/trip_model.dart';
 import '../../../injector.dart';
 import '../../core/constant/routes_values.dart';
 import '../../core/handler/dialog_handler.dart';
+import '../../core/model/static/location_types.dart';
 import '../../core/widget/empty_state.dart';
 import '../../core/widget/loading_state.dart';
 import 'booking/booking_filter.dart';
@@ -111,26 +112,25 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
 
   TextEditingController locationController = TextEditingController();
 
-  void filterLocation() {
+  void filterLocation(List<LocationType> usedLocationTypes) {
     DialogHandler.showBottomSheet(
         context: context,
         child: LocationFilter(
           controller: locationController,
           onFilterApplied: () {
-            setState(() {}); // Update booking list
+            setState(() {});
           },
+          usedLocationTypes: usedLocationTypes
         )
     );
   }
 
-  TextEditingController fromToController = TextEditingController();
   TextEditingController locationListController = TextEditingController();
 
   void filterPath(List<LocationModel> locations) {
     DialogHandler.showBottomSheet(
         context: context,
         child: PathFilter(
-          fromToController: fromToController,
           locationListController: locationListController,
           locations: locations,
           onFilterApplied: () {
@@ -386,25 +386,67 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
   }
 
   Widget locationPage(List<LocationModel> locations) {
-    if (locations.isEmpty) {
-      return EmptyState(
-        title: "No Records",
-        subtitle: "You haven’t added any location. Once you do, they’ll appear here.",
-        tapText: "Add Location +",
-        onTap: () => navigateLocationAdd(context),
-        onLearn: showDataWarning,
+    String filter = locationController.text.trim();
+    bool isFiltered = filter.isNotEmpty;
+
+    List<LocationModel> filteredLocations = locations.where((location) {
+      return filter.isEmpty ||
+          location.type.toLowerCase().contains(filter.toLowerCase());
+    }).toList();
+
+    final currentFilterText = isFiltered ? filter : 'All Locations';
+
+    final usedTypeIds = locations.map((l) => l.type).toSet();
+
+    final usedLocationTypes = locationTypes
+        .where((type) => usedTypeIds.contains(type.name))
+        .toList();
+
+    if (filteredLocations.isEmpty) {
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+            child: filterItem(
+              currentFilterText,
+              () => filterLocation(usedLocationTypes),
+              () {
+                locationController.clear();
+                setState(() { });
+              },
+              isFiltered,
+            ),
+          ),
+          Expanded(
+            child: EmptyState(
+              title: "No Records",
+              subtitle: "No location found with the current filter.",
+              tapText: "Add Location +",
+              onTap: () => navigateLocationAdd(context),
+              onLearn: showDataWarning,
+            ),
+          ),
+        ],
       );
     }
+
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
-      itemCount: locations.length + 1,
+      itemCount: filteredLocations.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
-          return filterItem('All Location', () {
-            filterLocation();
-          }, () {}, false);
+          return filterItem(
+            currentFilterText,
+            () => filterLocation(usedLocationTypes),
+            () {
+              locationController.clear();
+              setState(() { });
+            },
+            isFiltered,
+          );
         }
-        final location = locations[index -1 ];
+
+        final location = filteredLocations[index - 1];
         return LocationItem(
           item: location,
           onTap: (id) => navigateLocationDetail(id),
@@ -428,7 +470,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
       itemCount: paths.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
-          return filterItem('From - All Location', () {
+          return filterItem('All Locations', () {
             filterPath(locations);
           }, () {}, false);
         }

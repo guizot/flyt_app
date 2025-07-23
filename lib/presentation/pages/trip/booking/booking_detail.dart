@@ -309,85 +309,83 @@ class _BookingDetailPageState extends State<BookingDetailPage>
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StaggeredGrid.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              children: [
+                for (final entry in bookingEntries)
+                  StaggeredGridTile.fit(
+                    crossAxisCellCount: 1,
+                    child: bookingGridItem(entry, context),
+                  ),
+              ],
+            ),
+            if (detailEntries.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              headerItem('$detailType Detail'),
               StaggeredGrid.count(
                 crossAxisCount: 2,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
                 children: [
-                  for (final entry in bookingEntries)
+                  for (final entry in detailEntries)
                     StaggeredGridTile.fit(
-                      crossAxisCellCount: 1,
+                      crossAxisCellCount:
+                      (entry['title'] == 'Accom. Name' ||
+                          entry['title'] == 'Transport Name' ||
+                          entry['title'] == 'Activity Name' ||
+                          entry['title'] == 'Address')
+                          ? 2
+                          : 1,
                       child: bookingGridItem(entry, context),
                     ),
                 ],
               ),
-              if (detailEntries.isNotEmpty) ...[
+              if (booking.attachments.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                headerItem('$detailType Detail'),
-                StaggeredGrid.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  children: [
-                    for (final entry in detailEntries)
-                      StaggeredGridTile.fit(
-                        crossAxisCellCount:
-                            (entry['title'] == 'Accom. Name' ||
-                                entry['title'] == 'Transport Name' ||
-                                entry['title'] == 'Activity Name' ||
-                                entry['title'] == 'Address')
-                            ? 2
-                            : 1,
-                        child: bookingGridItem(entry, context),
+                headerItem('Attachments'),
+                for (final imageBytes in booking.attachments)
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        RoutesValues.viewImage,
+                        arguments: imageBytes,
+                      );
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 200,
+                      margin: const EdgeInsets.only(
+                        bottom: 16,
+                        left: 4,
+                        right: 4,
                       ),
-                  ],
-                ),
-                if (booking.attachments.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  headerItem('Attachments'),
-                  for (final imageBytes in booking.attachments)
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RoutesValues.viewImage,
-                          arguments: imageBytes,
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 200,
-                        margin: const EdgeInsets.only(
-                          bottom: 16,
-                          left: 4,
-                          right: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        alignment: Alignment.center,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12.0),
-                          child: Image.memory(
-                            imageBytes,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            height: 200,
-                          ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      alignment: Alignment.center,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: Image.memory(
+                          imageBytes,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          height: 200,
                         ),
                       ),
                     ),
-                ],
+                  ),
               ],
             ],
-          ),
+          ],
         ),
       ),
     );

@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             NavigationBar(
               backgroundColor: Theme.of(context).colorScheme.surface,
-              indicatorColor: Theme.of(context).colorScheme.inversePrimary,
+              indicatorColor: Theme.of(context).hoverColor,
               onDestinationSelected: (int index) {
                 setState(() {
                   currentPageIndex = index;

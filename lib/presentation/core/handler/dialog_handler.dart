@@ -15,7 +15,7 @@ class DialogHandler {
         final maxHeight = MediaQuery.of(context).size.height * 0.8;
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).hoverColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: ConstrainedBox(

@@ -461,11 +461,21 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
     String filterName = '';
 
     List<PathModel> filteredPaths = paths.where((path) {
-      final fromLocation = locations.firstWhere((l) => l.id == path.fromLocationId);
-      final toLocation = locations.firstWhere((l) => l.id == path.toLocationId);
+      LocationModel? fromLocation;
+      try {
+        fromLocation = locations.firstWhere((l) => l.id == path.fromLocationId);
+      } catch(e) {
+        fromLocation = null;
+      }
+      LocationModel? toLocation;
+      try {
+        toLocation = locations.firstWhere((l) => l.id == path.toLocationId);
+      } catch(e) {
+        toLocation = null;
+      }
       return filter.isEmpty ||
-          fromLocation.id.toLowerCase().contains(filter.toLowerCase()) ||
-          toLocation.id.toLowerCase().contains(filter.toLowerCase());
+          (fromLocation != null && fromLocation.id.toLowerCase().contains(filter.toLowerCase())) ||
+          (toLocation != null && toLocation.id.toLowerCase().contains(filter.toLowerCase()));
     }).toList();
 
     if(filter != '')  {

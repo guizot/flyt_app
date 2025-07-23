@@ -10,7 +10,6 @@ import 'package:flyt_app/presentation/pages/trip/path/path_filter.dart';
 import 'package:flyt_app/presentation/pages/trip/path/path_item.dart';
 import '../../../data/models/local/bookingdetail/accommodation_detail_model.dart';
 import '../../../data/models/local/bookingdetail/activity_detail_model.dart';
-import '../../../data/models/local/bookingdetail/booking_detail_model.dart';
 import '../../../data/models/local/bookingdetail/transportation_detail_model.dart';
 import '../../../data/models/local/location_model.dart';
 import '../../../data/models/local/trip_model.dart';
@@ -308,6 +307,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
   Widget bookingPage(List<BookingModel> bookings) {
     String typeFilter = bookingTypeController.text.trim();
     String itemFilter = bookingTypeItemController.text.trim();
+    bool isFiltered = typeFilter.isNotEmpty || itemFilter.isNotEmpty;
 
     List<BookingModel> filteredBookings = bookings.where((booking) {
       final matchType = typeFilter.isEmpty || booking.bookingType.toLowerCase() == typeFilter.toLowerCase();
@@ -345,7 +345,11 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-            child: filterItem(currentFilterText, filterBooking),
+            child: filterItem(currentFilterText, filterBooking, () {
+              bookingTypeController.clear();
+              bookingTypeItemController.clear();
+              setState(() {});
+            }, isFiltered),
           ),
           Expanded(
             child: EmptyState(
@@ -365,7 +369,11 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
         itemCount: filteredBookings.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return filterItem(currentFilterText, filterBooking);
+            return filterItem(currentFilterText, filterBooking, () {
+              bookingTypeController.clear();
+              bookingTypeItemController.clear();
+              setState(() {});
+            }, isFiltered);
           }
           final booking = filteredBookings[index - 1];
           return BookingItem(
@@ -394,7 +402,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
         if (index == 0) {
           return filterItem('All Location', () {
             filterLocation();
-          });
+          }, () {}, false);
         }
         final location = locations[index -1 ];
         return LocationItem(
@@ -422,7 +430,7 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
         if (index == 0) {
           return filterItem('From - All Location', () {
             filterPath(locations);
-          });
+          }, () {}, false);
         }
         final path = paths[index - 1];
         return PathItem(
@@ -515,7 +523,12 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
 
   // endregion
 
-  Widget filterItem(String text, VoidCallback onTap) {
+  Widget filterItem(
+      String text,
+      VoidCallback onTap,
+      VoidCallback onClear,
+      bool isFiltered,
+      ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -532,10 +545,18 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const Icon(Icons.filter_list_rounded)
+            if (isFiltered)
+              GestureDetector(
+                onTap: () {
+                  onClear();
+                },
+                child: const Icon(Icons.clear_rounded),
+              )
+            else
+              const Icon(Icons.filter_list_rounded),
           ],
         ),
-      )
+      ),
     );
   }
 

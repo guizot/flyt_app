@@ -19,54 +19,56 @@ class PathItem extends StatefulWidget {
 class _PathItemState extends State<PathItem> {
 
   Widget locationItem (LocationModel? location, double imageSize) {
-    return Expanded(
-        flex: 1,
-        child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-              color: Theme.of(context).hoverColor,
-              border: Border.all(
-                color: Theme.of(context).hoverColor,
-                width: 1,
-              ),
-            ),
-            child: Column(
-              children: [
-                location != null ? Container(
-                  width: imageSize,
-                  height: imageSize,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    image: DecorationImage(
-                      image: MemoryImage(location.photoBytes!),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ) : Container(
-                  width: imageSize,
-                  height: imageSize,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Theme.of(context).colorScheme.surface,
-                  ),
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.image, size: 28),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  location != null ? location.name : "Not Found",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            )
+    return Container(
+        width: 100,
+        height: 80,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+          // shape: BoxShape.circle,
+          color: Theme.of(context).hoverColor,
+          border: Border.all(
+            color: Theme.of(context).hoverColor,
+            width: 1,
+          ),
         ),
-      );
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // location != null ? Container(
+            //   width: imageSize,
+            //   height: imageSize,
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(8),
+            //     image: DecorationImage(
+            //       image: MemoryImage(location.photoBytes!),
+            //       fit: BoxFit.cover,
+            //     ),
+            //   ),
+            // ) : Container(
+            //   width: imageSize,
+            //   height: imageSize,
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(8),
+            //     color: Theme.of(context).colorScheme.surface,
+            //   ),
+            //   alignment: Alignment.center,
+            //   child: const Icon(Icons.image, size: 28),
+            // ),
+            // const SizedBox(height: 8),
+            Text(
+              location != null ? location.name : "Not Found",
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 3,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        )
+    );
   }
 
   Widget blockItem(String key, String value) {
@@ -115,6 +117,7 @@ class _PathItemState extends State<PathItem> {
     LocationModel? fromLocation = widget.item.getFromLocation(widget.locations);
     LocationModel? toLocation = widget.item.getToLocation(widget.locations);
     final mode = transportModes.firstWhere((m) => m.name == widget.item.transport);
+    final isBigger = mode.name.toLowerCase() == 'bus' || mode.name.toLowerCase() == 'car';
 
     if(widget.isEmbed) {
       return Row(
@@ -131,8 +134,8 @@ class _PathItemState extends State<PathItem> {
                     // ),
                     SvgPicture.asset(
                       'assets/svg/${mode.name.toLowerCase()}.svg',
-                      width: 20,
-                      height: 20,
+                      width: isBigger ? 25: 20,
+                      height: isBigger ? 25: 20,
                       colorFilter: ColorFilter.mode(
                           Theme.of(context).iconTheme.color ?? Colors.grey,
                           BlendMode.srcIn
@@ -207,8 +210,8 @@ class _PathItemState extends State<PathItem> {
                           // ),
                           SvgPicture.asset(
                             'assets/svg/${mode.name.toLowerCase()}.svg',
-                            width: 20,
-                            height: 20,
+                            width: isBigger ? 25: 20,
+                            height: isBigger ? 25: 20,
                             colorFilter: ColorFilter.mode(
                                 Theme.of(context).iconTheme.color ?? Colors.grey,
                                 BlendMode.srcIn

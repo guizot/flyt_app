@@ -91,8 +91,8 @@ class _LocationItemState extends State<LocationItem> {
               ),
             ),
             padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
+              vertical: 20.0,
+              horizontal: 20.0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

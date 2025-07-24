@@ -238,20 +238,20 @@ class _ItineraryAddState extends State<ItineraryAdd> {
                       .map((c) => {'title': c.name, 'icon': c.icon})
                       .toList(),
                 ),
-                // if (typeController.text == 'Travel')
-                //   DropDownItem(
-                //     title: "Travel Path",
-                //     controller: pathController,
-                //     items: pathItems,
-                //     useValue: true,
-                //   ),
-                // if (['Activity', 'Meal', 'Rest'].contains(typeController.text))
-                //   DropDownItem(
-                //     title: "Location",
-                //     controller: locationController,
-                //     items: locationItems,
-                //     useValue: true,
-                //   ),
+                if (typeController.text == 'Travel')
+                  DropDownItem(
+                    title: "Travel Path",
+                    controller: pathController,
+                    items: pathItems,
+                    useValue: true,
+                  ),
+                if (['Activity', 'Meal', 'Rest'].contains(typeController.text))
+                  DropDownItem(
+                    title: "Location",
+                    controller: locationController,
+                    items: locationItems,
+                    useValue: true,
+                  ),
               ],
             )
         ),

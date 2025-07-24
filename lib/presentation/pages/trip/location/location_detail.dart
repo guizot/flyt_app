@@ -85,87 +85,90 @@ class _LocationDetailPageState extends State<LocationDetailPage> with SingleTick
           ),
         ] : null,
       ),
-      body: location == null
-          ? const NotFoundState(
-        title: 'Location not found',
-        subtitle: 'We couldn\'t find the location you are looking for.',
-      )
-          : ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: 1 + // for the image section
-            (location.note != null && location.note!.isNotEmpty ? 8 : 7),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            // Show image section
-            return GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  RoutesValues.viewImage,
-                  arguments: location.photoBytes,
-                );
-              },
-              child: Container(
-                width: double.infinity,
-                height: 200,
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                alignment: Alignment.center,
-                child: location.photoBytes != null
-                    ? ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: Image.memory(
-                    location.photoBytes!,
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: location == null
+              ? const NotFoundState(
+            title: 'Location not found',
+            subtitle: 'We couldn\'t find the location you are looking for.',
+          )
+              : ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: 1 + // for the image section
+                (location.note != null && location.note!.isNotEmpty ? 8 : 7),
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                // Show image section
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      RoutesValues.viewImage,
+                      arguments: location.photoBytes,
+                    );
+                  },
+                  child: Container(
                     width: double.infinity,
-                    fit: BoxFit.cover,
                     height: 200,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    alignment: Alignment.center,
+                    child: location.photoBytes != null
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: Image.memory(
+                        location.photoBytes!,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        height: 200,
+                      ),
+                    )
+                        : const Icon(Icons.image_not_supported_outlined),
                   ),
-                )
-                    : const Icon(Icons.image_not_supported_outlined),
-              ),
-            );
-          }
+                );
+              }
 
-          final indexOffset = index - 1;
-          final items = <MapEntry<String, String>>[
-            MapEntry('Name', location.name),
-            MapEntry('Type', location.type),
-            MapEntry('Address', location.address),
-            MapEntry('Phone', location.phone),
-            MapEntry('Email', location.email),
-            MapEntry('Website', location.website),
-            MapEntry('Map URL', location.mapUrl),
-            if (location.note != null && location.note!.isNotEmpty)
-              MapEntry('Note', location.note!),
-          ];
+              final indexOffset = index - 1;
+              final items = <MapEntry<String, String>>[
+                MapEntry('Name', location.name),
+                MapEntry('Type', location.type),
+                MapEntry('Address', location.address),
+                MapEntry('Phone', location.phone),
+                MapEntry('Email', location.email),
+                MapEntry('Website', location.website),
+                MapEntry('Map URL', location.mapUrl),
+                if (location.note != null && location.note!.isNotEmpty)
+                  MapEntry('Note', location.note!),
+              ];
 
-          final copyableKeys = {
-            'Address',
-            'Phone',
-            'Email',
-            'Website',
-            'Map URL',
-          };
+              final copyableKeys = {
+                'Address',
+                'Phone',
+                'Email',
+                'Website',
+                'Map URL',
+              };
 
-          final entry = items[indexOffset];
-          final isCopyable = copyableKeys.contains(entry.key);
+              final entry = items[indexOffset];
+              final isCopyable = copyableKeys.contains(entry.key);
 
-          return LocationDetailItem(
-            title: entry.key,
-            description: entry.value,
-            onTap: isCopyable
-                ? () {
-              Clipboard.setData(
-                  ClipboardData(text: entry.value));
-            }
-                : null,
-          );
-        },
-      ),
-    );
+              return LocationDetailItem(
+                title: entry.key,
+                description: entry.value,
+                onTap: isCopyable
+                    ? () {
+                  Clipboard.setData(
+                      ClipboardData(text: entry.value));
+                }
+                    : null,
+              );
+            },
+          ),
+        )
+      );
   }
 
   @override

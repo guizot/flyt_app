@@ -306,16 +306,19 @@ class _TravelerAddState extends State<TravelerAdd> {
                 ),
               ],
       ),
-      body: BlocBuilder<TravelerCubit, TravelerCubitState>(
-        builder: (blocContext, state) {
-          if (state is TravelerInitial) {
-            return travelerInitial(context);
-          } else if (state is TravelerLoading) {
-            return const LoadingState();
-          }
-          return Container();
-        },
-      ),
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: BlocBuilder<TravelerCubit, TravelerCubitState>(
+          builder: (blocContext, state) {
+            if (state is TravelerInitial) {
+              return travelerInitial(context);
+            } else if (state is TravelerLoading) {
+              return const LoadingState();
+            }
+            return Container();
+          },
+        ),
+      )
     );
   }
 }

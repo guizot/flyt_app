@@ -189,8 +189,8 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
                               color: Theme.of(context).hoverColor,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: Theme.of(context).hoverColor,
-                                width: 2,
+                                color: Theme.of(context).colorScheme.shadow,
+                                width: 1,
                               ),
                             ),
                             padding: const EdgeInsets.all(16),
@@ -224,8 +224,8 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
                               color: Theme.of(context).hoverColor,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: Theme.of(context).hoverColor,
-                                width: 2,
+                                color: Theme.of(context).colorScheme.shadow,
+                                width: 1,
                               ),
                             ),
                             padding: const EdgeInsets.all(16),
@@ -369,39 +369,42 @@ class _TravelerDetailPageState extends State<TravelerDetailPage>
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: 8.0,
-              top: 16.0,
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 8.0,
+                top: 16.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  buildTab("Detail", 0),
+                  const SizedBox(width: 12.0),
+                  buildTab("Documents", 1),
+                ],
+              ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                buildTab("Detail", 0),
-                const SizedBox(width: 12.0),
-                buildTab("Documents", 1),
-              ],
+            const SizedBox(height: 8),
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() => selectedTabIndex = index);
+                },
+                children: [
+                  buildTabContent(0, traveler, documents),
+                  buildTabContent(1, traveler, documents),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => selectedTabIndex = index);
-              },
-              children: [
-                buildTabContent(0, traveler, documents),
-                buildTabContent(1, traveler, documents),
-              ],
-            ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      )
     );
   }
 

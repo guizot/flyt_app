@@ -203,85 +203,88 @@ class PhrasesDetailPageState extends State<PhrasesDetailPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 16,
-              bottom: 16,
-            ),
-            padding: const EdgeInsets.only(left: 8, right: 20),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(24.0)),
-              color: Theme.of(context).hoverColor,
-              border: Border.all(
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: 16,
+              ),
+              padding: const EdgeInsets.only(left: 8, right: 20),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(24.0)),
                 color: Theme.of(context).hoverColor,
-                width: 2,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.shadow,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      focusNode: searchFocusNode,
+                      style: const TextStyle(fontSize: 16),
+                      decoration: InputDecoration(
+                        hintText: 'Search phrases..',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).iconTheme.color?.withAlpha(70),
+                          fontWeight: FontWeight.normal,
+                        ),
+                        filled: true,
+                        fillColor: Colors.transparent,
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      keyboardType: TextInputType.text,
+                      maxLines: 1,
+                      onChanged: (query) {
+                        searchQuery = query;
+                        if (query.isEmpty) {
+                          context.read<PhrasesCubit>().getAllPhrases(widget.id);
+                        } else {
+                          context.read<PhrasesCubit>().searchPhrases(
+                            widget.id,
+                            query,
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  const Icon(Icons.search_rounded, size: 26, weight: 10),
+                ],
               ),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    focusNode: searchFocusNode,
-                    style: const TextStyle(fontSize: 16),
-                    decoration: InputDecoration(
-                      hintText: 'Search phrases..',
-                      hintStyle: TextStyle(
-                        color: Theme.of(context).iconTheme.color?.withAlpha(70),
-                        fontWeight: FontWeight.normal,
-                      ),
-                      filled: true,
-                      fillColor: Colors.transparent,
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    keyboardType: TextInputType.text,
-                    maxLines: 1,
-                    onChanged: (query) {
-                      searchQuery = query;
-                      if (query.isEmpty) {
-                        context.read<PhrasesCubit>().getAllPhrases(widget.id);
-                      } else {
-                        context.read<PhrasesCubit>().searchPhrases(
-                          widget.id,
-                          query,
-                        );
-                      }
-                    },
-                  ),
-                ),
-                const Icon(Icons.search_rounded, size: 26, weight: 10),
-              ],
-            ),
-          ),
-          Expanded(
-            child: BlocBuilder<PhrasesCubit, PhrasesCubitState>(
-              builder: (context, state) {
-                if (state is PhrasesInitial) {
+            Expanded(
+              child: BlocBuilder<PhrasesCubit, PhrasesCubitState>(
+                builder: (context, state) {
+                  if (state is PhrasesInitial) {
+                    return const SizedBox.shrink();
+                  } else if (state is PhrasesLoading) {
+                    return const LoadingState();
+                  } else if (state is PhrasesEmpty) {
+                    return EmptyState(
+                      title: "No Records",
+                      subtitle:
+                      "You haven’t added any phrase. Once you do, they’ll appear here.",
+                      tapText: "Add Phrase +",
+                      onTap: navigatePhrasesAdd,
+                      onLearn: showDataWarning,
+                    );
+                  } else if (state is PhrasesLoaded) {
+                    return phrasesLoaded(state.phrases);
+                  }
                   return const SizedBox.shrink();
-                } else if (state is PhrasesLoading) {
-                  return const LoadingState();
-                } else if (state is PhrasesEmpty) {
-                  return EmptyState(
-                    title: "No Records",
-                    subtitle:
-                        "You haven’t added any phrase. Once you do, they’ll appear here.",
-                    tapText: "Add Phrase +",
-                    onTap: navigatePhrasesAdd,
-                    onLearn: showDataWarning,
-                  );
-                } else if (state is PhrasesLoaded) {
-                  return phrasesLoaded(state.phrases);
-                }
-                return const SizedBox.shrink();
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        )
       ),
     );
   }

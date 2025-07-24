@@ -234,16 +234,19 @@ class _PathAddState extends State<PathAdd> {
             )
           ],
         ),
-        body: BlocBuilder<TripCubit, TripCubitState>(
-          builder: (blocContext, state) {
-            if(state is TripInitial) {
-              return bookingInitial(context);
-            }
-            else if(state is TripLoading) {
-              return const LoadingState();
-            }
-            return Container();
-          },
+        body: Container(
+          color: Theme.of(context).colorScheme.surface,
+          child: BlocBuilder<TripCubit, TripCubitState>(
+            builder: (blocContext, state) {
+              if(state is TripInitial) {
+                return bookingInitial(context);
+              }
+              else if(state is TripLoading) {
+                return const LoadingState();
+              }
+              return Container();
+            },
+          )
         )
     );
   }

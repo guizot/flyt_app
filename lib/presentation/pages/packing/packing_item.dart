@@ -27,8 +27,8 @@ class _PackingItemState extends State<PackingItem> {
               ),
               color: Theme.of(context).hoverColor,
               border: Border.all(
-                color: Theme.of(context).hoverColor,
-                width: 2,
+                color: Theme.of(context).colorScheme.shadow,
+                width: 1,
               ),
             ),
             padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),

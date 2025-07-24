@@ -42,9 +42,24 @@ class _BookingFilterState extends State<BookingFilter> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          const SizedBox(height: 4.0),
-          const Text('Booking Filter', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
-          const SizedBox(height: 12.0),
+          Container(
+            height: 5.0,
+            width: MediaQuery.of(context).size.width / 4,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.shadow,
+              borderRadius: const BorderRadius.all(Radius.circular(25.0)),
+            ),
+          ),
+          const SizedBox(height: 18.0),
+          const Text(
+            'Booking Filter',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 20,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16.0),
           DropDownItem(
             title: "Booking Type",
             controller: widget.bookingTypeController,

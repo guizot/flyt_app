@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             NavigationBar(
               backgroundColor: Theme.of(context).colorScheme.surface,
-              indicatorColor: Theme.of(context).hoverColor,
+              indicatorColor: Theme.of(context).colorScheme.shadow,
               onDestinationSelected: (int index) {
                 setState(() {
                   currentPageIndex = index;
@@ -174,15 +174,18 @@ class _HomePageState extends State<HomePage> {
             )
           ],
         ),
-        body: Builder(
-          builder: (_) {
-            if (currentPageIndex == 0) return TripPageProvider(pageKey: tripPageKey);
-            if (currentPageIndex == 1) return TravelerPageProvider(pageKey: travelerPageKey);
-            if (currentPageIndex == 2) return PackingPageProvider(pageKey: packingPageKey);
-            if (currentPageIndex == 3) return PhrasesPageProvider(pageKey: phrasesPageKey);
-            return const SizedBox.shrink();
-          },
-        ),
+        body: Container(
+          color: Theme.of(context).colorScheme.surface,
+          child: Builder(
+            builder: (_) {
+              if (currentPageIndex == 0) return TripPageProvider(pageKey: tripPageKey);
+              if (currentPageIndex == 1) return TravelerPageProvider(pageKey: travelerPageKey);
+              if (currentPageIndex == 2) return PackingPageProvider(pageKey: packingPageKey);
+              if (currentPageIndex == 3) return PhrasesPageProvider(pageKey: phrasesPageKey);
+              return const SizedBox.shrink();
+            },
+          ),
+        )
     );
   }
 

@@ -185,16 +185,19 @@ class _PackingAddState extends State<PackingAdd> {
             )
           ],
         ),
-        body: BlocBuilder<PackingCubit, PackingCubitState>(
-          builder: (blocContext, state) {
-            if(state is PackingInitial) {
-              return packingInitial(context);
-            }
-            else if(state is PackingLoading) {
-              return const LoadingState();
-            }
-            return Container();
-          },
+        body: Container(
+            color: Theme.of(context).colorScheme.surface,
+            child: BlocBuilder<PackingCubit, PackingCubitState>(
+            builder: (blocContext, state) {
+              if(state is PackingInitial) {
+                return packingInitial(context);
+              }
+              else if(state is PackingLoading) {
+                return const LoadingState();
+              }
+              return Container();
+            },
+          )
         )
     );
   }

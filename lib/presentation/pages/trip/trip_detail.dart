@@ -723,46 +723,49 @@ class _TripDetailPageState extends State<TripDetailPage> with SingleTickerProvid
           ),
         ],
       ),
-      body: Column(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.only(
-              top: 16.0,
-              bottom: 16.0,
-              left: 16,
-              right: 16,
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                top: 16.0,
+                bottom: 16.0,
+                left: 16,
+                right: 16,
+              ),
+              controller: _tabScrollController,
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  buildTab("Itinerary", 0, key: _tabKeys[0]),
+                  buildTab("Booking", 1, key: _tabKeys[1]),
+                  buildTab("Location", 2, key: _tabKeys[2]),
+                  buildTab("Path", 3, key: _tabKeys[3]),
+                  buildTab("Description", 4, key: _tabKeys[4]),
+                  buildTab("Notes", 5, key: _tabKeys[5]),
+                ],
+              ),
             ),
-            controller: _tabScrollController,
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                buildTab("Itinerary", 0, key: _tabKeys[0]),
-                buildTab("Booking", 1, key: _tabKeys[1]),
-                buildTab("Location", 2, key: _tabKeys[2]),
-                buildTab("Path", 3, key: _tabKeys[3]),
-                buildTab("Description", 4, key: _tabKeys[4]),
-                buildTab("Notes", 5, key: _tabKeys[5]),
-              ],
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() => selectedTabIndex = index);
+                  scrollToSelectedTab();
+                },
+                children: [
+                  itineraryPage(state.itineraries, state.locations, state.paths),
+                  bookingPage(state.bookings),
+                  locationPage(state.locations),
+                  pathPage(state.paths, state.locations),
+                  descriptionPage(state.trip),
+                  notesPage(state.notes),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => selectedTabIndex = index);
-                scrollToSelectedTab();
-              },
-              children: [
-                itineraryPage(state.itineraries, state.locations, state.paths),
-                bookingPage(state.bookings),
-                locationPage(state.locations),
-                pathPage(state.paths, state.locations),
-                descriptionPage(state.trip),
-                notesPage(state.notes),
-              ],
-            ),
-          ),
-        ],
+          ],
+        )
       ),
     );
   }

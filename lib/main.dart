@@ -41,11 +41,12 @@ class MyApp extends StatelessWidget {
             // theme: themeService.currentThemeData(ThemeServiceValues.light),
             // darkTheme: themeService.currentThemeData(ThemeServiceValues.dark),
             theme: ThemeData(
-              colorScheme: const ColorScheme.light(
+              colorScheme: ColorScheme.light(
                 primary: Colors.black,
                 onPrimary: Colors.white,
-                surface: Colors.white,
+                surface: HexColor('f6f6f6'),
                 onSurface: Colors.black,
+                shadow: HexColor('e6e6e7')
               ),
               scaffoldBackgroundColor: Colors.white,
               appBarTheme: const AppBarTheme(
@@ -55,16 +56,17 @@ class MyApp extends StatelessWidget {
               textTheme: const TextTheme(
                 bodyMedium: TextStyle(color: Colors.black),
               ),
-              hoverColor: HexColor('e6e6e6').withValues(alpha: 0.5),
+              hoverColor: HexColor('ffffff'),
               fontFamily: 'Poppins',
               useMaterial3: true,
             ),
             darkTheme: ThemeData(
-              colorScheme: const ColorScheme.dark(
+              colorScheme: ColorScheme.dark(
                 primary: Colors.white,
                 onPrimary: Colors.black,
-                surface: Colors.black,
+                surface: HexColor('0e0e0e'),
                 onSurface: Colors.white,
+                shadow: HexColor('272729')
               ),
               scaffoldBackgroundColor: Colors.black,
               appBarTheme: const AppBarTheme(
@@ -74,7 +76,7 @@ class MyApp extends StatelessWidget {
               textTheme: const TextTheme(
                 bodyMedium: TextStyle(color: Colors.white),
               ),
-              hoverColor: HexColor('2e2e2e').withValues(alpha: 0.5),
+              hoverColor: HexColor('1a1a1a'),
               fontFamily: 'Poppins',
               useMaterial3: true,
             ),

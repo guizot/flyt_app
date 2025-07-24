@@ -48,7 +48,10 @@ class _DropDownItemState extends State<DropDownItem> {
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(16.0)),
             color: Theme.of(context).hoverColor,
-            border: Border.all(color: Theme.of(context).hoverColor, width: 2),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.shadow,
+              width: 1,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -19,17 +19,20 @@ class _ImageViewState extends State<ImageView> with SingleTickerProviderStateMix
         title: const Text('Image View'),
         centerTitle: true,
       ),
-      body: Center(
-        child: widget.imageBytes != null
-            ? InteractiveViewer( // Optional for zoom/pan
-          child: Image.memory(
-            widget.imageBytes!,
-            fit: BoxFit.contain,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-          ),
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Center(
+          child: widget.imageBytes != null
+              ? InteractiveViewer( // Optional for zoom/pan
+            child: Image.memory(
+              widget.imageBytes!,
+              fit: BoxFit.contain,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+            ),
+          )
+              : const Icon(Icons.image_outlined, size: 60),
         )
-            : const Icon(Icons.image_outlined, size: 60),
       ),
     );
   }

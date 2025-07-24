@@ -80,7 +80,10 @@ class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(16.0)),
         color: Theme.of(context).hoverColor,
-        border: Border.all(color: Theme.of(context).hoverColor, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.shadow,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -163,7 +166,7 @@ class _AddMultipleImageItemState extends State<AddMultipleImageItem> {
           FilledButton(
             onPressed: _pickImage,
             style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).hoverColor,
+              backgroundColor: Theme.of(context).colorScheme.shadow,
               padding: const EdgeInsets.all(16.0),
             ),
             child: Text(

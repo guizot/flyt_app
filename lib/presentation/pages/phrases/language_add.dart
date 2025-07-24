@@ -176,15 +176,18 @@ class _LanguageAddState extends State<LanguageAdd> {
                 ),
               ],
       ),
-      body: BlocBuilder<PhrasesCubit, PhrasesCubitState>(
-        builder: (blocContext, state) {
-          if (state is PhrasesInitial) {
-            return phrasesInitial(context);
-          } else if (state is PhrasesLoading) {
-            return const LoadingState();
-          }
-          return Container();
-        },
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: BlocBuilder<PhrasesCubit, PhrasesCubitState>(
+          builder: (blocContext, state) {
+            if (state is PhrasesInitial) {
+              return phrasesInitial(context);
+            } else if (state is PhrasesLoading) {
+              return const LoadingState();
+            }
+            return Container();
+          },
+        )
       ),
     );
   }

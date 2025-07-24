@@ -26,11 +26,7 @@ class _PathItemState extends State<PathItem> {
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(16.0)),
           // shape: BoxShape.circle,
-          color: Theme.of(context).hoverColor,
-          border: Border.all(
-            color: Theme.of(context).hoverColor,
-            width: 1,
-          ),
+          color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -77,11 +73,7 @@ class _PathItemState extends State<PathItem> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-            color: Theme.of(context).hoverColor,
-            border: Border.all(
-              color: Theme.of(context).hoverColor,
-              width: 1,
-            ),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.75),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,8 +178,8 @@ class _PathItemState extends State<PathItem> {
               borderRadius: const BorderRadius.all(Radius.circular(24.0)),
               color: Theme.of(context).hoverColor,
               border: Border.all(
-                color: Theme.of(context).hoverColor,
-                width: 2,
+                color: Theme.of(context).colorScheme.shadow,
+                width: 1,
               ),
             ),
             padding: const EdgeInsets.symmetric(

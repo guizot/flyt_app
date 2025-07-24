@@ -15,7 +15,7 @@ class DialogHandler {
         final maxHeight = MediaQuery.of(context).size.height * 0.8;
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).hoverColor,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: ConstrainedBox(
@@ -61,6 +61,10 @@ class DialogHandler {
       context: context,
       isCancelable: isCancelable,
       child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
         padding: const EdgeInsets.all(16.0),
         child: SizedBox(
           width: double.infinity,
@@ -70,7 +74,7 @@ class DialogHandler {
                 height: 5.0,
                 width: MediaQuery.of(context).size.width / 4,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).hoverColor,
+                  color: Theme.of(context).colorScheme.shadow,
                   borderRadius: const BorderRadius.all(Radius.circular(25.0)),
                 ),
               ),
@@ -148,7 +152,7 @@ class DialogHandler {
                         height: 5.0,
                         width: MediaQuery.of(context).size.width / 4,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).hoverColor,
+                          color: Theme.of(context).colorScheme.shadow,
                           borderRadius: const BorderRadius.all(
                             Radius.circular(25.0),
                           ),

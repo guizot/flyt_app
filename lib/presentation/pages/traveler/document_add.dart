@@ -198,16 +198,19 @@ class _DocumentAddState extends State<DocumentAdd> {
                 ),
               ],
       ),
-      body: BlocBuilder<TravelerCubit, TravelerCubitState>(
-        builder: (blocContext, state) {
-          if (state is TravelerInitial) {
-            return documentInitial(context);
-          } else if (state is TravelerLoading) {
-            return const LoadingState();
-          }
-          return Container();
-        },
-      ),
+      body: Container(
+        color: Theme.of(context).colorScheme.surface ,
+        child: BlocBuilder<TravelerCubit, TravelerCubitState>(
+          builder: (blocContext, state) {
+            if (state is TravelerInitial) {
+              return documentInitial(context);
+            } else if (state is TravelerLoading) {
+              return const LoadingState();
+            }
+            return Container();
+          },
+        ),
+      )
     );
   }
 }

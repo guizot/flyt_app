@@ -87,7 +87,7 @@ class _BookingDetailPageState extends State<BookingDetailPage>
       decoration: BoxDecoration(
         color: Theme.of(context).hoverColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).hoverColor, width: 2),
+        border: Border.all(color: Theme.of(context).colorScheme.shadow, width: 1),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -309,85 +309,88 @@ class _BookingDetailPageState extends State<BookingDetailPage>
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            StaggeredGrid.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              children: [
-                for (final entry in bookingEntries)
-                  StaggeredGridTile.fit(
-                    crossAxisCellCount: 1,
-                    child: bookingGridItem(entry, context),
-                  ),
-              ],
-            ),
-            if (detailEntries.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              headerItem('$detailType Detail'),
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               StaggeredGrid.count(
                 crossAxisCount: 2,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
                 children: [
-                  for (final entry in detailEntries)
+                  for (final entry in bookingEntries)
                     StaggeredGridTile.fit(
-                      crossAxisCellCount:
-                      (entry['title'] == 'Accom. Name' ||
-                          entry['title'] == 'Transport Name' ||
-                          entry['title'] == 'Activity Name' ||
-                          entry['title'] == 'Address')
-                          ? 2
-                          : 1,
+                      crossAxisCellCount: 1,
                       child: bookingGridItem(entry, context),
                     ),
                 ],
               ),
-              if (booking.attachments.isNotEmpty) ...[
+              if (detailEntries.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                headerItem('Attachments'),
-                for (final imageBytes in booking.attachments)
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        RoutesValues.viewImage,
-                        arguments: imageBytes,
-                      );
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 200,
-                      margin: const EdgeInsets.only(
-                        bottom: 16,
-                        left: 4,
-                        right: 4,
+                headerItem('$detailType Detail'),
+                StaggeredGrid.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  children: [
+                    for (final entry in detailEntries)
+                      StaggeredGridTile.fit(
+                        crossAxisCellCount:
+                        (entry['title'] == 'Accom. Name' ||
+                            entry['title'] == 'Transport Name' ||
+                            entry['title'] == 'Activity Name' ||
+                            entry['title'] == 'Address')
+                            ? 2
+                            : 1,
+                        child: bookingGridItem(entry, context),
                       ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      alignment: Alignment.center,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.0),
-                        child: Image.memory(
-                          imageBytes,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          height: 200,
+                  ],
+                ),
+                if (booking.attachments.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  headerItem('Attachments'),
+                  for (final imageBytes in booking.attachments)
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RoutesValues.viewImage,
+                          arguments: imageBytes,
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 200,
+                        margin: const EdgeInsets.only(
+                          bottom: 16,
+                          left: 4,
+                          right: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        alignment: Alignment.center,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.0),
+                          child: Image.memory(
+                            imageBytes,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            height: 200,
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                ],
               ],
             ],
-          ],
+          ),
         ),
-      ),
+      )
     );
   }
 

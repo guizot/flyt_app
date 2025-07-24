@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
 
   int currentPageIndex = 0;
   String titlePage = "Trip";
+  // String? imageBytes = 'https://vetmarlborough.co.nz/wp-content/uploads/cat-facts.jpg';
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +30,35 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Theme.of(context).colorScheme.surface,
           surfaceTintColor: Colors.transparent,
           centerTitle: true,
+          // leading: Container(
+          //   margin: const EdgeInsets.only(left: 21.0),
+          //   child: GestureDetector(
+          //     onTap: () {
+          //       // Aksi saat ditekan
+          //     },
+          //     child: Container(
+          //       decoration: BoxDecoration(
+          //         shape: BoxShape.circle,
+          //         color: Theme.of(context).hoverColor,
+          //         border: Border.all(
+          //           color: Theme.of(context).colorScheme.shadow,
+          //         ),
+          //       ),
+          //       child: Center(
+          //         child: (imageBytes != null && imageBytes!.isNotEmpty)
+          //             ? ClipOval(
+          //           child: Image.network(
+          //             imageBytes!,
+          //             width: 34,
+          //             height: 34,
+          //             fit: BoxFit.cover,
+          //           ),
+          //         )
+          //             : const Icon(Icons.person, size: 18),
+          //       ),
+          //     ),
+          //   ),
+          // ),
           actions: [
             Container(
               margin: const EdgeInsets.only(right: 8.0),
